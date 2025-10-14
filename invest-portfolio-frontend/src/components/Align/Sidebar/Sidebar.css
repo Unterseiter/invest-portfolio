@@ -1,0 +1,6 @@
+.Sidebar{
+    width: 250px;
+    height: 100vh;
+    background: #1A1A1A;
+    flex-shrink: 0;
+}
