@@ -1,5 +1,6 @@
-// ThemeToggle.jsx
+import './Buttons.css';
 import { useState, useEffect } from 'react';
+
 
 const ThemeToggle = () => {
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');

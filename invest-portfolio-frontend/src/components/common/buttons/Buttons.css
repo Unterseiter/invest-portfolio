@@ -1,0 +1,25 @@
+.Theme-toggle-button{
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* border: 1px black solid; */
+    background: transparent;
+    border-radius: 25px;
+}
+
+
+.Sidebar-navigate{
+    
+    border-radius: 15px;
+    /* border: 1px black solid; */
+    
+    width: 90%;
+    height: 50px;
+    margin: 10px;
+
+    color: azure;
+    background-color: rgb(17, 17, 17);
+}

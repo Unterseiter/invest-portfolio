@@ -3,4 +3,8 @@
     height: 100vh;
     background: #1A1A1A;
     flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    /* gap: 15px; */
+    padding: 20px 0;
 }
