@@ -8,8 +8,6 @@ import Sun from '../../../assets/header/Sun';
 function Header() {
     const { currentTheme, toggleTheme } = useTheme();
 
-    console.log('Текущая тема:', currentTheme);
-
     return(
         <header className="Header">
             <div className='logo'>

@@ -3,18 +3,22 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const [currentTheme, setCurrentTheme] = useState("light");
-
-  useEffect(() => {
+  const [currentTheme, setCurrentTheme] = useState(() => {
     const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) {
-      setCurrentTheme(savedTheme);
+
+    if (savedTheme === "light" || savedTheme === "dark") {
+      return savedTheme;
     }
-  }, []);
+    
+    const systemPrefersDark = window.matchMedia 
+      && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    return systemPrefersDark ? "dark" : "light";
+  });
 
   useEffect(() => {
+    console.log("Применяем тему:", currentTheme);
     localStorage.setItem("theme", currentTheme);
-
     document.documentElement.setAttribute("data-theme", currentTheme);
   }, [currentTheme]);
 
@@ -23,7 +27,9 @@ export const ThemeProvider = ({ children }) => {
   };
 
   const setTheme = (themeName) => {
-    setCurrentTheme(themeName);
+    if (themeName === "light" || themeName === "dark") {
+      setCurrentTheme(themeName);
+    }
   };
 
   const value = {
