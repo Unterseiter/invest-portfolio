@@ -8,6 +8,7 @@
     /* border: 1px black solid; */
     background: transparent;
     border-radius: 25px;
+    color: var(--color-secondary);
 }
 
 
@@ -20,6 +21,6 @@
     height: 50px;
     margin: 10px;
 
-    color: azure;
-    background-color: rgb(17, 17, 17);
+    color: var(--color-secondary);
+    background-color: var(--bg-button);
 }

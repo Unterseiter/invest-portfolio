@@ -1,4 +1,4 @@
-const Logo = ({ width = 59, height, color = '#0022FF', ...props }) => {
+const Logo = ({ width = 59, height, color = 'var(--color-accent)', ...props }) => {
 
     const logoHeight = height || (width * 33 / 59);
     

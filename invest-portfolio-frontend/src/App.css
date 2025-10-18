@@ -1,6 +1,6 @@
 .App {
   min-height: 100vh;
-  background: #292929;
+  background: var(--bg-page);
   display: flex;
   flex-direction: column;
 }
@@ -15,8 +15,8 @@
 .main-content {
   flex: 1;
   padding: 20px;
-  background: #363636;
-  color: white;
+  background: var(--bg-page);
+  color: var(--color-primary);
   overflow-y: auto; /* Прокрутка только для контента */
   min-height: calc(100vh - 200px); /* Высота минус шапка и подвал */
 }

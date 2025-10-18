@@ -1,4 +1,4 @@
-const Sun = ({ width = 78, height, color = '#0022FF', ...props }) => {
+const Sun = ({ width = 78, height, color = 'var(--color-accent)', ...props }) => {
 
     const sunHeight = height || (width * 78 / 78);
     

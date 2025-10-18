@@ -1,0 +1,37 @@
+:root {
+    /* -----------------------=LIGHT  THEME=---------------------------- */
+
+    --bg-header: #ebebeb;
+    --bg-sidebar: #e1e1e1;
+    --bg-footer: #959595;
+    --bg-page: #ffffff;
+    --bg-button: #ffffff;
+    --bg-button-select: #c6c6c6;
+    
+    --color-primary: black;
+    --color-secondary: #1e1e1e;
+    --color-third: #292929;
+    
+    --color-accent: #0022ff;
+}
+    /* -----------------------=DARK   THEME=---------------------------- */
+    
+    [data-theme="dark"]{
+   
+        --bg-header: #141414;
+        --bg-sidebar: #1a1a1a;
+        --bg-footer: #333333;
+        --bg-page: #363636;
+        --bg-button: #111111;
+        --bg-button-select: #151515;
+        
+
+        --color-primary: white;
+        --color-secondary: azure;
+        --color-third: rgb(205, 205, 205);
+        
+        --color-accent: #0022ff;
+    }
+
+
+    /* -----------------------=CUSTOM THEME=---------------------------- */

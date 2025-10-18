@@ -1,5 +1,5 @@
 .Header{
-    background: rgb(20, 20, 20);
+    background: var(--bg-header);
     width: 100%;
     height: 80px;
     display: flex;
@@ -11,7 +11,7 @@
 }
 
 .logo{
-    color: white;
+    color: var(--color-primary);
     display: flex;
     flex-direction: row;
     align-items: center;
