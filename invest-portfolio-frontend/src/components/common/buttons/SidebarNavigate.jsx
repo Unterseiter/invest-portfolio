@@ -1,10 +1,16 @@
 import './Buttons.css';
-import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const SidebarNavigate = ({text = "SidebarNavigate Text"}) => {
+const SidebarNavigate = ({text = "SidebarNavigate Text", path = "/"}) => {
+
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate(path);
+    }
 
     return(
-        <button className='Sidebar-navigate'>
+        <button className='Sidebar-navigate' onClick={handleClick}>
             <p>
                 {text}
             </p>

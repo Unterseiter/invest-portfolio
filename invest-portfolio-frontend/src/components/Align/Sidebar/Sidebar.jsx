@@ -4,10 +4,10 @@ import SidebarNavigate from '../../common/buttons/SidebarNavigate';
 function Sidebar (){
 return(
     <aside className='Sidebar'>
-        <SidebarNavigate text='Главная'/>
-        <SidebarNavigate text='Настройки'/>
-        <SidebarNavigate text='Активы'/>
-        <SidebarNavigate text='Расчёт'/>
+        <SidebarNavigate text='Главная' path='/'/>
+        <SidebarNavigate text='Настройки' path='/settings'/>
+        <SidebarNavigate text='Активы' path='/monitoring'/>
+        <SidebarNavigate text='Расчёт' path='/functional'/>
     </aside>
 )
 }

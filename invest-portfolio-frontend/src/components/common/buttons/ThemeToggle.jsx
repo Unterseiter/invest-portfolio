@@ -1,23 +1,21 @@
 import './Buttons.css';
-import { useState, useEffect } from 'react';
+import Sun from '../../../assets/header/Sun';
+import Moon from '../../../assets/header/Moon';
+import { useTheme } from '../../../contexts/ThemeContext';
+// import { useState, useEffect } from 'react';
 
 
 const ThemeToggle = () => {
-    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
-
-    useEffect(() => {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-    }, [theme]);
-
-    const toggleTheme = () => {
-        setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-    };
+    const { currentTheme, toggleTheme } = useTheme();
 
     return (
-        <button onClick={toggleTheme}>
-            {theme === 'light' ? '🌙 Темная' : '☀️ Светлая'}
-        </button>
+        <button onClick={toggleTheme} className='Theme-toggle-button'>
+                {currentTheme ==='light'? (
+                    <Sun width={35} color='var(--color-primary)' />
+                ):(
+                    <Moon width={35} color='var(--color-primary)'/>
+                )}
+            </button>
     );
 };
 

@@ -6,7 +6,9 @@ import Sidebar from './components/Align/Sidebar/Sidebar';
 import './App.css';
 
 import HomePage from './pages/main/HomePage';
-import SettingsPage from './pages/settings/SettingsPage'
+import SettingsPage from './pages/settings/SettingsPage';
+import MonitoringPage from './pages/monitor/MonitoringPage';
+import FunctionalPage from './pages/functional/FunctionalPage';
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
             <Routes>
               <Route path='/' element={<HomePage />} />
               <Route path='/settings' element={<SettingsPage />} />
+              <Route path='/monitoring' element={<MonitoringPage />} />
+              <Route path='/functional' element={<FunctionalPage />} />
             </Routes>
             
           </div>
