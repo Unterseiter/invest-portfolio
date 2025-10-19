@@ -1,0 +1,68 @@
+.portfolio-review-box{
+}
+
+.portfolio-review{
+
+    height: max-content;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+
+    h1{
+        color: var(--color-primary);
+        width: max-content;
+        height: max-content;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    p{
+        color: var(--color-secondary);
+        width: max-content;
+        height: max-content;
+        margin: 10px 0;
+        font-style: italic;
+        font-weight: 300;
+    }
+}
+
+.portfolio-info{
+
+    width: 100%;
+    color: var(--color-primary);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .total-cost{
+        border: 1px var(--color-primary) solid;
+        border-radius: 15px;
+        width: 400px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .number-actives{
+        border: 1px var(--color-primary) solid;
+        border-radius: 15px;
+        width: 400px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .best-active{
+        border: 1px var(--color-primary) solid;
+        border-radius: 15px;
+        width: 400px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
