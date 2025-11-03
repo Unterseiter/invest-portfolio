@@ -1,0 +1,64 @@
+.chart-container {
+    border: 1px solid var(--bg-footer);
+    background: var(--bg-header);
+    border-radius: 12px;
+    padding: 20px;
+    width: 60%;
+  }
+  
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .period-selector {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .period-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--color-secondary);
+    background: var(--bg-button-select);
+    color: var(--color-secondary);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .period-btn:hover {
+    border-color: var(--color-primary);
+    background: var(--bg-button-select-primary);
+    color: var(--color-primary);
+  }
+  
+  .period-btn.active {
+    background: var(--bg-button-select-secondary);
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  
+  .custom-tooltip {
+    background: white;
+    border: 1px solid var(--color-primary);
+    padding: 10px;
+    border-radius: 4px;
+    /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
+  }
+  
+  .custom-tooltip .label {
+    margin: 0;
+    font-weight: bold;
+    color: var(--bg-footer);
+  }
+  
+  .custom-tooltip .intro {
+    margin: 5px 0 0 0;
+    color: var(--color-accent);
+  }

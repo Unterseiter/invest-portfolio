@@ -5,12 +5,14 @@
     --bg-sidebar: #e1e1e1;
     --bg-footer: #959595;
     --bg-page: #ffffff;
-    --bg-button: #ffffff;
-    --bg-button-select: #c6c6c6;
+    --bg-button-primary: #ffffff;
+    --bg-button-secondary: #e6e6e6;
+    --bg-button-select-primary: #c6c6c6;
+    --bg-button-select-secondary: #c6c6c6;
     
     --color-primary: black;
     --color-secondary: #1e1e1e;
-    --color-third: #292929;
+    --color-tertiary: #292929;
     
     --color-accent: #0022ff;
 }
@@ -22,13 +24,18 @@
         --bg-sidebar: #1a1a1a;
         --bg-footer: #333333;
         --bg-page: #363636;
-        --bg-button: #111111;
-        --bg-button-select: #151515;
+        
+        
+        --bg-button-primary: #111111;
+        --bg-button-secondary: #3a3a3a;
+
+        --bg-button-select-primary: #666666;
+        --bg-button-select-secondary: #151515;
         
 
         --color-primary: white;
-        --color-secondary: azure;
-        --color-third: rgb(205, 205, 205);
+        --color-secondary: rgb(187, 187, 187);
+        --color-tertiary: rgb(38, 38, 38);
         
         --color-accent: #0022ff;
     }
