@@ -1,6 +1,7 @@
-import PriceChart from "../../components/common/Graphics/PriceChart";
+import PriceChart from "../../components/common/Graphics/Line/PriceChart";
 import TotalPrice from "../../components/common/TotalPrice/TotalPrice";
 import TotalActive from "../../components/common/TotalActive/TotalActive";
+import SectorPieChart from "../../components/common/Graphics/Sector/SectorPieChart";
 import './HomePage.css';
 
 function MainPage() {
@@ -16,9 +17,11 @@ function MainPage() {
     <TotalActive /> 
     </div>
 
-      <div>
+      <div className="graphic">
         <PriceChart />
+        <SectorPieChart height={300} />
       </div>
+
     </div>
   );
 }

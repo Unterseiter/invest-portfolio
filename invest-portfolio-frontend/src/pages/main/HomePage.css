@@ -6,6 +6,12 @@
     .total{
         display: flex;
         flex-direction: row;
+        gap: 35px;
+    }
+
+    .graphic{
+        display: flex;
+        flex-direction: row;
         gap: 15px;
     }
 }

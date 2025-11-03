@@ -1,0 +1,111 @@
+/* styles/SectorCharts.css */
+.sector-pie-chart {
+  background: var(--bg-header);
+  border: 1px solid var(--bg-footer);
+  border-radius: 8px;
+  padding: 20px;
+  /* box-shadow: 0 2px 4px rgba(0,0,0,0.1); */
+  /* margin-bottom: 20px; */
+  width: 30%;
+  /* height: 100%; */
+}
+
+.sector-pie-chart h3 {
+  margin: 0 0 20px 0;
+  color: var(--color-primary);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chart-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: var(--color-secondary);
+}
+
+.custom-tooltip {
+  background: white;
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tooltip-sector {
+  font-weight: bold;
+  margin: 0 0 5px 0;
+  color: var(--color-tertiary);
+}
+
+.tooltip-value {
+  margin: 0 0 3px 0;
+  color: var(--color-tertiary);
+  font-size: 12px;
+}
+
+.tooltip-percentage {
+  margin: 0 0 3px 0;
+  color: var(--color-tertiary);
+  font-size: 12px;
+}
+
+.tooltip-assets {
+  margin: 0;
+  color: #999;
+  font-size: 11px;
+}
+
+.sector-details {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.sector-item {
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+}
+
+.sector-item:last-child {
+  border-bottom: none;
+}
+
+.sector-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.sector-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.sector-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.sector-percentage {
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.sector-value {
+  font-size: 14px;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.sector-asset {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--color-primary);
+  margin-bottom: 2px;
+}

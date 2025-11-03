@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { PortfolioAPI } from '../../../test/mockData';
+import { PortfolioAPI } from '../../../../test/mockData';
 import './PriceChart.css';
 
 const PortfolioChart = () => {
