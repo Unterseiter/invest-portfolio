@@ -1,9 +1,34 @@
 from app.models.user_info_model import TableSecuritiesModel, UserInfoModel
 from database.db_connection import db_connection, close_connection
 from app.services.table_securities_service import TableSecuritiesService
+from typing import List
 
 
 class UserService:
+
+    @classmethod
+    def GetAll(self) -> List[UserInfoModel]:
+        try:
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            queue = """SELECT * FROM user_info ORDER BY date"""
+            cursor.execute(queue)
+            data = cursor.fetchall()
+
+            close_connection(connection)
+            result_list = []
+
+            for record in data:
+
+                list_table_securities = TableSecuritiesService.GetAll(record[0])
+                result_list.append(UserInfoModel(id=data[0], date=data[1], table_securities=list_table_securities))
+
+            return result_list
+
+        except Exception as e:
+            print(f'Ошибка в сервисе: {e}')
+            return None
 
     @classmethod
     def GetOneById(self, user_id) -> UserInfoModel:
