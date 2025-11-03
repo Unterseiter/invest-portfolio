@@ -147,3 +147,21 @@ class UserInfo(Resource):
                 'success': False,
                 'message': f'Ошибка при создании портфеля: {str(e)}'
             }, 500
+
+    @api.doc('get_all_user_info')
+    @api.response(200, 'Данные портфелей успешно получены')
+    def get(self):
+        try:
+            data = UserService.GetAll()
+
+            if data:
+                return {
+                    'success': True,
+                    'data': [record.to_dict() for record in data]
+                }, 200
+
+        except Exception as e:
+            return {
+                'success': False,
+                'message': f'Ошибка при получении портфелей: {str(e)}'
+            }, 500
