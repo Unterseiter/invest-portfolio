@@ -1,26 +1,273 @@
-.Theme-toggle-button{
-    width: 40px;
-    height: 40px;
+/* Buttons.css */
+
+/* ==================== THEME TOGGLE BUTTON ==================== */
+.Theme-toggle-button {
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    
-    /* border: 1px black solid; */
-    background: transparent;
-    border-radius: 25px;
+    background: var(--bg-button-primary);
+    border: 1px solid var(--border-secondary);
+    border-radius: var(--radius-xl);
     color: var(--color-secondary);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-small);
 }
 
+.Theme-toggle-button:hover {
+    background: var(--bg-button-hover);
+    border-color: var(--border-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
 
-.Sidebar-navigate{
-    
-    border-radius: 15px;
-    /* border: 1px black solid; */
-    
+.Theme-toggle-button:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-small);
+}
+
+.Theme-toggle-button:focus {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+}
+
+/* Анимация переключения */
+.Theme-toggle-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--bg-button-hover), transparent);
+    transition: left 0.5s;
+}
+
+.Theme-toggle-button:hover::before {
+    left: 100%;
+}
+
+/* ==================== SIDEBAR NAVIGATE BUTTON ==================== */
+.Sidebar-navigate {
+    border-radius: var(--radius-lg);
     width: 90%;
-    height: 50px;
-    margin: 10px;
-
-    color: var(--color-secondary);
+    height: 52px;
+    margin: 8px auto;
+    padding: 0 16px;
+    
+    color: var(--color-primary);
     background-color: var(--bg-button-primary);
+    border: 1px solid var(--border-secondary);
+    
+    font-family: var(--font-family-primary);
+    font-size: 15px;
+    font-weight: var(--font-weight-medium);
+    
+    cursor: pointer;
+    transition: var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-small);
+    
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.Sidebar-navigate:hover {
+    background: var(--bg-button-hover);
+    border-color: var(--border-primary);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-medium);
+    color: var(--color-accent);
+}
+
+.Sidebar-navigate:active {
+    transform: translateX(2px);
+    box-shadow: var(--shadow-small);
+}
+
+.Sidebar-navigate:focus {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+    border-color: var(--color-accent);
+}
+
+/* Активное состояние (если нужно выделить текущую страницу) */
+.Sidebar-navigate.active {
+    background: var(--bg-button-select-primary);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    box-shadow: var(--shadow-inset);
+}
+
+/* Индикатор текущей страницы */
+.Sidebar-navigate::after {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    background: var(--color-accent);
+    border-radius: var(--radius-sm);
+    transition: var(--transition-normal);
+}
+
+.Sidebar-navigate:hover::after,
+.Sidebar-navigate.active::after {
+    height: 60%;
+}
+
+/* Анимация заполнения при ховере */
+.Sidebar-navigate::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--bg-surface-hover), transparent);
+    transition: left 0.6s ease;
+}
+
+.Sidebar-navigate:hover::before {
+    left: 100%;
+}
+
+/* ==================== BASE BUTTON STYLES ==================== */
+.button-primary {
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 12px 24px;
+    font-family: var(--font-family-primary);
+    font-size: 14px;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    box-shadow: var(--shadow-small);
+}
+
+.button-primary:hover {
+    background: var(--color-accent-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.button-primary:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-small);
+}
+
+.button-secondary {
+    background: var(--bg-button-secondary);
+    color: var(--color-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    padding: 12px 24px;
+    font-family: var(--font-family-primary);
+    font-size: 14px;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: var(--transition-normal);
+}
+
+.button-secondary:hover {
+    background: var(--bg-button-hover);
+    border-color: var(--border-accent);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-small);
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+    .Theme-toggle-button {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .Sidebar-navigate {
+        height: 48px;
+        margin: 6px auto;
+        font-size: 14px;
+    }
+    
+    .button-primary,
+    .button-secondary {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+}
+
+/* ==================== DISABLED STATES ==================== */
+.Sidebar-navigate:disabled,
+.button-primary:disabled,
+.button-secondary:disabled,
+.Theme-toggle-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.Sidebar-navigate:disabled:hover,
+.button-primary:disabled:hover,
+.button-secondary:disabled:hover,
+.Theme-toggle-button:disabled:hover {
+    background: var(--bg-button-disabled);
+    border-color: var(--border-secondary);
+    color: var(--color-tertiary);
+}
+
+/* ==================== LOADING STATES ==================== */
+.Sidebar-navigate.loading,
+.button-primary.loading,
+.button-secondary.loading {
+    position: relative;
+    color: transparent;
+}
+
+.Sidebar-navigate.loading::after,
+.button-primary.loading::after,
+.button-secondary.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: button-spinner 0.8s linear infinite;
+}
+
+@keyframes button-spinner {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================== ICON BUTTONS ==================== */
+.button-with-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.button-icon {
+    width: 18px;
+    height: 18px;
 }

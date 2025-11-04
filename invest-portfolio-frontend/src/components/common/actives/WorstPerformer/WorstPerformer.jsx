@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PortfolioAPI from '../../../../test/mockData.js';
 import './WorstPerformer.css';
+import ChartDown from '../../../../assets/Chart/ChartDown.jsx';
 
 const WorstPerformer = () => {
   const [worstAsset, setWorstAsset] = useState(null);
@@ -33,33 +34,22 @@ const WorstPerformer = () => {
 
   if (loading) {
     return (
-      <div className="performance-card loading worst">
-        <div className="performance-header">
-          <h3>Худший актив</h3>
-          <div className="performance-badge skeleton-badge">-0%</div>
-        </div>
-        <div className="asset-info">
-          <div className="asset-symbol skeleton-text"></div>
-          <div className="asset-name skeleton-text-short"></div>
-        </div>
-        <div className="performance-details">
-          <div className="detail-item skeleton-text"></div>
-          <div className="detail-item skeleton-text"></div>
-        </div>
+      <div className="worst-performer loading">
+        <ChartDown width={24} height={24} color="var(--color-tertiary)" />
+        <h3 className="worst-performer-title">Худший актив</h3>
+        <div className="worst-performer-value">-</div>
+        <div className="worst-performer-subtitle">Загрузка данных...</div>
       </div>
     );
   }
 
   if (error || !worstAsset) {
     return (
-      <div className="performance-card error worst">
-        <div className="performance-header">
-          <h3>Худший актив</h3>
-          <div className="performance-badge error">-</div>
-        </div>
-        <div className="error-message">
-          {error || 'Нет данных'}
-        </div>
+      <div className="worst-performer error">
+        <ChartDown width={24} height={24} color="var(--color-error)" />
+        <h3 className="worst-performer-title">Худший актив</h3>
+        <div className="worst-performer-value error">-</div>
+        <div className="worst-performer-subtitle error">{error || 'Нет данных'}</div>
       </div>
     );
   }
@@ -67,44 +57,33 @@ const WorstPerformer = () => {
   const isPositive = worstAsset.changePercent >= 0;
 
   return (
-    <div className="performance-card worst">
-      <div className="performance-header">
-        <h3>Худший актив</h3>
-        <div className={`performance-badge ${isPositive ? 'positive' : 'negative'}`}>
+    <div className="worst-performer">
+      <div className="worst-performer-header">
+        <ChartDown width={24} height={24} color="var(--color-error)" />
+        <h3 className="worst-performer-title">Худший актив</h3>
+      </div>
+      
+      <div className="worst-performer-content">
+        <div className="asset-symbol">{worstAsset.symbol}</div>
+        <div className="asset-name">{worstAsset.name}</div>
+        
+        <div className={`performance-change ${isPositive ? 'positive' : 'negative'}`}>
           {isPositive ? '+' : ''}{worstAsset.changePercent}%
         </div>
       </div>
-      
-      <div className="asset-info">
-        <div className="asset-symbol">{worstAsset.symbol}</div>
-        <div className="asset-name">{worstAsset.name}</div>
-      </div>
 
-      <div className="performance-details">
-        <div className="detail-item">
-          <span className="detail-label">Текущая цена:</span>
-          <span className="detail-value">{worstAsset.currentPrice.toLocaleString('ru-RU')} ₽</span>
-        </div>
-        <div className="detail-item">
-          <span className="detail-label">Изменение:</span>
-          <span className={`detail-value ${isPositive ? 'positive' : 'negative'}`}>
-            {isPositive ? '+' : ''}{worstAsset.change.toLocaleString('ru-RU')} ₽
-          </span>
-        </div>
-        <div className="detail-item">
-          <span className="detail-label">Количество:</span>
-          <span className="detail-value">{worstAsset.quantity.toLocaleString('ru-RU')} шт.</span>
-        </div>
-        <div className="detail-item">
-          <span className="detail-label">Стоимость:</span>
-          <span className="detail-value">{worstAsset.value.toLocaleString('ru-RU')} ₽</span>
-        </div>
-      </div>
-
-      <div className="performance-footer">
-        <div className="trend-indicator">
-          <span className="trend-icon">📉</span>
-          <span>Наибольшее падение</span>
+      <div className="worst-performer-footer">
+        <div className="performance-details">
+          <div className="detail-item">
+            <span className="detail-label">Цена:</span>
+            <span className="detail-value">{worstAsset.currentPrice.toLocaleString('ru-RU')} ₽</span>
+          </div>
+          <div className="detail-item">
+            <span className="detail-label">Изменение:</span>
+            <span className={`detail-value ${isPositive ? 'positive' : 'negative'}`}>
+              {isPositive ? '+' : ''}{worstAsset.change.toLocaleString('ru-RU')} ₽
+            </span>
+          </div>
         </div>
       </div>
     </div>

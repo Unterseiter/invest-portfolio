@@ -1,4 +1,4 @@
-import PortfolioValue from "../../components/common/actives/TotalPrice/TotalPrice"
+import PortfolioValue from "../../components/common/actives/TotalPrice/PortfolioValue"
 import TotalActive from "../../components/common/actives/TotalActive/TotalActive";
 import BestPerformer from "../../components/common/actives/BestPerformer/BestPerformer";
 import WorstPerformer from "../../components/common/actives/WorstPerformer/WorstPerformer";
@@ -12,10 +12,10 @@ function HomePage() {
 return(
     <div className="home">
         
-        <div className="home-header">
+        {/* <div className="home-header">
             <h2>Обзор портфеля</h2>
             <p>Общая информация о ваших инвестициях и текущем состоянии портфеля</p>
-        </div>
+        </div> */}
 
         <div className="active-info">
             <PortfolioValue />

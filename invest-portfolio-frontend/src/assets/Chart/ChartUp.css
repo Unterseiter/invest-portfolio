@@ -1,0 +1,14 @@
+.chart-up-icon {
+    transition: var(--transition-fast);
+  }
+  
+  /* Анимация для состояния загрузки */
+  .portfolio-value.loading .chart-up-icon {
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+  }

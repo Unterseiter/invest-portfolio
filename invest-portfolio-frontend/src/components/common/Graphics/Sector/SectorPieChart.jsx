@@ -1,29 +1,24 @@
-// components/SectorPieChart.jsx
 import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import PortfolioAPI from '../../../../test/mockData.js';
 import './SectorPieChart.css';
+import ChartUp from '../../../../assets/Chart/ChartUp.jsx';
 
-const SectorPieChart = ({ height = 400, showLegend = true }) => {
+const SectorPieChart = ({ height = 300, showLegend = true }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Используем встроенный метод API для получения секторного распределения
+        setLoading(true);
         const sectorData = await PortfolioAPI.getSectorAllocation();
         setData(sectorData);
+        setError(null);
       } catch (error) {
         console.error('Error fetching sector data:', error);
-        // Fallback: пробуем получить через активы
-        try {
-          const assets = await PortfolioAPI.getAssets();
-          const sectorAllocation = await PortfolioAPI.getSectorAllocation();
-          setData(sectorAllocation);
-        } catch (fallbackError) {
-          console.error('Fallback also failed:', fallbackError);
-        }
+        setError('Не удалось загрузить данные');
       } finally {
         setLoading(false);
       }
@@ -33,11 +28,23 @@ const SectorPieChart = ({ height = 400, showLegend = true }) => {
   }, []);
 
   if (loading) {
-    return <div className="chart-loading">Загрузка данных...</div>;
+    return (
+      <div className="sector-pie-chart loading">
+        <ChartUp width={24} height={24} color="var(--color-tertiary)" />
+        <h3 className="chart-title">Секторное распределение</h3>
+        <div className="chart-loading-text">Загрузка данных...</div>
+      </div>
+    );
   }
 
-  if (!data || data.length === 0) {
-    return <div className="chart-error">Нет данных для отображения</div>;
+  if (error || !data || data.length === 0) {
+    return (
+      <div className="sector-pie-chart error">
+        <ChartUp width={24} height={24} color="var(--color-error)" />
+        <h3 className="chart-title">Секторное распределение</h3>
+        <div className="chart-error-text">{error || 'Нет данных для отображения'}</div>
+      </div>
+    );
   }
 
   const renderCustomizedLabel = ({
@@ -48,19 +55,18 @@ const SectorPieChart = ({ height = 400, showLegend = true }) => {
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-    if (percent < 0.05) return null; // Не показываем подписи для маленьких сегментов
+    if (percent < 0.05) return null;
 
     return (
       <text 
         x={x} 
         y={y} 
-        fill="white" 
+        fill="var(--color-primary)" 
         textAnchor={x > cx ? 'start' : 'end'} 
         dominantBaseline="central"
-        fontSize={12}
-        fontWeight="bold"
-        stroke="black"
-        strokeWidth={0.5}
+        fontSize={11}
+        fontWeight="var(--font-weight-semibold)"
+        fontFamily="var(--font-family-primary)"
       >
         {`${(percent * 100).toFixed(0)}%`}
       </text>
@@ -73,55 +79,86 @@ const SectorPieChart = ({ height = 400, showLegend = true }) => {
       return (
         <div className="custom-tooltip">
           <p className="tooltip-sector"><strong>{data.sector}</strong></p>
-          <p className="tooltip-value">Стоимость: {data.value.toLocaleString('ru-RU')} ₽</p>
+          <p className="tooltip-value">{data.value.toLocaleString('ru-RU')} ₽</p>
           <p className="tooltip-percentage">{data.percentage}% портфеля</p>
-          <p className="tooltip-assets">Активы: {data.assets.join(', ')}</p>
         </div>
       );
     }
     return null;
   };
 
+  // Цветовая палитра для секторов
+  const COLORS = [
+    'var(--color-accent)',
+    'var(--color-success)',
+    'var(--color-warning)',
+    'var(--color-error)',
+    'var(--color-info)',
+    '#8B5CF6',
+    '#06B6D4',
+    '#84CC16',
+    '#F59E0B',
+    '#EF4444'
+  ];
+
   return (
     <div className="sector-pie-chart">
-      <h3>Секторное распределение активов</h3>
-      <ResponsiveContainer width="100%" height={height}>
-        <PieChart>
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            label={renderCustomizedLabel}
-            outerRadius={height * 0.35}
-            innerRadius={height * 0.2}
-            fill="#8884d8"
-            dataKey="value"
-            nameKey="sector"
-          >
-            {data.map((entry, index) => (
-              <Cell 
-                key={`cell-${index}`} 
-                fill={entry.color} 
-                stroke="#fff"
-                strokeWidth={2}
+      <div className="chart-header">
+        <div className="chart-title-section">
+          <ChartUp width={24} height={24} color="var(--color-accent)" />
+          <h3 className="chart-title">Секторное распределение</h3>
+        </div>
+      </div>
+
+      <div className="chart-content">
+        <ResponsiveContainer width="100%" height={height}>
+          <PieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              label={renderCustomizedLabel}
+              outerRadius={height * 0.35}
+              innerRadius={height * 0.2}
+              fill="#8884d8"
+              dataKey="value"
+              nameKey="sector"
+            >
+              {data.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={COLORS[index % COLORS.length]} 
+                  stroke="var(--bg-surface-primary)"
+                  strokeWidth={2}
+                />
+              ))}
+            </Pie>
+            <Tooltip content={<CustomTooltip />} />
+            {showLegend && (
+              <Legend 
+                verticalAlign="bottom" 
+                height={36}
+                formatter={(value, entry) => (
+                  <span style={{ 
+                    color: 'var(--color-secondary)', 
+                    fontSize: 'var(--font-size-xs)',
+                    fontFamily: 'var(--font-family-primary)'
+                  }}>
+                    {value}
+                  </span>
+                )}
               />
-            ))}
-          </Pie>
-          <Tooltip content={<CustomTooltip />} />
-          {showLegend && (
-            <Legend 
-            verticalAlign="bottom" 
-            height={36}
-            formatter={(value, entry) => (
-              <span style={{ color: 'var(--color-secondary)', fontSize: '12px' }}>
-                  {value} ({entry.payload.percentage}%)
-                </span>
             )}
-          />
-          )}
-        </PieChart>
-      </ResponsiveContainer>
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="chart-footer">
+        <div className="sectors-count">
+          Всего секторов: {data.length}
+        </div>
+      </div>
     </div>
   );
 };

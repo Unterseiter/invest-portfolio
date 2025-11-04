@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PortfolioAPI from "../../../../test/mockData";
 import "./TotalActive.css";
+import ChartUp from "../../../../assets/Chart/ChartUp";
 
 const TotalActive = () => {
   const [assets, setAssets] = useState([]);
@@ -36,36 +37,52 @@ const TotalActive = () => {
 
   if (loading) {
     return (
-      <div className="portfolio-actives loading">
-        <h2>Количество активов</h2>
-        <div className="total-actives skeleton">-</div>
-        <div className="second-total-actives skeleton-text">
-          Загрузка данных...
-        </div>
+      <div className="total-active loading">
+        <ChartUp width={24} height={24} color="var(--color-tertiary)" />
+        <h3 className="total-active-title">Количество активов</h3>
+        <div className="total-active-value">-</div>
+        <div className="total-active-subtitle">Загрузка данных...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="portfolio-actives error">
-        <h2>Количество активов</h2>
-        <div className="total-actives error">0</div>
-        <div className="second-total-actives error">{error}</div>
+      <div className="total-active error">
+        <ChartUp width={24} height={24} color="var(--color-error)" />
+        <h3 className="total-active-title">Количество активов</h3>
+        <div className="total-active-value error">0</div>
+        <div className="total-active-subtitle error">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="portfolio-actives">
-      <h2>Количество активов</h2>
-      <div className="total-actives">{assets.length}</div>
-      <div className="second-total-actives">
-        {uniqueSectorsCount > 0
-          ? `В ${uniqueSectorsCount} ${getSectorWord(
-              uniqueSectorsCount
-            )} экономики`
-          : "Нет данных о секторах"}
+    <div className="total-active">
+      <div className="total-active-header">
+        <ChartUp width={24} height={24} color="var(--color-accent)" />
+        <h3 className="total-active-title">Количество активов</h3>
+      </div>
+      
+      <div className="total-active-content">
+        <div className="total-active-value">{assets.length}</div>
+        <div className="total-active-subtitle">
+          {uniqueSectorsCount > 0
+            ? `В ${uniqueSectorsCount} ${getSectorWord(uniqueSectorsCount)} экономики`
+            : "Нет данных о секторах"}
+        </div>
+      </div>
+
+      <div className="total-active-footer">
+        <div className="diversification-indicator">
+          <div 
+            className="diversification-bar" 
+            style={{ width: `${Math.min((uniqueSectorsCount / 10) * 100, 100)}%` }}
+          ></div>
+        </div>
+        <div className="diversification-label">
+          Диверсификация: {Math.min(uniqueSectorsCount, 10)}+ секторов
+        </div>
       </div>
     </div>
   );

@@ -1,64 +1,206 @@
-.chart-container {
-    border: 1px solid var(--border-primary);
-    background: var(--bg-header);
-    border-radius: 12px;
-    padding: 20px;
-    width: 60%;
-  }
+.portfolio-chart {
+  background: var(--bg-surface-primary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
   
+  display: flex;
+  flex-direction: column;
+  
+  position: relative;
+  transition: var(--transition-normal);
+  min-height: 400px;
+  min-width: 1270px;
+}
+
+.portfolio-chart:hover {
+  border-color: var(--border-primary);
+  box-shadow: var(--shadow-small);
+}
+
+/* Header */
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.chart-title-section {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.chart-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-secondary);
+  margin: 0;
+}
+
+/* Period Selector */
+.period-selector {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.period-btn {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--border-secondary);
+  background: var(--bg-button-secondary);
+  color: var(--color-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.period-btn:hover {
+  border-color: var(--border-primary);
+  background: var(--bg-button-hover);
+  color: var(--color-primary);
+}
+
+.period-btn.active {
+  background: var(--bg-button-select-primary);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* Chart Content */
+.chart-content {
+  flex: 1;
+  min-height: 300px;
+}
+
+/* Tooltip */
+.custom-tooltip {
+  background: var(--bg-surface-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm);
+  box-shadow: var(--shadow-medium);
+}
+
+.tooltip-label {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-tertiary);
+  font-weight: var(--font-weight-regular);
+}
+
+.tooltip-value {
+  margin: var(--spacing-xs) 0 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-accent);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-family-monospace);
+}
+
+/* Footer */
+.chart-footer {
+  margin-top: var(--spacing-md);
+  border-top: 1px solid var(--border-tertiary);
+  padding-top: var(--spacing-md);
+}
+
+.chart-period {
+  font-size: var(--font-size-xs);
+  color: var(--color-tertiary);
+  font-weight: var(--font-weight-regular);
+}
+
+/* Loading state */
+.portfolio-chart.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  min-height: 400px;
+}
+
+.chart-loading-text {
+  color: var(--color-tertiary);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
   .chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 15px;
+    flex-direction: column;
+    align-items: flex-start;
   }
   
   .period-selector {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    flex-wrap: wrap;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .portfolio-chart {
+    padding: var(--spacing-md);
+    min-height: 350px;
+  }
+  
+  .chart-content {
+    min-height: 250px;
+  }
+  
+  .period-selector {
+    gap: var(--spacing-xs);
   }
   
   .period-btn {
-    padding: 8px 16px;
-    border: 1px solid var(--color-secondary);
-    background: var(--bg-button-select);
-    color: var(--color-secondary);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .portfolio-chart {
+    min-height: 300px;
   }
   
-  .period-btn:hover {
-    border-color: var(--color-primary);
-    background: var(--bg-button-select-primary);
-    color: var(--color-primary);
+  .chart-content {
+    min-height: 200px;
   }
   
-  .period-btn.active {
-    background: var(--bg-button-select-secondary);
-    color: var(--color-accent);
-    border-color: var(--color-accent);
+  .period-selector {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: var(--spacing-xs);
   }
   
-  .custom-tooltip {
-    background: white;
-    border: 1px solid var(--color-primary);
-    padding: 10px;
-    border-radius: 4px;
-    /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
+  .period-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
   }
-  
-  .custom-tooltip .label {
-    margin: 0;
-    font-weight: bold;
-    color: var(--bg-footer);
-  }
-  
-  .custom-tooltip .intro {
-    margin: 5px 0 0 0;
-    color: var(--color-accent);
-  }
+}
+
+/* Dark theme enhancements */
+[data-theme="dark"] .custom-tooltip {
+  background: var(--bg-surface-secondary);
+  border-color: var(--border-primary);
+}
+
+[data-theme="dark"] .period-btn.active {
+  background: rgba(66, 133, 244, 0.15);
+}
+
+/* Animation for chart updates */
+.portfolio-chart.updating .chart-content {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
+}

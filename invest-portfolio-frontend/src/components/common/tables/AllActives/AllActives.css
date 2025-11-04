@@ -1,7 +1,5 @@
-/* AllActives.css */
 .table-allActives {
-  /* padding: 0 15px; */
-  width: 96%;
+  width: 100%;
   border-collapse: separate;
   border-spacing: 0;
   background: var(--table-background);
