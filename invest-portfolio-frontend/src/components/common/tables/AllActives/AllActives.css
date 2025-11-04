@@ -1,0 +1,242 @@
+/* AllActives.css */
+.table-allActives {
+  /* padding: 0 15px; */
+  width: 96%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--table-background);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--table-shadow);
+  font-family: var(--font-family-primary);
+  border: 1px solid var(--border-primary);
+}
+
+/* Заголовок таблицы */
+.table-allActives thead tr {
+  background: var(--table-header-background);
+}
+
+.table-allActives thead th {
+  color: var(--table-header-text);
+  font-weight: var(--header-font-weight);
+  padding: var(--header-padding);
+  border-bottom: 1px solid var(--table-header-border);
+  text-align: center;
+  font-size: var(--header-font-size);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Строки таблицы */
+.table-allActives tbody tr {
+  background: var(--table-row-background);
+  transition: var(--row-transition);
+}
+
+.table-allActives tbody tr:nth-child(even) {
+  background: var(--table-row-even-background);
+}
+
+.table-allActives tbody tr:hover {
+  background: var(--table-row-hover-background);
+  transform: var(--row-hover-transform);
+  box-shadow: var(--table-row-hover-shadow);
+}
+
+.table-allActives tbody tr:nth-child(even):hover {
+  background: var(--table-row-hover-background);
+}
+
+.table-allActives tbody td {
+  padding: var(--cell-padding);
+  border-bottom: 1px solid var(--table-row-border);
+  color: var(--table-cell-text);
+  text-align: var(--cell-text-align);
+  vertical-align: middle;
+  font-size: var(--cell-font-size);
+}
+
+/* Последняя строка в tbody */
+.table-allActives tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Стили для отдельных колонок */
+.table-allActives td:first-child {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-accent);
+}
+
+.table-allActives td:nth-child(2),
+.table-allActives td:nth-child(3),
+.table-allActives td:nth-child(4) {
+  text-align: center;
+  font-family: var(--font-family-monospace);
+}
+
+.table-allActives td:last-child {
+  font-weight: var(--font-weight-medium);
+  text-align: right;
+}
+
+/* Закругленные углы для таблицы */
+.table-allActives thead tr:first-child th:first-child {
+  border-top-left-radius: var(--radius-lg);
+}
+
+.table-allActives thead tr:first-child th:last-child {
+  border-top-right-radius: var(--radius-lg);
+}
+
+.table-allActives tbody tr:last-child td:first-child {
+  border-bottom-left-radius: var(--radius-lg);
+}
+
+.table-allActives tbody tr:last-child td:last-child {
+  border-bottom-right-radius: var(--radius-lg);
+}
+
+/* Стили для положительных и отрицательных изменений */
+.change-positive {
+  color: var(--table-positive-color) !important;
+  font-weight: var(--font-weight-semibold);
+}
+
+.change-negative {
+  color: var(--table-negative-color) !important;
+  font-weight: var(--font-weight-semibold);
+}
+
+.change-neutral {
+  color: var(--table-neutral-color) !important;
+}
+
+/* Стили для информации об активе */
+.asset-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.asset-symbol {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--cell-font-size);
+  color: var(--table-asset-symbol-color);
+}
+
+.asset-name {
+  font-size: calc(var(--cell-font-size) - 2px);
+  color: var(--table-asset-name-color);
+}
+
+/* Итоговая строка */
+.table-allActives tfoot tr {
+  background: var(--table-footer-background);
+  border-top: 2px solid var(--table-footer-border);
+}
+
+.table-allActives tfoot td {
+  padding: var(--footer-padding);
+  font-weight: var(--footer-font-weight);
+  color: var(--table-footer-text);
+  font-size: var(--footer-font-size);
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(10px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+.table-allActives tbody tr {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .table-allActives {
+      font-size: 13px;
+      border-radius: var(--radius-md);
+  }
+  
+  .table-allActives thead th {
+      padding: var(--header-padding-mobile);
+      font-size: 12px;
+  }
+  
+  .table-allActives tbody td {
+      padding: var(--cell-padding-mobile);
+      font-size: 13px;
+  }
+  
+  .table-allActives tfoot td {
+      padding: var(--footer-padding-mobile);
+      font-size: 14px;
+  }
+  
+  .asset-symbol {
+      font-size: 13px;
+  }
+  
+  .asset-name {
+      font-size: 11px;
+  }
+  
+  /* Скрываем некоторые колонки на мобильных */
+  .table-allActives th:nth-child(3),
+  .table-allActives td:nth-child(3) {
+      display: none;
+  }
+  
+  /* Адаптивные углы */
+  .table-allActives thead tr:first-child th:first-child {
+      border-top-left-radius: var(--radius-md);
+  }
+  
+  .table-allActives thead tr:first-child th:last-child {
+      border-top-right-radius: var(--radius-md);
+  }
+  
+  .table-allActives tbody tr:last-child td:first-child {
+      border-bottom-left-radius: var(--radius-md);
+  }
+  
+  .table-allActives tbody tr:last-child td:last-child {
+      border-bottom-right-radius: var(--radius-md);
+  }
+}
+
+/* Состояние загрузки */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 16px;
+  color: var(--loading-color);
+  background: var(--table-background);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--table-shadow);
+}
+
+/* Пустое состояние */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--empty-state-color);
+  background: var(--table-background);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--table-shadow);
+}
+
+.empty-state svg {
+  margin-bottom: var(--spacing-md);
+  opacity: 0.5;
+}

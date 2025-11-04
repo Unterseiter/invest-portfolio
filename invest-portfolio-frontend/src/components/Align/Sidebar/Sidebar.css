@@ -1,6 +1,6 @@
 .Sidebar{
     width: 250px;
-    height: 100vh; /* загадка от Жака Фреско, как сделать сайд бар на полную?*/
+    /* height: 100; загадка от Жака Фреско, как сделать сайд бар на полную? */
     background: var(--bg-sidebar);
     flex-shrink: 0;
     display: flex;

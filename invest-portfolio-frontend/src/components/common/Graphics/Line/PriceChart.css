@@ -1,5 +1,5 @@
 .chart-container {
-    border: 1px solid var(--bg-footer);
+    border: 1px solid var(--border-primary);
     background: var(--bg-header);
     border-radius: 12px;
     padding: 20px;

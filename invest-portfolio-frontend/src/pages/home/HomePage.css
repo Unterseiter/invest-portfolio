@@ -1,0 +1,42 @@
+.home{
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    .home-header{
+        width: 100%;
+        height: max-content;
+        display: flex;
+        flex-direction: column;
+        padding: 0 35px;
+
+        h2{
+            font-size: 2.3rem;
+            margin: 0 0 15px 0;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+        p{
+            font-size: 1.2rem;
+            margin: 0 0 0 0;
+            color: var(--color-secondary);
+            font-weight: 300;
+        }
+    }
+
+    .active-info{
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        gap: 22px;
+    }
+    
+    .portfolio-graphics{
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        /* justify-content: space-between; */
+        gap: 15px;
+    }
+}

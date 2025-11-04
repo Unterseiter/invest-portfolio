@@ -1,0 +1,205 @@
+/* ==================== CSS VARIABLES DEFINITION ==================== */
+
+:root {
+  /* ==================== BASE COLORS ==================== */
+  
+  /* Background colors */
+  --bg-header: ;
+  --bg-sidebar: ;
+  --bg-footer: ;
+  --bg-page: ;
+  --bg-overlay: ;
+  --bg-modal: ;
+  --bg-tooltip: ;
+  
+  /* Surface colors */
+  --bg-surface-primary: ;
+  --bg-surface-secondary: ;
+  --bg-surface-tertiary: ;
+  --bg-surface-hover: ;
+  --bg-surface-active: ;
+  
+  /* Button backgrounds */
+  --bg-button-primary: ;
+  --bg-button-secondary: ;
+  --bg-button-tertiary: ;
+  --bg-button-disabled: ;
+  
+  /* Button states */
+  --bg-button-hover: ;
+  --bg-button-active: ;
+  --bg-button-focus: ;
+  
+  /* Selected states */
+  --bg-button-select-primary: ;
+  --bg-button-select-secondary: ;
+  --bg-select-primary: ;
+  --bg-select-secondary: ;
+  
+  /* ==================== TEXT COLORS ==================== */
+  
+  /* Primary text colors */
+  --color-primary: ;
+  --color-secondary: ;
+  --color-tertiary: ;
+  --color-quaternary: ;
+  
+  /* Interactive text */
+  --color-link: ;
+  --color-link-hover: ;
+  --color-link-visited: ;
+  
+  /* Status text */
+  --color-success: ;
+  --color-warning: ;
+  --color-error: ;
+  --color-info: ;
+  
+  /* ==================== ACCENT COLORS ==================== */
+  
+  /* Main accent */
+  --color-accent: ;
+  --color-accent-hover: ;
+  --color-accent-active: ;
+  --color-accent-disabled: ;
+  
+  /* Additional accents */
+  --color-accent-secondary: ;
+  --color-accent-tertiary: ;
+  
+  /* ==================== BORDER COLORS ==================== */
+  
+  --border-primary: ;
+  --border-secondary: ;
+  --border-tertiary: ;
+  --border-accent: ;
+  --border-divider: ;
+  
+  /* ==================== SHADOWS ==================== */
+  
+  --shadow-small: ;
+  --shadow-medium: ;
+  --shadow-large: ;
+  --shadow-focus: ;
+  --shadow-inset: ;
+  
+  /* ==================== TABLE SPECIFIC ==================== */
+  
+  /* Table backgrounds */
+  --table-background: ;
+  --table-header-background: ;
+  --table-row-background: ;
+  --table-row-even-background: ;
+  --table-row-hover-background: ;
+  --table-footer-background: ;
+  
+  /* Table text */
+  --table-header-text: ;
+  --table-cell-text: ;
+  --table-footer-text: ;
+  
+  /* Table borders */
+  --table-header-border: ;
+  --table-row-border: ;
+  --table-footer-border: ;
+  
+  /* Table status colors */
+  --table-positive-color: ;
+  --table-negative-color: ;
+  --table-neutral-color: ;
+  
+  /* Table specific elements */
+  --table-asset-symbol-color: ;
+  --table-asset-name-color: ;
+  
+  /* Table shadows */
+  --table-shadow: ;
+  --table-row-hover-shadow: ;
+  
+  /* ==================== COMPONENT SPECIFIC ==================== */
+  
+  /* Loading states */
+  --loading-color: ;
+  --loading-background: ;
+  
+  /* Empty states */
+  --empty-state-color: ;
+  --empty-state-background: ;
+  
+  /* Input fields */
+  --input-background: ;
+  --input-border: ;
+  --input-text: ;
+  --input-placeholder: ;
+  --input-focus-background: ;
+  --input-focus-border: ;
+  
+  /* Cards */
+  --card-background: ;
+  --card-border: ;
+  --card-shadow: ;
+  
+  /* ==================== TYPOGRAPHY ==================== */
+  
+  --font-family-primary: ;
+  --font-family-secondary: ;
+  --font-family-monospace: ;
+  
+  --font-weight-light: ;
+  --font-weight-regular: ;
+  --font-weight-medium: ;
+  --font-weight-semibold: ;
+  --font-weight-bold: ;
+  
+  /* ==================== SPACING ==================== */
+  
+  --spacing-xs: ;
+  --spacing-sm: ;
+  --spacing-md: ;
+  --spacing-lg: ;
+  --spacing-xl: ;
+  
+  /* ==================== BORDER RADIUS ==================== */
+  
+  --radius-sm: ;
+  --radius-md: ;
+  --radius-lg: ;
+  --radius-xl: ;
+  
+  /* ==================== TRANSITIONS ==================== */
+  
+  --transition-fast: ;
+  --transition-normal: ;
+  --transition-slow: ;
+  
+  /* ==================== Z-INDEX ==================== */
+  
+  --z-dropdown: ;
+  --z-sticky: ;
+  --z-fixed: ;
+  --z-modal: ;
+  --z-popover: ;
+  --z-tooltip: ;
+  
+  /* ==================== TABLE SIZING ==================== */
+  
+  --header-padding: ;
+  --header-padding-mobile: ;
+  --cell-padding: ;
+  --cell-padding-mobile: ;
+  --footer-padding: ;
+  --footer-padding-mobile: ;
+  
+  --header-font-size: ;
+  --header-font-weight: ;
+  --cell-font-size: ;
+  --footer-font-size: ;
+  --footer-font-weight: ;
+  
+  --cell-text-align: ;
+  
+  /* ==================== ANIMATIONS ==================== */
+  
+  --row-transition: ;
+  --row-hover-transform: ;
+}

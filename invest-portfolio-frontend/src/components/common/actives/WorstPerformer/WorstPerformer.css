@@ -1,0 +1,22 @@
+/* PerformanceDashboard.css */
+.performance-dashboard {
+    width: 100%;
+  }
+  
+  .performance-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .performance-col {
+    min-width: 0;
+  }
+  
+  @media (max-width: 768px) {
+    .performance-row {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PortfolioAPI } from '../../../test/mockData';
+import { PortfolioAPI } from '../../../../test/mockData';
 import './TotalPrice.css';
 
 const PortfolioValue = () => {

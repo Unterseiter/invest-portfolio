@@ -1,70 +1,149 @@
-// Базовая структура портфеля
+// mockData.js - Моковые данные для портфеля инвестора
+
+// Базовые данные портфеля
 const initialPortfolio = {
-  totalValue: 15480.75,  // Общая стоимость портфеля
-  dailyChange: +324.50,  // Изменение за день
-  dailyChangePercent: +2.14,  // Изменение в процентах
-  currency: 'USD',
+  totalValue: 0, // Будет рассчитано автоматически
+  dailyChange: 0, // Будет рассчитано автоматически
+  dailyChangePercent: 0, // Будет рассчитано автоматически
+  currency: 'RUB',
   lastUpdated: new Date().toISOString()
 };
 
-// Активы в портфеле
+// Генерация случайной цены в диапазоне 2000-7000 рублей
+const generateRandomPrice = () => {
+  return Number((Math.random() * (7000 - 2000) + 2000).toFixed(2));
+};
+
+// Генерация случайного изменения цены в процентах (-10% до +10%)
+const generateRandomChangePercent = () => {
+  return Number((Math.random() * 20 - 10).toFixed(2));
+};
+
+// Активы в портфеле (6 различных активов)
 const portfolioAssets = [
   {
     id: 1,
-    symbol: 'AAPL',
-    name: 'Apple Inc.',
-    quantity: 10,
-    avgPrice: 145.30,
-    currentPrice: 178.72,
-    value: 1787.20,
-    change: +334.20,
-    changePercent: +23.00
+    symbol: 'GAZP',
+    name: 'Газпром',
+    quantity: 100,
+    avgPrice: 4500.00,
+    currentPrice: generateRandomPrice(),
+    changePercent: generateRandomChangePercent()
   },
   {
     id: 2,
-    symbol: 'TSLA',
-    name: 'Tesla Inc.',
-    quantity: 5,
-    avgPrice: 210.50,
-    currentPrice: 248.42,
-    value: 1242.10,
-    change: +189.60,
-    changePercent: +18.02
+    symbol: 'SBER',
+    name: 'Сбербанк',
+    quantity: 50,
+    avgPrice: 3200.00,
+    currentPrice: generateRandomPrice(),
+    changePercent: generateRandomChangePercent()
   },
   {
     id: 3,
-    symbol: 'GOOGL',
-    name: 'Alphabet Inc.',
-    quantity: 3,
-    avgPrice: 125.80,
-    currentPrice: 142.05,
-    value: 426.15,
-    change: +48.75,
-    changePercent: +12.91
+    symbol: 'LKOH',
+    name: 'Лукойл',
+    quantity: 30,
+    avgPrice: 6800.00,
+    currentPrice: generateRandomPrice(),
+    changePercent: generateRandomChangePercent()
   },
   {
     id: 4,
-    symbol: 'MSFT',
-    name: 'Microsoft Corp.',
-    quantity: 8,
-    avgPrice: 305.20,
-    currentPrice: 374.58,
-    value: 2996.64,
-    change: +554.24,
-    changePercent: +22.69
+    symbol: 'YNDX',
+    name: 'Яндекс',
+    quantity: 20,
+    avgPrice: 4200.00,
+    currentPrice: generateRandomPrice(),
+    changePercent: generateRandomChangePercent()
   },
   {
     id: 5,
-    symbol: 'BTC',
-    name: 'Bitcoin',
-    quantity: 0.5,
-    avgPrice: 42500.00,
-    currentPrice: 51280.00,
-    value: 25640.00,
-    change: +4380.00,
-    changePercent: +20.62
+    symbol: 'VTBR',
+    name: 'ВТБ',
+    quantity: 200,
+    avgPrice: 2500.00,
+    currentPrice: generateRandomPrice(),
+    changePercent: generateRandomChangePercent()
+  },
+  {
+    id: 6,
+    symbol: 'POLY',
+    name: 'Polymetal',
+    quantity: 40,
+    avgPrice: 3800.00,
+    currentPrice: generateRandomPrice(),
+    changePercent: generateRandomChangePercent()
   }
 ];
+
+// Рассчитываем производные поля для активов
+portfolioAssets.forEach(asset => {
+  asset.value = Number((asset.quantity * asset.currentPrice).toFixed(2));
+  asset.change = Number(((asset.changePercent / 100) * (asset.quantity * asset.avgPrice)).toFixed(2));
+});
+
+// Обновляем данные портфеля на основе активов
+const updatePortfolioData = () => {
+  const totalValue = portfolioAssets.reduce((sum, asset) => sum + asset.value, 0);
+  const totalInvested = portfolioAssets.reduce((sum, asset) => sum + (asset.avgPrice * asset.quantity), 0);
+  const dailyChange = totalValue - totalInvested;
+  const dailyChangePercent = ((dailyChange / totalInvested) * 100);
+  
+  initialPortfolio.totalValue = Number(totalValue.toFixed(2));
+  initialPortfolio.dailyChange = Number(dailyChange.toFixed(2));
+  initialPortfolio.dailyChangePercent = Number(dailyChangePercent.toFixed(2));
+};
+
+updatePortfolioData();
+
+// Данные для секторного распределения (пирог)
+export const sectorAllocationData = [
+  {
+    sector: 'Нефть и Газ',
+    value: portfolioAssets.filter(a => ['GAZP', 'LKOH'].includes(a.symbol))
+                         .reduce((sum, asset) => sum + asset.value, 0),
+    percentage: 0, // Будет рассчитано ниже
+    color: '#FF6B6B',
+    assets: ['GAZP', 'LKOH']
+  },
+  {
+    sector: 'Финансы',
+    value: portfolioAssets.filter(a => ['SBER', 'VTBR'].includes(a.symbol))
+                         .reduce((sum, asset) => sum + asset.value, 0),
+    percentage: 0,
+    color: '#4ECDC4',
+    assets: ['SBER', 'VTBR']
+  },
+  {
+    sector: 'Технологии',
+    value: portfolioAssets.filter(a => ['YNDX'].includes(a.symbol))
+                         .reduce((sum, asset) => sum + asset.value, 0),
+    percentage: 0,
+    color: '#45B7D1',
+    assets: ['YNDX']
+  },
+  {
+    sector: 'Металлы',
+    value: portfolioAssets.filter(a => ['POLY'].includes(a.symbol))
+                         .reduce((sum, asset) => sum + asset.value, 0),
+    percentage: 0,
+    color: '#FFA07A',
+    assets: ['POLY']
+  }
+];
+
+// Рассчитываем проценты для секторов
+const totalSectorValue = sectorAllocationData.reduce((sum, sector) => sum + sector.value, 0);
+sectorAllocationData.forEach(sector => {
+  sector.percentage = Number(((sector.value / totalSectorValue) * 100).toFixed(1));
+  sector.value = Number(sector.value.toFixed(2));
+});
+
+// Функция для получения данных секторного распределения
+export const getSectorAllocation = (assets) => {
+  return sectorAllocationData;
+};
 
 // Генератор исторических данных для портфеля
 const generatePortfolioHistory = (period, points = 50) => {
@@ -119,7 +198,7 @@ const generatePortfolioHistory = (period, points = 50) => {
     data.push({
       timestamp: date.getTime(),
       date: date.toISOString(),
-      value: Math.max(1000, Number(portfolioValue.toFixed(2))), // Минимум 1000
+      value: Math.max(1000, Number(portfolioValue.toFixed(2))),
       volume: Math.floor(Math.random() * 1000000) + 500000
     });
   }
@@ -246,6 +325,12 @@ export const PortfolioAPI = {
     }));
   },
 
+  // Получить секторное распределение
+  getSectorAllocation: async () => {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return sectorAllocationData;
+  },
+
   // Получить общую статистику
   getPortfolioStats: async () => {
     await new Promise(resolve => setTimeout(resolve, 200));
@@ -282,21 +367,21 @@ export const sampleChartData = {
     year: generatePortfolioHistory('year')
   },
   assets: {
-    AAPL: {
-      hour: generateAssetHistory('AAPL', 'hour'),
-      day: generateAssetHistory('AAPL', 'day'),
-      week: generateAssetHistory('AAPL', 'week'),
-      month: generateAssetHistory('AAPL', 'month'),
-      year: generateAssetHistory('AAPL', 'year')
+    GAZP: {
+      hour: generateAssetHistory('GAZP', 'hour'),
+      day: generateAssetHistory('GAZP', 'day'),
+      week: generateAssetHistory('GAZP', 'week'),
+      month: generateAssetHistory('GAZP', 'month'),
+      year: generateAssetHistory('GAZP', 'year')
     },
-    TSLA: {
-      hour: generateAssetHistory('TSLA', 'hour'),
-      day: generateAssetHistory('TSLA', 'day'),
-      week: generateAssetHistory('TSLA', 'week'),
-      month: generateAssetHistory('TSLA', 'month'),
-      year: generateAssetHistory('TSLA', 'year')
+    SBER: {
+      hour: generateAssetHistory('SBER', 'hour'),
+      day: generateAssetHistory('SBER', 'day'),
+      week: generateAssetHistory('SBER', 'week'),
+      month: generateAssetHistory('SBER', 'month'),
+      year: generateAssetHistory('SBER', 'year')
     }
-    // ... можно добавить другие активы
+    // ... можно добавить другие активы по аналогии
   }
 };
 

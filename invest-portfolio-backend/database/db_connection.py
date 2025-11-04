@@ -16,7 +16,7 @@ def db_connection():
             database='DTI_project',
             user='root',
             password='qwerty',
-            host='localhost1'
+            host='localhost'
         )
     except Exception as e:
         print(f'Ошибка! Не удалось подключиться к БД: {e}')

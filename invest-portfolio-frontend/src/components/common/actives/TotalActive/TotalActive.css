@@ -1,9 +1,9 @@
-.portfolio-value{
+.portfolio-actives{
     width: 30%;
     aspect-ratio: 1/0.5;
     background: var(--bg-header);
     
-    border: 1px solid var(--bg-footer);
+    border: 1px solid var(--border-primary);
     border-radius: 12px;
     
     align-items: center;
@@ -18,10 +18,16 @@
         margin: 0 0 15px 0;
     }
 
-    .total-value{
+    .total-actives{
         font-size: 1.5rem;
         font-weight: 500;
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     }
-/* нужно сделать по цвету индексацию динамическую, она по факту сделана, но нужно сделать именно цвет */
+    
+    .second-total-actives{
+        font-size: 1.2rem;
+        font-weight: 200;
+        font-style: italic;
+        color: var(--bg-footer);
+    }
 }

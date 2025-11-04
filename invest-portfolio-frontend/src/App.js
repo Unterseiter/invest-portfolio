@@ -5,7 +5,7 @@ import Footer from './components/Align/Footer/Footer';
 import Sidebar from './components/Align/Sidebar/Sidebar';
 import './App.css';
 
-import HomePage from './pages/main/HomePage';
+import HomePage from './pages/home/HomePage';
 import SettingsPage from './pages/settings/SettingsPage';
 import MonitoringPage from './pages/monitor/MonitoringPage';
 import FunctionalPage from './pages/functional/FunctionalPage';
