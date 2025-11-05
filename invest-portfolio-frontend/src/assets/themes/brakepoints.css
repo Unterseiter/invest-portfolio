@@ -1,0 +1,286 @@
+/* ==================== RESPONSIVE BREAKPOINTS ==================== */
+:root {
+
+    /* ==================== SIDEBAR SPECIFIC ==================== */
+    --sidebar-width-mobile: 280px;
+    --sidebar-width-tablet: 280px;
+    --sidebar-width-desktop: 320px;
+
+    /* ==================== BREAKPOINT VALUES ==================== */
+    --breakpoint-mobile: 480px;
+    --breakpoint-tablet: 768px;
+    --breakpoint-laptop: 1024px;
+    --breakpoint-desktop: 1200px;
+    --breakpoint-wide: 1440px;
+    --breakpoint-ultra: 1920px;
+  
+    /* ==================== MEDIA QUERIES ==================== */
+    /* Mobile First Approach */
+    --mobile-up: (min-width: 481px);
+    --tablet-up: (min-width: 769px);
+    --laptop-up: (min-width: 1025px);
+    --desktop-up: (min-width: 1201px);
+    --wide-up: (min-width: 1441px);
+    --ultra-up: (min-width: 1921px);
+  
+    /* Desktop First Approach */
+    --ultra-down: (max-width: 1919px);
+    --wide-down: (max-width: 1439px);
+    --desktop-down: (max-width: 1199px);
+    --laptop-down: (max-width: 1023px);
+    --tablet-down: (max-width: 767px);
+    --mobile-down: (max-width: 479px);
+  
+    /* ==================== RESPONSIVE SPACING ==================== */
+    /* Mobile */
+    --spacing-xs-mobile: 4px;
+    --spacing-sm-mobile: 8px;
+    --spacing-md-mobile: 12px;
+    --spacing-lg-mobile: 16px;
+    --spacing-xl-mobile: 20px;
+  
+    /* Tablet */
+    --spacing-xs-tablet: 4px;
+    --spacing-sm-tablet: 8px;
+    --spacing-md-tablet: 16px;
+    --spacing-lg-tablet: 20px;
+    --spacing-xl-tablet: 24px;
+  
+    /* Desktop */
+    --spacing-xs-desktop: 4px;
+    --spacing-sm-desktop: 8px;
+    --spacing-md-desktop: 16px;
+    --spacing-lg-desktop: 24px;
+    --spacing-xl-desktop: 32px;
+  
+    /* ==================== RESPONSIVE TYPOGRAPHY ==================== */
+    /* Mobile */
+    --font-size-xs-mobile: 10px;
+    --font-size-sm-mobile: 12px;
+    --font-size-md-mobile: 14px;
+    --font-size-lg-mobile: 16px;
+    --font-size-xl-mobile: 18px;
+    --font-size-xxl-mobile: 24px;
+    --font-size-xxxl-mobile: 28px;
+  
+    /* Tablet */
+    --font-size-xs-tablet: 11px;
+    --font-size-sm-tablet: 13px;
+    --font-size-md-tablet: 15px;
+    --font-size-lg-tablet: 18px;
+    --font-size-xl-tablet: 22px;
+    --font-size-xxl-tablet: 28px;
+    --font-size-xxxl-tablet: 32px;
+  
+    /* Desktop */
+    --font-size-xs-desktop: 12px;
+    --font-size-sm-desktop: 14px;
+    --font-size-md-desktop: 16px;
+    --font-size-lg-desktop: 18px;
+    --font-size-xl-desktop: 24px;
+    --font-size-xxl-desktop: 32px;
+    --font-size-xxxl-desktop: 40px;
+  
+    /* ==================== RESPONSIVE LAYOUT ==================== */
+    /* Container widths */
+    --container-mobile: 100%;
+    --container-tablet: 720px;
+    --container-laptop: 960px;
+    --container-desktop: 1140px;
+    --container-wide: 1320px;
+  
+    /* Grid gaps */
+    --grid-gap-mobile: 16px;
+    --grid-gap-tablet: 20px;
+    --grid-gap-desktop: 24px;
+  
+    /* Card dimensions */
+    --card-min-height-mobile: 140px;
+    --card-min-height-tablet: 160px;
+    --card-min-height-desktop: 180px;
+  
+    /* ==================== COMPONENT SPECIFIC BREAKPOINTS ==================== */
+    /* Sidebar */
+    --sidebar-width-mobile: 100%;
+    --sidebar-width-tablet: 280px;
+    --sidebar-width-desktop: 320px;
+  
+    /* Header */
+    --header-height-mobile: 56px;
+    --header-height-tablet: 64px;
+    --header-height-desktop: 72px;
+  
+    /* Table responsive */
+    --table-collapse-breakpoint: 768px;
+    --table-scroll-breakpoint: 1024px;
+  
+    /* Chart dimensions */
+    --chart-height-mobile: 200px;
+    --chart-height-tablet: 250px;
+    --chart-height-desktop: 300px;
+  
+    /* ==================== Z-INDEX SCALE ==================== */
+    --z-mobile-menu: 1000;
+    --z-dropdown: 1100;
+    --z-sticky: 1200;
+    --z-fixed: 1300;
+    --z-modal: 1400;
+    --z-popover: 1500;
+    --z-tooltip: 1600;
+    --z-toast: 1700;
+  
+    /* ==================== ANIMATION DURATIONS ==================== */
+    --duration-fast: 0.15s;
+    --duration-normal: 0.25s;
+    --duration-slow: 0.35s;
+    --duration-page-transition: 0.4s;
+  
+    /* ==================== BORDER RADIUS ==================== */
+    --radius-sm-mobile: 4px;
+    --radius-md-mobile: 6px;
+    --radius-lg-mobile: 8px;
+    --radius-xl-mobile: 12px;
+  
+    --radius-sm-desktop: 6px;
+    --radius-md-desktop: 8px;
+    --radius-lg-desktop: 12px;
+    --radius-xl-desktop: 16px;
+  }
+  
+  /* ==================== MEDIA QUERY MIXINS (CSS Custom Properties) ==================== */
+  /* Usage example: 
+     @media screen and (min-width: var(--breakpoint-tablet)) { ... }
+  */
+  
+  /* ==================== HELPER CLASSES FOR RESPONSIVE DESIGN ==================== */
+  .visible-mobile {
+    display: block;
+  }
+  
+  .visible-tablet {
+    display: none;
+  }
+  
+  .visible-desktop {
+    display: none;
+  }
+  
+  .hidden-mobile {
+    display: none;
+  }
+  
+  .hidden-tablet {
+    display: block;
+  }
+  
+  .hidden-desktop {
+    display: block;
+  }
+  
+  /* Tablet */
+  @media screen and (min-width: 769px) {
+    .visible-mobile {
+      display: none;
+    }
+    
+    .visible-tablet {
+      display: block;
+    }
+    
+    .hidden-mobile {
+      display: block;
+    }
+    
+    .hidden-tablet {
+      display: none;
+    }
+  }
+  
+  /* Desktop */
+  @media screen and (min-width: 1025px) {
+    .visible-tablet {
+      display: none;
+    }
+    
+    .visible-desktop {
+      display: block;
+    }
+    
+    .hidden-tablet {
+      display: block;
+    }
+    
+    .hidden-desktop {
+      display: none;
+    }
+  }
+  
+  /* ==================== RESPONSIVE UTILITY CLASSES ==================== */
+  .container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md-mobile);
+  }
+  
+  @media screen and (min-width: 769px) {
+    .container {
+      max-width: var(--container-tablet);
+      padding: 0 var(--spacing-md-tablet);
+    }
+  }
+  
+  @media screen and (min-width: 1025px) {
+    .container {
+      max-width: var(--container-desktop);
+      padding: 0 var(--spacing-md-desktop);
+    }
+  }
+  
+  @media screen and (min-width: 1441px) {
+    .container {
+      max-width: var(--container-wide);
+    }
+  }
+  
+  /* Grid system */
+  .grid {
+    display: grid;
+    gap: var(--grid-gap-mobile);
+  }
+  
+  @media screen and (min-width: 769px) {
+    .grid {
+      gap: var(--grid-gap-tablet);
+    }
+  }
+  
+  @media screen and (min-width: 1025px) {
+    .grid {
+      gap: var(--grid-gap-desktop);
+    }
+  }
+  
+  /* Text alignment */
+  .text-center-mobile {
+    text-align: center;
+  }
+  
+  .text-left-tablet {
+    text-align: left;
+  }
+  
+  @media screen and (min-width: 769px) {
+    .text-center-mobile {
+      text-align: left;
+    }
+  }
+  
+  /* ==================== PRINT STYLES ==================== */
+  @media print {
+    :root {
+      --color-primary: #000000;
+      --color-secondary: #333333;
+      --bg-surface-primary: #ffffff;
+      --border-primary: #cccccc;
+    }
+  }

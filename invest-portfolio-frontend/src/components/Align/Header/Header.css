@@ -1,26 +1,136 @@
-.Header{
+/* ==================== HEADER BASE STYLES ==================== */
+.header {
     background: var(--bg-header);
+    border-bottom: 1px solid var(--border-primary);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
     width: 100%;
-    height: 80px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    box-sizing: border-box;
-    padding: 0 20px 0 0;
-    justify-content: space-between;
+    height: var(--header-height-desktop);
+    backdrop-filter: blur(8px);
+    background: rgba(var(--bg-header-rgb), 0.95);
 }
 
-.logo{
-    color: var(--color-primary);
+.header__container {
     display: flex;
-    flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     height: 100%;
-    width: 235px;
-    /* background: #121212; */
-    padding-left: 15px;
+    padding: 0 var(--spacing-lg);
+    margin: 0 auto;
+    max-width: 100%;
+}
 
-    .logo-text{
-        font-size: 17px;
+/* ==================== LEFT SECTION ==================== */
+.header__left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    min-width: 0;
+}
+
+.header__logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    min-width: 0;
+}
+
+.header__title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ==================== ACTIONS SECTION ==================== */
+.header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+/* ==================== ADAPTIVE BREAKPOINTS ==================== */
+
+/* Tablet (768px и меньше) */
+@media (max-width: 768px) {
+    .header {
+        height: var(--header-height-tablet);
+    }
+    
+    .header__container {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .header__left {
+        gap: var(--spacing-sm);
+    }
+    
+    .header__logo {
+        gap: var(--spacing-sm);
+    }
+    
+    .header__title {
+        font-size: var(--font-size-md);
+    }
+    
+    .header__actions {
+        gap: var(--spacing-sm);
+    }
+}
+
+/* Mobile (480px и меньше) */
+@media (max-width: 480px) {
+    .header {
+        height: var(--header-height-mobile);
+    }
+    
+    .header__container {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .header__left {
+        gap: var(--spacing-xs);
+    }
+    
+    .header__logo {
+        gap: var(--spacing-xs);
+    }
+    
+    .header__title {
+        font-size: var(--font-size-sm);
+    }
+    
+    .header__actions {
+        gap: var(--spacing-xs);
+    }
+}
+
+/* ==================== DARK THEME ENHANCEMENTS ==================== */
+[data-theme="dark"] .header {
+    background: rgba(var(--bg-header-rgb), 0.98);
+    border-bottom-color: var(--border-secondary);
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+@media (prefers-reduced-motion: reduce) {
+    .header__container {
+        transition: none;
+    }
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+    .header {
+        background: white !important;
+        border-bottom: 1px solid #000;
+        position: static;
+    }
+    
+    .header__actions {
+        display: none;
     }
 }

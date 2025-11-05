@@ -10,7 +10,7 @@
   position: relative;
   transition: var(--transition-normal);
   min-height: 400px;
-  min-width: 1270px;
+  flex: 1;
 }
 
 .portfolio-chart:hover {

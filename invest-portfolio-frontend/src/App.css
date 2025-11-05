@@ -1,22 +1,64 @@
+/* ==================== APP BASE STYLES ==================== */
 .App {
   min-height: 100vh;
-  background: var(--bg-page);
   display: flex;
   flex-direction: column;
+  background: var(--bg-page);
+  color: var(--color-primary);
 }
 
 .App-body {
   display: flex;
-  flex-direction: row;
   flex: 1;
-  overflow: hidden; 
+  min-height: calc(100vh - var(--header-height-desktop) - var(--footer-height));
 }
 
 .main-content {
   flex: 1;
-  padding: 20px;
-  background: var(--bg-page);
-  color: var(--color-primary);
-  overflow-y: auto; /* Прокрутка только для контента */
-  min-height: calc(100vh - 200px); /* Высота минус шапка и подвал */
+  padding: var(--spacing-lg);
+  margin-left: var(--sidebar-width-desktop); /* По умолчанию для десктопа */
+  transition: margin-left var(--transition-normal);
+  min-width: 0;
+  width: calc(100% - var(--sidebar-width-desktop));
+}
+
+/* ==================== DIFFERENT SCREEN SIZES ==================== */
+
+/* Tablet (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .App-body {
+    min-height: calc(100vh - var(--header-height-tablet) - var(--footer-height));
+  }
+  
+  .main-content {
+    margin-left: var(--sidebar-width-tablet);
+    width: calc(100% - var(--sidebar-width-tablet));
+    padding: var(--spacing-md);
+  }
+}
+
+/* Mobile (768px и меньше) */
+@media (max-width: 768px) {
+  .App-body {
+    min-height: calc(100vh - var(--header-height-mobile) - var(--footer-height));
+  }
+  
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: var(--spacing-sm);
+  }
+}
+
+/* Когда сайдбар открыт на мобильных - затемняем основной контент */
+.screen-mobile.sidebar-open .main-content::before {
+  content: '';
+  position: fixed;
+  top: var(--header-height-mobile);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-overlay);
+  z-index: 999;
+  pointer-events: none;
 }
