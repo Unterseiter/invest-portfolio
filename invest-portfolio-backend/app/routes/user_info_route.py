@@ -71,7 +71,7 @@ class UserInfoById(Resource):
     @api.doc('update_user_info')
     @api.response(200, 'Портфель успешно изменен')
     @api.response(404, 'Портфель не найден')
-    def update(self, user_id):
+    def put(self, user_id):
         try:
             data = request.get_json()
             success = UserService.Update(user_id, data['date'])

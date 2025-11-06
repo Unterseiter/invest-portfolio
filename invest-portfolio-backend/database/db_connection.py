@@ -3,12 +3,24 @@ from mysql import connector
 
 def db_connection():
     try:
+<<<<<<< Updated upstream
+=======
+        # Евгений Булатов
+>>>>>>> Stashed changes
         connection = connector.connect(
             database='DTI_project',
             user='root',
             password='admin1234',
             host='localhost'
         )
+
+        # Данил Иванов
+        # connection = connector.connect(
+        #     database='DTI_project',
+        #     user='root',
+        #     password='qwerty',
+        #     host='localhost'
+        # )
     except Exception as e:
         print(f'Ошибка! Не удалось подключиться к БД: {e}')
         return None

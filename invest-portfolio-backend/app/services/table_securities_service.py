@@ -15,7 +15,7 @@ class TableSecuritiesService:
                     st.name,
                     tb.quantity
                     FROM table_securities as tb
-                    JOIN stock_names as st ON tb.securitie = st.name_id 
+                    JOIN stock_names as st ON tb.securitie_id = st.name_id 
                     WHERE tb.user_id = %s"""
             cursor.execute(queue, [user_id])
             data = cursor.fetchall()
@@ -51,7 +51,7 @@ class TableSecuritiesService:
                             st.name,
                             tb.quantity
                             FROM table_securities as tb
-                            JOIN stock_names as st ON tb.securitie = st.name_id
+                            JOIN stock_names as st ON tb.securitie_id = st.name_id
                             WHERE st.id = %s"""
             cursor.execute(queue, (id,))
             data = cursor.fetchall()

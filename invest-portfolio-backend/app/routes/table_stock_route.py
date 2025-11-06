@@ -10,12 +10,10 @@ table_stock_model = api.model('TableStock', {
     'high': fields.Float(required=True, description='Самая высокая цена'),
     'low': fields.Float(required=True, description='Самая низкая цена'),
     'close': fields.Float(required=True, description='Цена закрытия'),
-    'volume': fields.Integer(required=True, description='Что-то')   #Поменять потом!
+    'volume': fields.Integer(required=True, description='Количество сделок')
 })
 
 table_stock_create_model = api.model('TableStockCreate', {
-    'filename': fields.String(required=True, description='Файл csv для заполнения биржы'),
-    'delimiter': fields.String(required=True, description='Разделитель csv файла'),
     'name': fields.String(required=True, description='Название компании')
 })
 
@@ -108,13 +106,13 @@ class CreateTableStock(Resource):
 
     @api.doc('create_table_stock')
     @api.expect(table_stock_create_model)
-    @api.response(201, 'Портфель успешно создан')
+    @api.response(201, 'Биржа успешно записана')
     def post(self):
         try:
             data = request.get_json()
-            filename, delimiter, name = data['filename'], data['delimiter'], data['name']
+            name = data['name']
 
-            check = TableStockService.Post(filename, delimiter, name)
+            check = TableStockService.Post(';', name)
 
             if check:
                 return {
@@ -127,5 +125,29 @@ class CreateTableStock(Resource):
         except Exception as e:
             return {
                 'success': False,
-                'message': f'Ошибка при получении биржы: {str(e)}'
+                'message': f'Ошибка при создании биржы: {str(e)}'
+            }, 500
+
+    @api.doc('update_table_stock')
+    @api.expect(table_stock_create_model)
+    @api.response(201, 'Биржа успешно обновлена')
+    def put(self):
+        try:
+            data = request.get_json()
+            name = data['name']
+
+            check = TableStockService.Update(';', name)
+
+            if check:
+                return {
+                    'success': True,
+                    'message': 'Биржа успешно обновлена'
+                }, 201
+
+            raise Exception
+
+        except Exception as e:
+            return {
+                'success': False,
+                'message': f'Ошибка при обновление биржы: {str(e)}'
             }, 500
