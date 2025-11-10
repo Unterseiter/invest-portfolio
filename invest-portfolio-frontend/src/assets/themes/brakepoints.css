@@ -5,6 +5,11 @@
     --sidebar-width-mobile: 280px;
     --sidebar-width-tablet: 280px;
     --sidebar-width-desktop: 320px;
+    
+    /* ==================== SIDEBAR SPECIFIC ==================== */
+    --footer-height-mobile: 100px;
+    --footer-height-tablet: 100px;
+    --footer-height-desktop: 100px;
 
     /* ==================== BREAKPOINT VALUES ==================== */
     --breakpoint-mobile: 480px;
