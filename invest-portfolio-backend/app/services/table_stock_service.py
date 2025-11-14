@@ -2,6 +2,7 @@ from app.models.stock_names_model import StockNamesModel, TableStockModel
 from database.db_connection import db_connection, close_connection
 from typing import List
 from app.utils.load_df import load_df
+from app.utils.update_df import update_df
 
 
 class TableStockService:

@@ -108,17 +108,13 @@ class CreateTableStock(Resource):
 
     @api.doc('create_table_stock')
     @api.expect(table_stock_create_model)
-    @api.response(201, 'Портфель успешно создан')
+    @api.response(201, 'Биржа успешно записана')
     def post(self):
         try:
             data = request.get_json()
-            filename, delimiter, name = data['filename'], data['delimiter'], data['name']
+            name = data['name']
 
-            check = TableStockService.Post(filename, delimiter, name)
-
-            name, begin_date, end_date = data['name'], data['begin_date'], data['end_date']
-
-            check = TableStockService.Post(';', name, begin_date, end_date)
+            check = TableStockService.Post(';', name)
 
             if check:
                 return {
@@ -131,5 +127,29 @@ class CreateTableStock(Resource):
         except Exception as e:
             return {
                 'success': False,
-                'message': f'Ошибка при получении биржы: {str(e)}'
+                'message': f'Ошибка при создании биржы: {str(e)}'
+            }, 500
+
+    @api.doc('update_table_stock')
+    @api.expect(table_stock_create_model)
+    @api.response(201, 'Биржа успешно обновлена')
+    def put(self):
+        try:
+            data = request.get_json()
+            name = data['name']
+
+            check = TableStockService.Update(';', name)
+
+            if check:
+                return {
+                    'success': True,
+                    'message': 'Биржа успешно обновлена'
+                }, 201
+
+            raise Exception
+
+        except Exception as e:
+            return {
+                'success': False,
+                'message': f'Ошибка при обновление биржы: {str(e)}'
             }, 500

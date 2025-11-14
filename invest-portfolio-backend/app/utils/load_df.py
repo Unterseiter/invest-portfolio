@@ -3,10 +3,7 @@ from datetime import date, timedelta
 from database.db_connection import db_connection
 
 
-def load_df(delimiter, name):
-
-    end_date = date.today()
-    begin_date = end_date - timedelta(days=30)
+def load_df(delimiter, name, begin_date, end_date):
 
     url = f"""https://iss.moex.com/iss/engines/stock/markets/shares/securities/{name}/candles.csv?from={begin_date}&till={end_date}&interval=60"""
 
