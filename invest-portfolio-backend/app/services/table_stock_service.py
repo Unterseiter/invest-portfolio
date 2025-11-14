@@ -75,7 +75,8 @@ class TableStockService:
             print(f'Ошибка в сервисе: {e}')
             return None
 
-    def Post(self, delimiter, name, begin_date, end_date) -> bool:
+    @classmethod
+    def Post(cls, delimiter, name, begin_date, end_date) -> bool:
         return load_df(delimiter, name, begin_date, end_date)
 
     @classmethod

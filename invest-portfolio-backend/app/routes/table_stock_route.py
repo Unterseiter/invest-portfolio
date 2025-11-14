@@ -14,9 +14,9 @@ table_stock_model = api.model('TableStock', {
 })
 
 table_stock_create_model = api.model('TableStockCreate', {
-    'filename': fields.String(required=True, description='Файл csv для заполнения биржы'),
-    'delimiter': fields.String(required=True, description='Разделитель csv файла'),
-    'name': fields.String(required=True, description='Название компании')
+    'name': fields.String(required=True, description='Название компании'),
+    'begin_date': fields.String(required=True, description='Начало периода'),
+    'end_date': fields.String(required=True, description='Конец периода')
 })
 
 
