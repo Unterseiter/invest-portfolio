@@ -116,6 +116,10 @@ class CreateTableStock(Resource):
 
             check = TableStockService.Post(filename, delimiter, name)
 
+            name, begin_date, end_date = data['name'], data['begin_date'], data['end_date']
+
+            check = TableStockService.Post(';', name, begin_date, end_date)
+
             if check:
                 return {
                     'success': True,

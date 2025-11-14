@@ -78,6 +78,13 @@ class TableStockService:
     def Post(self, filename, delimiter, name) -> bool:
         return load_df(filename, delimiter, name)
 
+    def Post(self, delimiter, name, begin_date, end_date) -> bool:
+        return load_df(delimiter, name, begin_date, end_date)
+
+    @classmethod
+    def Update(cls, delimiter, name) -> bool:
+        return update_df(delimiter, name)
+
     @classmethod
     def Delete(cls, name_id):
         try:

@@ -5,6 +5,23 @@ from database.db_connection import db_connection
 def load_df(file, delimiter, name):
     df = pd.read_csv(file, delimiter=delimiter)
 
+
+def load_df(delimiter, name, begin_date, end_date):
+
+    url = f"""https://iss.moex.com/iss/engines/stock/markets/shares/securities/{name}/candles.csv?from={begin_date}&till={end_date}&interval=60"""
+
+    df = pd.read_csv(url,
+                     delimiter=delimiter,
+                     skiprows=2,  # Пропускаем первые 2 строки с заголовками
+                     header=0)  # Первая строка - заголовок колонок
+
+    # ДЛЯ ОТЛАДКИ: посмотрим структуру данных
+    print("Структура данных:")
+    print(f"Колонки: {df.columns.tolist()}")
+    print(f"Первые 3 строки: {df.head(3)}")
+    print(f"Размер: {df.shape}")
+
+
     connection = db_connection()
     if connection:
         check = create_table(connection, name)
@@ -19,7 +36,6 @@ def load_df(file, delimiter, name):
         return check
     else:
         return False
-
 
 
 def add_stock_names(connection, name):
