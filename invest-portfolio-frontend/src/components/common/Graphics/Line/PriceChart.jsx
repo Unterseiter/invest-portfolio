@@ -1,3 +1,4 @@
+// frontend/src/components/PortfolioChart/PortfolioChart.js
 import React, { useState, useEffect } from "react";
 import {
   LineChart,
@@ -8,14 +9,15 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { PortfolioAPI } from "../../../../test/mockData";
+import { PortfolioAPI } from '../../../../services/portfolioAPI';
 import "./PriceChart.css";
-import ChartUp from "../../../../assets/Chart/ChartUp";
+import ChartUp from '../../../../assets/Chart/ChartUp';
 
 const PortfolioChart = () => {
   const [data, setData] = useState([]);
   const [period, setPeriod] = useState("day");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadPortfolioData(period);
@@ -23,77 +25,157 @@ const PortfolioChart = () => {
 
   const loadPortfolioData = async (selectedPeriod) => {
     setLoading(true);
+    setError(null);
     try {
-      const chartData = await PortfolioAPI.getPortfolioHistory(selectedPeriod);
-      setData(chartData.data);
+      const result = await PortfolioAPI.getPortfolioHistory(selectedPeriod);
+      if (result.success) {
+        setData(result.data);
+        if (result.message) {
+          console.log(result.message);
+        }
+      } else {
+        const errorMsg = result.message || 'Failed to load portfolio data';
+        setError(errorMsg);
+        console.error("Error loading portfolio data:", errorMsg);
+        setData([]);
+      }
     } catch (error) {
+      const errorMsg = error.message || 'Network error';
+      setError(errorMsg);
       console.error("Error loading portfolio data:", error);
+      setData([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // Функция форматирования оси X в зависимости от периода
   const formatXAxis = (timestamp) => {
     const date = new Date(timestamp);
-    switch (period) {
-      case "hour":
-        return date.toLocaleTimeString("ru-RU", {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-      case "day":
-        return date.toLocaleTimeString("ru-RU", {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-      case "week":
-        return date.toLocaleDateString("ru-RU", {
-          day: "2-digit",
-          month: "2-digit",
-        });
-      case "month":
-        return date.toLocaleDateString("ru-RU", {
-          day: "2-digit",
-          month: "short",
-        });
-      case "year":
-        return date.toLocaleDateString("ru-RU", {
-          month: "short",
-          year: "2-digit",
-        });
-      default:
-        return date.toLocaleDateString();
+    try {
+      switch (period) {
+        case "hour":
+          // Для часового периода показываем время с минутами
+          return date.toLocaleTimeString("ru-RU", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        case "day":
+          // Для дневного периода показываем время
+          return date.toLocaleTimeString("ru-RU", {
+            hour: "2-digit",
+          });
+        case "week":
+          // Для недельного периода показываем дату и день недели
+          return date.toLocaleDateString("ru-RU", {
+            day: "2-digit",
+            month: "2-digit",
+          });
+        case "month":
+          // Для месячного периода показываем даты
+          return date.toLocaleDateString("ru-RU", {
+            day: "2-digit",
+            month: "short",
+          });
+        case "year":
+          // Для годового периода показываем месяцы
+          return date.toLocaleDateString("ru-RU", {
+            month: "short",
+            year: "2-digit",
+          });
+        default:
+          return date.toLocaleDateString("ru-RU");
+      }
+    } catch (e) {
+      return timestamp.toString();
     }
   };
 
+  // Кастомный тултип для графика
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
         <div className="custom-tooltip">
-          <p className="tooltip-label">{`${new Date(label).toLocaleString("ru-RU")}`}</p>
-          <p className="tooltip-value">{`$${payload[0].value.toLocaleString()}`}</p>
+          <p className="tooltip-label">
+            {`${new Date(label).toLocaleString("ru-RU")}`}
+          </p>
+          <p className="tooltip-value">
+            {`$${payload[0].value.toLocaleString('ru-RU')}`}
+          </p>
         </div>
       );
     }
     return null;
   };
 
+  // Состояние загрузки
   if (loading) {
     return (
       <div className="portfolio-chart loading">
-        <ChartUp width={24} height={24} color="var(--color-tertiary)" />
-        <h3 className="chart-title">История портфеля</h3>
-        <div className="chart-loading-text">Загрузка данных...</div>
+        <div className="chart-header">
+          <div className="chart-title-section">
+            <ChartUp width={24} height={24} color="var(--color-tertiary)" />
+            <h3 className="chart-title">История портфеля</h3>
+          </div>
+        </div>
+        <div className="chart-loading-text">Загрузка реальных данных...</div>
       </div>
     );
   }
 
+  // Состояние ошибки
+  if (error) {
+    return (
+      <div className="portfolio-chart error">
+        <div className="chart-header">
+          <div className="chart-title-section">
+            <ChartUp width={24} height={24} color="var(--color-error)" />
+            <h3 className="chart-title">История портфеля</h3>
+          </div>
+        </div>
+        <div className="chart-error-text">
+          Ошибка: {error}
+          <button 
+            onClick={() => loadPortfolioData(period)}
+            className="retry-btn"
+          >
+            Повторить
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Нет данных
+  if (!data || data.length === 0) {
+    return (
+      <div className="portfolio-chart no-data">
+        <div className="chart-header">
+          <div className="chart-title-section">
+            <ChartUp width={24} height={24} color="var(--color-tertiary)" />
+            <h3 className="chart-title">История портфеля</h3>
+          </div>
+        </div>
+        <div className="chart-no-data-text">
+          Нет данных для отображения
+          <button 
+            onClick={() => loadPortfolioData(period)}
+            className="retry-btn"
+          >
+            Обновить
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Основной рендер с данными
   return (
     <div className="portfolio-chart">
       <div className="chart-header">
         <div className="chart-title-section">
           <ChartUp width={24} height={24} color="var(--color-accent)" />
-          <h3 className="chart-title">История портфеля</h3>
+          <h3 className="chart-title">История портфеля (реальные данные)</h3>
         </div>
         <div className="period-selector">
           {["hour", "day", "week", "month", "year"].map((p) => (
@@ -131,7 +213,7 @@ const PortfolioChart = () => {
               fontSize={12}
             />
             <YAxis
-              tickFormatter={(value) => `$${value.toLocaleString()}`}
+              tickFormatter={(value) => `$${value.toLocaleString('ru-RU')}`}
               domain={['dataMin - 1000', 'dataMax + 1000']}
               scale="linear"
               allowDataOverflow={false}
@@ -164,6 +246,9 @@ const PortfolioChart = () => {
                   period === "day" ? "дневной" : 
                   period === "week" ? "недельный" : 
                   period === "month" ? "месячный" : "годовой"}
+        </div>
+        <div className="chart-info">
+          Данные точек: {data.length}
         </div>
       </div>
     </div>
