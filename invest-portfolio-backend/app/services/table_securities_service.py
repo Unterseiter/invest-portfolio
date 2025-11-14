@@ -35,7 +35,7 @@ class TableSecuritiesService:
             return [TableSecuritiesModel(
                 ticker=data[row][0],
                 quantity=data[row][1],
-                price=price_list[row]
+                price=float(price_list[row])
             ) for row in range(len(data))]
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
@@ -65,7 +65,7 @@ class TableSecuritiesService:
             price = cursor.fetchall()[0][0]
 
             close_connection(connection)
-            return TableSecuritiesModel(ticker=data[0][0], quantity=data[0][1], price=price)
+            return TableSecuritiesModel(ticker=data[0][0], quantity=data[0][1], price=float(price))
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
             return None
