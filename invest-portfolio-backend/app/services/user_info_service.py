@@ -2,6 +2,13 @@ from app.models.user_info_model import TableSecuritiesModel, UserInfoModel
 from database.db_connection import db_connection, close_connection
 from app.services.table_securities_service import TableSecuritiesService
 from typing import List
+from datetime import date
+
+
+def serialize_date(obj):
+    if isinstance(obj, date):
+        return obj.isoformat()
+    return obj
 
 
 class UserService:
@@ -22,7 +29,7 @@ class UserService:
             for record in data:
 
                 list_table_securities = TableSecuritiesService.GetAll(record[0])
-                result_list.append(UserInfoModel(id=data[0], date=data[1], table_securities=list_table_securities))
+                result_list.append(UserInfoModel(id=record[0], date=serialize_date(record[1]), table_securities=list_table_securities))
 
             return result_list
 
@@ -47,7 +54,7 @@ class UserService:
             close_connection(connection)
             list_table_securities = TableSecuritiesService.GetAll(user_id)
 
-            return UserInfoModel(id=data[0][0], date=data[0][1], table_securities=list_table_securities)
+            return UserInfoModel(id=data[0][0], date=serialize_date(data[0][1]), table_securities=list_table_securities)
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
             return None
@@ -62,16 +69,18 @@ class UserService:
                         id, 
                         date
                         FROM user_info
-                        WHERE date < %s
+                        WHERE date <= %s
                         ORDER BY id DESC
                         LIMIT 1"""
             cursor.execute(queue, (date,))
             data = cursor.fetchall()
 
+            print(data)
+
             close_connection(connection)
             list_table_securities = TableSecuritiesService.GetAll(data[0][0])
 
-            return UserInfoModel(id=data[0][0], date=data[0][1], table_securities=list_table_securities)
+            return UserInfoModel(id=data[0][0], date=serialize_date(data[0][1]), table_securities=list_table_securities)
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
             return None
