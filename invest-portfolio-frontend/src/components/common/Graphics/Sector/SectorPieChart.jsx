@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import PortfolioAPI from '../../../../test/mockData.js';
+import { PortfolioAPI } from '../../../../services/portfolioAPI';
 import './SectorPieChart.css';
 import ChartUp from '../../../../assets/Chart/ChartUp.jsx';
 
@@ -45,16 +45,57 @@ const SectorPieChart = ({ height = 'auto', showLegend = true }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const sectorData = await PortfolioAPI.getSectorAllocation();
+        setError(null);
         
+        // Получаем портфели
+        const portfolios = await PortfolioAPI.getPortfolios();
+        if (!portfolios || portfolios.length === 0) {
+          throw new Error('Нет данных портфеля');
+        }
+
+        // Берем последний портфель
+        const latestPortfolio = portfolios[portfolios.length - 1];
+        
+        // Получаем активы портфеля
+        const tableSecurities = await PortfolioAPI.getTableSecurities(latestPortfolio.id || 1);
+        if (!tableSecurities || tableSecurities.length === 0) {
+          throw new Error('Нет данных об активах');
+        }
+
+        // Группируем активы по тикерам (вместо секторов)
+        // В реальном API у нас нет секторов, используем тикеры как "сектора"
+        const sectorAllocation = {};
+        let totalValue = 0;
+
+        tableSecurities.forEach(asset => {
+          const sector = asset.ticker || 'Неизвестно';
+          const value = asset.sum_price || 0;
+          
+          if (sectorAllocation[sector]) {
+            sectorAllocation[sector] += value;
+          } else {
+            sectorAllocation[sector] = value;
+          }
+          totalValue += value;
+        });
+
+        // Преобразуем в массив для графика
+        const sectorData = Object.entries(sectorAllocation).map(([sector, value]) => ({
+          sector: sector,
+          value: value,
+          percentage: totalValue > 0 ? (value / totalValue * 100) : 0
+        }));
+
+        // Сортируем по убыванию стоимости
+        sectorData.sort((a, b) => b.value - a.value);
+
         if (mounted) {
           setData(sectorData);
-          setError(null);
         }
       } catch (err) {
         if (mounted) {
           console.error('Error fetching sector data:', err);
-          setError('Не удалось загрузить данные');
+          setError(err.message || 'Не удалось загрузить данные');
         }
       } finally {
         if (mounted) setLoading(false);
@@ -108,7 +149,7 @@ const SectorPieChart = ({ height = 'auto', showLegend = true }) => {
       <div className="custom-tooltip">
         <p className="tooltip__sector">{data.sector}</p>
         <p className="tooltip__value">{data.value.toLocaleString('ru-RU')} ₽</p>
-        <p className="tooltip__percentage">{data.percentage}% портфеля</p>
+        <p className="tooltip__percentage">{data.percentage.toFixed(1)}% портфеля</p>
       </div>
     );
   }, []);
@@ -156,7 +197,7 @@ const SectorPieChart = ({ height = 'auto', showLegend = true }) => {
       <div className="chart-header">
         <div className="chart-title-section">
           <ChartUp width={20} height={20} color="var(--color-accent)" />
-          <h3 className="chart-title">Секторное распределение</h3>
+          <h3 className="chart-title">Распределение по компаниям</h3>
         </div>
       </div>
 
@@ -203,7 +244,7 @@ const SectorPieChart = ({ height = 'auto', showLegend = true }) => {
 
       <div className="chart-footer">
         <div className="sectors-count">
-          Всего секторов: {chartData.length}
+          Всего компаний: {chartData.length}
         </div>
       </div>
     </div>

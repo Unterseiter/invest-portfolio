@@ -1,8 +1,11 @@
 function SettingsPage () {
     return (
-        <div>
-            settings-page
+        <aside>
+            
+        <div className="settings">
+            
         </div>
+        </aside>
     )
 }
 
