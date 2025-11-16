@@ -14,7 +14,8 @@ table_stock_model = api.model('TableStock', {
 })
 
 table_stock_create_model = api.model('TableStockCreate', {
-    'name': fields.String(required=True, description='Название компании'),
+    'name': fields.String(required=True, description='Тикер компании'),
+    'full_name': fields.String(required=True, description='Полное наименование компании'),
     'begin_date': fields.String(required=True, description='Начало периода'),
     'end_date': fields.String(required=True, description='Конец периода')
 })
@@ -112,9 +113,9 @@ class CreateTableStock(Resource):
     def post(self):
         try:
             data = request.get_json()
-            name, begin_date, end_date = data['name'], data['begin_date'], data['end_date']
+            name, full_name, begin_date, end_date = data['name'], data['begin_date'], data['end_date'], data['full_name']
 
-            check = TableStockService.Post(';', name, begin_date, end_date)
+            check = TableStockService.Post(';', name, full_name, begin_date, end_date)
 
             if check:
                 return {

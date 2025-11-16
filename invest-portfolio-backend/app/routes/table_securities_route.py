@@ -118,7 +118,7 @@ class TableSecurities(Resource):
     @api.doc('update_table_securities')
     @api.expect(table_securities_model)
     @api.response(201, 'Актив успешно изменен')
-    def update(self, id):
+    def put(self, id):
         try:
             data = request.get_json()
             securitie_id, quantity = data['securitie_id'], data['quantity']

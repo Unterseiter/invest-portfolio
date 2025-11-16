@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from database.db_connection import db_connection
 
 
-def load_df(delimiter, name, begin_date, end_date):
+def load_df(delimiter, name, full_name, begin_date, end_date):
 
     url = f"""https://iss.moex.com/iss/engines/stock/markets/shares/securities/{name}/candles.csv?from={begin_date}&till={end_date}&interval=60"""
 
@@ -26,7 +26,7 @@ def load_df(delimiter, name, begin_date, end_date):
             check = create_records(connection, df, name)
 
             if check:
-                add_stock_names(connection, name)
+                check = add_stock_names(connection, name, full_name)
 
         connection.close()
         return check
@@ -34,11 +34,22 @@ def load_df(delimiter, name, begin_date, end_date):
         return False
 
 
-def add_stock_names(connection, name):
-    cursor = connection.cursor()
+def add_stock_names(connection, name, full_name):
+    try:
 
-    cursor.execute("""INSERT INTO stock_names (name) VALUES (%s)""", [name])
-    connection.commit()
+        cursor = connection.cursor()
+        queue = 'SELECT name FROM stock_names WHERE name = %s'
+
+        cursor.execute(queue, (name,))
+        data = cursor.fetchall()
+
+        if not data:
+            cursor.execute("""INSERT INTO stock_names (name, full_name) VALUES (%s, %s)""", (name, full_name))
+            connection.commit()
+
+    except Exception as e:
+        print("Ошибка в добавление имени в таблицу stock_names:", e)
+        return False
 
 
 def create_table(connection, name):

@@ -68,31 +68,6 @@ class UserInfoById(Resource):
                 'message': f'Ошибка при удалении портфеля: {str(e)}'
             }, 500
 
-    @api.doc('update_user_info')
-    @api.response(200, 'Портфель успешно изменен')
-    @api.response(404, 'Портфель не найден')
-    def update(self, user_id):
-        try:
-            data = request.get_json()
-            success = UserService.Update(user_id, data['date'])
-
-            if success:
-                return {
-                    'success': True,
-                    'message': 'Портфель успешно изменен'
-                }, 200
-
-            return {
-                'success': False,
-                'message': 'Портфель не найден'
-            }, 404
-
-        except Exception as e:
-            return {
-                'success': False,
-                'message': f'Ошибка при изменении портфеля: {str(e)}'
-            }, 500
-
 
 @api.route('/portfolio/<string:date>')
 @api.param('date', 'Дата портфеля')
@@ -164,4 +139,30 @@ class UserInfo(Resource):
             return {
                 'success': False,
                 'message': f'Ошибка при получении портфелей: {str(e)}'
+            }, 500
+
+    @api.doc('update_user_info')
+    @api.expect(user_info_model)
+    @api.response(200, 'Портфель успешно изменен')
+    @api.response(404, 'Портфель не найден')
+    def put(self):
+        try:
+            data = request.get_json()
+            success = UserService.Update(data['date'])
+
+            if success:
+                return {
+                    'success': True,
+                    'message': 'Портфель успешно изменен'
+                }, 200
+
+            return {
+                'success': False,
+                'message': 'Портфель не найден'
+            }, 404
+
+        except Exception as e:
+            return {
+                'success': False,
+                'message': f'Ошибка при изменении портфеля: {str(e)}'
             }, 500

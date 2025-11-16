@@ -12,7 +12,7 @@ class StockNamesService:
             connection = db_connection()
             cursor = connection.cursor()
 
-            queue = """SELECT name_id, name FROM stock_names WHERE name_id = %s"""
+            queue = """SELECT name_id, name, full_name FROM stock_names WHERE name_id = %s"""
             cursor.execute(queue, (name_id,))
             data = cursor.fetchall()
 
@@ -23,8 +23,10 @@ class StockNamesService:
             return StockNameModel(
                 id=data[0][0],
                 name=data[0][1],
+                full_name=data[0][2],
                 table=list_table_stock
             )
+
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
             return None
@@ -35,7 +37,7 @@ class StockNamesService:
             connection = db_connection()
             cursor = connection.cursor()
 
-            queue = """SELECT name_id, name FROM stock_names"""
+            queue = """SELECT name_id, name, full_name FROM stock_names"""
             cursor.execute(queue)
             data = cursor.fetchall()
 
@@ -43,7 +45,8 @@ class StockNamesService:
 
             return [StockNamesModel(
                 id=data[row][0],
-                name=data[row][1]
+                name=data[row][1],
+                full_name=data[row][2]
             )
                 for row in range(len(data))]
         except Exception as e:
@@ -69,6 +72,7 @@ class StockNamesService:
             TableStockService.Delete(name_id)
 
             return True
+
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
             return False

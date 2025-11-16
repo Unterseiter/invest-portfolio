@@ -26,12 +26,14 @@ class TableStockModel:
 class StockNameModel:
     id: int
     name: str
+    full_name: str
     table: List[TableStockModel]
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             'id': self.id,
             'name': self.name,
+            'full_name': self.full_name,
             'table': [
                 {
                     'date': row.date,
@@ -50,9 +52,11 @@ class StockNameModel:
 class StockNamesModel:
     id: int
     name: str
+    full_name: str
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             'id': self.id,
-            'name': self.name
+            'name': self.name,
+            'full_name': self.full_name
         }

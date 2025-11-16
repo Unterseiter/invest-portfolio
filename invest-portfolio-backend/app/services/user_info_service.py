@@ -2,11 +2,11 @@ from app.models.user_info_model import TableSecuritiesModel, UserInfoModel
 from database.db_connection import db_connection, close_connection
 from app.services.table_securities_service import TableSecuritiesService
 from typing import List
-from datetime import date
+from datetime import date, datetime
 
 
 def serialize_date(obj):
-    if isinstance(obj, date):
+    if isinstance(obj, datetime):
         return obj.isoformat()
     return obj
 
@@ -119,17 +119,28 @@ class UserService:
             return False
 
     @classmethod
-    def Update(self, user_id, date) -> bool:
+    def Update(csl, prev_date) -> bool:
         try:
             connection = db_connection()
             cursor = connection.cursor()
 
-            queue = """UPDATE user_info SET date = %s WHERE id = %s"""
-            cursor.execute(queue, (user_id, date))
-            connection.commit()
+            queue = """SELECT user_id FROM user_info WHERE date <= %s"""
+            cursor.execute(queue, (prev_date,))
+            prev_user_id = cursor.fetchall()[0][0]
+
+            now_date = datetime.now()
+
+            csl.Post(now_date)
+
+            queue = """SELECT user_id FROM user_info WHERE date = %s"""
+            cursor.execute(queue, (now_date,))
+            new_user_id = cursor.fetchall()[0][0]
+
+            TableSecuritiesService.UpdatePrices(prev_user_id, new_user_id)
 
             close_connection(connection)
             return True
+
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
             return False

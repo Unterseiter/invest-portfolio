@@ -13,29 +13,19 @@ class TableSecuritiesService:
 
             queue = """SELECT
                     st.name,
-                    tb.quantity
+                    tb.quantity,
+                    tb.price
                     FROM table_securities as tb
                     JOIN stock_names as st ON tb.securitie_id = st.name_id 
                     WHERE tb.user_id = %s"""
             cursor.execute(queue, [user_id])
             data = cursor.fetchall()
 
-            price_list = []
-            queue = """SELECT
-                       close
-                       FROM {}
-                       ORDER BY id DESC
-                       LIMIT 1"""
-            for row in range(len(data)):
-                cursor.execute(queue.format(data[row][0]))
-                price = cursor.fetchall()[0][0]
-                price_list.append(price)
-
             close_connection(connection)
             return [TableSecuritiesModel(
                 ticker=data[row][0],
                 quantity=data[row][1],
-                price=float(price_list[row])
+                price=float(data[row][2])
             ) for row in range(len(data))]
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
@@ -49,23 +39,17 @@ class TableSecuritiesService:
 
             queue = """SELECT
                             st.name,
-                            tb.quantity
+                            tb.quantity,
+                            tb.price
                             FROM table_securities as tb
                             JOIN stock_names as st ON tb.securitie_id = st.name_id
                             WHERE st.id = %s"""
             cursor.execute(queue, (id,))
             data = cursor.fetchall()
 
-            queue = """SELECT
-                               close
-                               FROM {}
-                               ORDER BY id DESC
-                               LIMIT 1"""
-            cursor.execute(queue.format(data[0][0]))
-            price = cursor.fetchall()[0][0]
-
             close_connection(connection)
-            return TableSecuritiesModel(ticker=data[0][0], quantity=data[0][1], price=float(price))
+            return TableSecuritiesModel(ticker=data[0][0], quantity=data[0][1], price=float(data[0][2]))
+
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
             return None
@@ -76,9 +60,17 @@ class TableSecuritiesService:
             connection = db_connection()
             cursor = connection.cursor()
 
-            queue = """INSERT INTO table_securities (user_id, securitie_id, quantity) VALUES
-                    (%s, %s, %s)"""
-            cursor.execute(queue, (user_id, sequritie_id, quantity))
+            queue = """SELECT name FROM stock_names WHERE name_id = %s"""
+            cursor.execute(queue, (sequritie_id,))
+            name = cursor.fetchall()[0][0]
+
+            queue = f"""SELECT close FROM {name} ORDER BY date DESC LIMIT 1"""
+            cursor.execute(queue)
+            price = float(cursor.fetchall()[0][0])
+
+            queue = """INSERT INTO table_securities (user_id, securitie_id, quantity, price) VALUES
+                    (%s, %s, %s, %s)"""
+            cursor.execute(queue, (user_id, sequritie_id, quantity, price))
             connection.commit()
 
             close_connection(connection)
@@ -119,6 +111,27 @@ class TableSecuritiesService:
 
             close_connection(connection)
             return True
+        except Exception as e:
+            print(f'Ошибка в сервисе: {e}')
+            return False
+
+    @classmethod
+    def UpdatePrices(cls, prev_user_id, new_user_id) -> bool:
+        try:
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            queue = """SELECT securitie_id, quantity FROM table_securities WHERE user_id = %s"""
+            cursor.execute(queue, (prev_user_id,))
+            data = cursor.fetchall()
+
+            close_connection(connection)
+
+            for record in data:
+                cls.Post(record[0], new_user_id, record[1])
+
+            return True
+
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
             return False
