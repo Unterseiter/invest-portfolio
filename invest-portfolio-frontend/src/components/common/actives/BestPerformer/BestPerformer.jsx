@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import PortfolioAPI from '../../../../test/mockData.js';
+import { PortfolioAPI } from '../../../../services/portfolioAPI';
 import './BestPerformer.css';
 import ChartUp from '../../../../assets/Chart/ChartUp.jsx';
 
@@ -12,15 +12,68 @@ const BestPerformer = () => {
     const loadBestPerformer = async () => {
       try {
         setLoading(true);
-        const assets = await PortfolioAPI.getAssets();
+        setError(null);
         
-        if (assets && assets.length > 0) {
-          // Находим актив с максимальным процентом роста
-          const best = assets.reduce((max, asset) => 
+        // 1. Получаем портфели
+        const portfolios = await PortfolioAPI.getPortfolios();
+        if (!portfolios || portfolios.length === 0) {
+          setError('Нет данных портфеля');
+          return;
+        }
+
+        // 2. Берем последний портфель
+        const latestPortfolio = portfolios[portfolios.length - 1];
+        
+        // 3. Получаем активы портфеля
+        const tableSecurities = await PortfolioAPI.getTableSecurities(latestPortfolio.id || 1);
+        if (!tableSecurities || tableSecurities.length === 0) {
+          setError('Нет данных об активах');
+          return;
+        }
+
+        // 4. Для каждого актива получаем текущие биржевые данные
+        const assetsWithPrices = await Promise.all(
+          tableSecurities.map(async (asset) => {
+            try {
+              // Получаем данные об акции
+              const stockData = await PortfolioAPI.getStockNameById(asset.securitie_id || asset.id);
+              
+              if (stockData && stockData.table && stockData.table.length > 0) {
+                const latestPriceData = stockData.table[stockData.table.length - 1];
+                const purchasePrice = asset.price || 0;
+                const currentPrice = latestPriceData.close || 0;
+                const change = currentPrice - purchasePrice;
+                const changePercent = purchasePrice > 0 ? (change / purchasePrice) * 100 : 0;
+                
+                return {
+                  symbol: asset.ticker,
+                  name: stockData.name || asset.ticker,
+                  currentPrice: currentPrice,
+                  purchasePrice: purchasePrice,
+                  change: change,
+                  changePercent: changePercent,
+                  quantity: asset.quantity
+                };
+              }
+            } catch (err) {
+              console.error(`Error loading data for ${asset.ticker}:`, err);
+              return null;
+            }
+            return null;
+          })
+        );
+
+        // 5. Фильтруем успешно загруженные активы и находим лучший
+        const validAssets = assetsWithPrices.filter(asset => asset !== null);
+        if (validAssets.length > 0) {
+          const best = validAssets.reduce((max, asset) => 
             asset.changePercent > max.changePercent ? asset : max
           );
           setBestAsset(best);
+        } else {
+          setError('Не удалось загрузить данные цен');
         }
+
       } catch (err) {
         console.error('Ошибка загрузки данных:', err);
         setError('Не удалось загрузить данные');
@@ -68,20 +121,24 @@ const BestPerformer = () => {
         <div className="asset-name">{bestAsset.name}</div>
         
         <div className={`performance-change ${isPositive ? 'positive' : 'negative'}`}>
-          {isPositive ? '+' : ''}{bestAsset.changePercent}%
+          {isPositive ? '+' : ''}{bestAsset.changePercent.toFixed(2)}%
         </div>
       </div>
 
       <div className="best-performer-footer">
         <div className="performance-details">
           <div className="detail-item">
-            <span className="detail-label">Цена:</span>
+            <span className="detail-label">Текущая цена:</span>
             <span className="detail-value">{bestAsset.currentPrice.toLocaleString('ru-RU')} ₽</span>
+          </div>
+          <div className="detail-item">
+            <span className="detail-label">Цена покупки:</span>
+            <span className="detail-value">{bestAsset.purchasePrice.toLocaleString('ru-RU')} ₽</span>
           </div>
           <div className="detail-item">
             <span className="detail-label">Изменение:</span>
             <span className={`detail-value ${isPositive ? 'positive' : 'negative'}`}>
-              {isPositive ? '+' : ''}{bestAsset.change.toLocaleString('ru-RU')} ₽
+              {isPositive ? '+' : ''}{bestAsset.change.toFixed(2)} ₽
             </span>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import PortfolioAPI from "../../../../test/mockData";
+import { PortfolioAPI } from "../../../../services/portfolioAPI"; // ПРАВИЛЬНЫЙ ПУТЬ К API
 import "./TotalActive.css";
 import ChartUp from "../../../../assets/Chart/ChartUp";
 
@@ -13,17 +13,33 @@ const TotalActive = () => {
     const loadData = async () => {
       try {
         setLoading(true);
-        // Загружаем активы и сектора одновременно
-        const [assetsData, sectorsData] = await Promise.all([
-          PortfolioAPI.getAssets(),
-          PortfolioAPI.getSectorAllocation(),
-        ]);
-
-        setAssets(assetsData);
-        setSectors(sectorsData);
+        setError(null);
+        
+        // Загружаем данные из реального API
+        // Получаем все портфели и берем последний
+        const portfolios = await PortfolioAPI.getPortfolios();
+        
+        if (portfolios && portfolios.length > 0) {
+          const latestPortfolio = portfolios[portfolios.length - 1];
+          
+          // Получаем таблицу активов для последнего портфеля
+          const tableSecurities = await PortfolioAPI.getTableSecurities(latestPortfolio.id || 1);
+          setAssets(tableSecurities || []);
+          
+          // Для секторов используем данные из stock_names
+          // В реальном API может не быть секторов, поэтому используем тикеры как "сектора"
+          const stockNames = await PortfolioAPI.getStockNames();
+          const uniqueTickers = [...new Set(tableSecurities?.map(asset => asset.ticker) || [])];
+          setSectors(uniqueTickers);
+        } else {
+          setAssets([]);
+          setSectors([]);
+        }
       } catch (err) {
         console.error("Ошибка загрузки данных:", err);
         setError("Не удалось загрузить данные");
+        setAssets([]);
+        setSectors([]);
       } finally {
         setLoading(false);
       }
@@ -32,8 +48,9 @@ const TotalActive = () => {
     loadData();
   }, []);
 
-  // Получаем уникальные сектора из активов
+  // Получаем уникальные сектора (в данном случае - уникальные тикеры)
   const uniqueSectorsCount = sectors.length;
+  const totalAssetsCount = assets.length;
 
   if (loading) {
     return (
@@ -65,11 +82,11 @@ const TotalActive = () => {
       </div>
       
       <div className="total-active-content">
-        <div className="total-active-value">{assets.length}</div>
+        <div className="total-active-value">{totalAssetsCount}</div>
         <div className="total-active-subtitle">
           {uniqueSectorsCount > 0
-            ? `В ${uniqueSectorsCount} ${getSectorWord(uniqueSectorsCount)} экономики`
-            : "Нет данных о секторах"}
+            ? `${uniqueSectorsCount} ${getSectorWord(uniqueSectorsCount)}`
+            : "Нет данных о компаниях"}
         </div>
       </div>
 
@@ -81,23 +98,21 @@ const TotalActive = () => {
           ></div>
         </div>
         <div className="diversification-label">
-          Диверсификация: {Math.min(uniqueSectorsCount, 10)}+ секторов
+          Компаний: {uniqueSectorsCount}
         </div>
       </div>
     </div>
   );
 };
 
-// Вспомогательная функция для склонения слова "сектор"
+// Вспомогательная функция для склонения слова "компания"
 const getSectorWord = (count) => {
-  if (count % 10 === 1 && count % 100 !== 11) return "секторе";
-  if (
-    count % 10 >= 2 &&
-    count % 10 <= 4 &&
-    (count % 100 < 10 || count % 100 >= 20)
-  )
-    return "секторах";
-  return "секторах";
+  const lastDigit = count % 10;
+  const lastTwoDigits = count % 100;
+  
+  if (lastDigit === 1 && lastTwoDigits !== 11) return "компания";
+  if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 10 || lastTwoDigits >= 20)) return "компании";
+  return "компаний";
 };
 
 export default TotalActive;
