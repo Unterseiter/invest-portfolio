@@ -12,6 +12,7 @@ def load_df(delimiter, name, full_name, begin_date, end_date):
                      skiprows=2,  # Пропускаем первые 2 строки с заголовками
                      header=0)  # Первая строка - заголовок колонок
 
+    print(name, full_name, begin_date, end_date)
     # ДЛЯ ОТЛАДКИ: посмотрим структуру данных
     print("Структура данных:")
     print(f"Колонки: {df.columns.tolist()}")
@@ -46,6 +47,8 @@ def add_stock_names(connection, name, full_name):
         if not data:
             cursor.execute("""INSERT INTO stock_names (name, full_name) VALUES (%s, %s)""", (name, full_name))
             connection.commit()
+
+        return True
 
     except Exception as e:
         print("Ошибка в добавление имени в таблицу stock_names:", e)

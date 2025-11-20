@@ -77,7 +77,8 @@ class TableStockService:
 
     @classmethod
     def Post(cls, delimiter, name, full_name, begin_date, end_date) -> bool:
-        return load_df(delimiter, name, full_name, begin_date, end_date)
+        return load_df(delimiter=delimiter, name=name, full_name=full_name,
+                       begin_date=begin_date, end_date=end_date)
 
     @classmethod
     def Update(cls, delimiter, name) -> bool:

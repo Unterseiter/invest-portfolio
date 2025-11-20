@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from typing import List, Tuple
 import talib
+from sklearn.metrics import accuracy_score, precision_score, recall_score
 
 
 class FeatureEngineer:
@@ -89,3 +90,44 @@ class FeatureEngineer:
         df = df.fillna(method='bfill').fillna(method='ffill')
 
         return df
+
+    def prepare_trend_labels(self, df, lookforward=5):
+        """Подготовка меток тренда на основе будущих цен"""
+        close_prices = df['close'].values
+
+        trends = []
+        for i in range(len(close_prices) - lookforward):
+            current_price = close_prices[i]
+            future_price = close_prices[i + lookforward]
+
+            change_percent = (future_price - current_price) / current_price * 100
+
+            # Определение тренда
+            if change_percent > 1.0:  # Восходящий тренд
+                trend = [0, 0, 1]
+            elif change_percent < -1.0:  # Нисходящий тренд
+                trend = [1, 0, 0]
+            else:  # Боковой тренд
+                trend = [0, 1, 0]
+
+            trends.append(trend)
+
+        # Добавляем нули для последних элементов
+        trends.extend([[0, 1, 0]] * min(lookforward, len(close_prices)))
+
+        return np.array(trends)
+
+    def calculate_trend_metrics(self, y_true, y_pred):
+        """Расчет метрик для тренда"""
+        true_trends = np.argmax(y_true, axis=1)
+        pred_trends = np.argmax(y_pred, axis=1)
+
+        accuracy = accuracy_score(true_trends, pred_trends)
+        precision = precision_score(true_trends, pred_trends, average='weighted')
+        recall = recall_score(true_trends, pred_trends, average='weighted')
+
+        return {
+            'trend_accuracy': accuracy,
+            'trend_precision': precision,
+            'trend_recall': recall
+        }

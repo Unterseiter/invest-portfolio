@@ -3,8 +3,8 @@ import numpy as np
 import os
 from app.ml_models.src.utils.config import Config
 from app.ml_models.src.data_processing.feature_engineer import FeatureEngineer
-from app.ml_models.src.models.hybrid_model import HybridCandleModel
-from app.ml_models.src.models.model_trainer import ModelTrainer
+from app.ml_models.src.models.hybrid_model2 import HybridCandleModel
+from app.ml_models.src.models.model_trainer2 import ModelTrainer
 from database.db_connection import db_connection, close_connection
 
 
@@ -22,19 +22,8 @@ def main():
     cursor.execute(queue)
     data = cursor.fetchall()
 
-    df1 = pd.DataFrame(data=data, columns=['datetime', 'open', 'high', 'low', 'close', 'volume'])
-
-    queue = f"""SELECT date, open, high, low, close, volume
-                   FROM gazp
-                   ORDER BY date DESC"""
-    cursor.execute(queue)
-    data = cursor.fetchall()
-
+    df = pd.DataFrame(data=data, columns=['datetime', 'open', 'high', 'low', 'close', 'volume'])
     close_connection(connection)
-
-    df2 = pd.DataFrame(data=data, columns=['datetime', 'open', 'high', 'low', 'close', 'volume'])
-
-    df = pd.concat([df1, df2], ignore_index=True)
 
     # Подготовка данных
     trainer = ModelTrainer(config)

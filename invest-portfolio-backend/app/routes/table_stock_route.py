@@ -113,9 +113,10 @@ class CreateTableStock(Resource):
     def post(self):
         try:
             data = request.get_json()
-            name, full_name, begin_date, end_date = data['name'], data['begin_date'], data['end_date'], data['full_name']
+            name, full_name, begin_date, end_date = data['name'], data['full_name'], data['begin_date'], data['end_date']
 
-            check = TableStockService.Post(';', name, full_name, begin_date, end_date)
+            check = TableStockService.Post(';', name=name, full_name=full_name,
+                                           begin_date=begin_date, end_date=end_date)
 
             if check:
                 return {
