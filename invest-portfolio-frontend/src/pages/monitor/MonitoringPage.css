@@ -1,0 +1,86 @@
+.monitoring-page {
+    padding: var(--spacing-lg);
+    min-height: 100vh;
+}
+
+.monitoring-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Новая сетка для трех компонентов */
+.main-action-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    align-items: start;
+}
+
+.price-section {
+    grid-column: 1;
+}
+
+.actions-section {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.chart-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Стили для состояний загрузки и ошибок */
+.monitoring-page.loading,
+.monitoring-page.error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.loading-content,
+.error-content {
+    text-align: center;
+    padding: var(--spacing-xl);
+}
+
+.error-content {
+    color: var(--color-error);
+}
+
+.retry-btn {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+}
+
+.retry-btn:hover {
+    background: var(--color-accent-hover);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .monitoring-page {
+        padding: var(--spacing-md);
+    }
+    
+    .main-action-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .price-section {
+        grid-column: 1;
+    }
+    
+    .actions-section {
+        grid-column: 1;
+    }
+}

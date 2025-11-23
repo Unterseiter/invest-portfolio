@@ -298,8 +298,8 @@
     background: var(--color-primary);
     border-radius: 1px;
     transition: 
-        transform var(--transition-normal),
-        opacity var(--transition-normal);
+    transform var(--transition-normal),
+    opacity var(--transition-normal);
 }
 
 .burger-menu--open .burger-menu__line:nth-child(1) {
@@ -326,3 +326,5 @@
     outline-offset: 2px;
     border-radius: var(--radius-sm);
 }
+/* ==================== ForecastButton STYLES ==================== */
+

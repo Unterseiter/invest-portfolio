@@ -6,7 +6,7 @@ function Sidebar({ isOpen, onClose }) {
     const navigationItems = [
         { text: 'Главная', path: '/' },
         { text: 'Настройки', path: '/settings' },
-        { text: 'Активы', path: '/monitoring' },
+        { text: 'Мониторинг активов', path: '/monitoring' },
         { text: 'Расчёт', path: '/functional' }
     ];
 
