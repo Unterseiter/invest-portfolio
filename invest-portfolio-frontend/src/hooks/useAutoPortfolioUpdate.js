@@ -71,7 +71,7 @@ export const useAutoPortfolioUpdate = () => {
 
   const copyAssetsFromPreviousPortfolio = async (newUserId) => {
     try {
-      const previousUserId = 1;
+      const previousUserId = newUserId - 1;
       
       console.log(`🔄 Копируем активы из портфеля ${previousUserId} в ${newUserId}`);
       
