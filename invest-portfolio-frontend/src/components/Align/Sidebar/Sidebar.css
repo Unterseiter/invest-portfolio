@@ -3,7 +3,7 @@
     background: var(--bg-sidebar);
     border-right: 1px solid var(--border-primary);
     width: var(--sidebar-width-desktop);
-    height: 100vh;
+    height: calc(100vh - var(--header-height-desktop));
     position: fixed;
     top: var(--header-height-desktop);
     left: 0;

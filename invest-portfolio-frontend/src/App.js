@@ -11,9 +11,13 @@ import SettingsPage from './pages/settings/SettingsPage';
 import MonitoringPage from './pages/monitor/MonitoringPage';
 import FunctionalPage from './pages/functional/FunctionalPage';
 
+import { useAutoPortfolioUpdate } from './hooks/useAutoPortfolioUpdate';
+
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [screenSize, setScreenSize] = useState('desktop');
+
+  useAutoPortfolioUpdate();
 
   // Определяем тип устройства
   useEffect(() => {
@@ -60,6 +64,7 @@ function App() {
   return (
     <Router>
       <div className={`App ${sidebarIsOpen ? 'sidebar-open' : ''} screen-${screenSize}`}>
+        
         <Header 
           isSidebarOpen={sidebarIsOpen}
           onToggleSidebar={toggleSidebar}

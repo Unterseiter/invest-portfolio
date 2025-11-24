@@ -1,6 +1,7 @@
 import React from 'react';
 import './Sidebar.css';
 import SidebarNavigate from '../../common/buttons/SidebarNavigate';
+import AutoUpdateStatus from '../../common/AutoUpdateStatus/AutoUpdateStatus';
 
 function Sidebar({ isOpen, onClose }) {
     const navigationItems = [
@@ -38,6 +39,10 @@ function Sidebar({ isOpen, onClose }) {
                         ))}
                     </ul>
                 </nav>
+
+                <div className="sidebar-footer">
+        <AutoUpdateStatus />
+      </div>
             </aside>
         </>
     );
