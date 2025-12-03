@@ -6,6 +6,27 @@ from app.models.user_info_model import TableSecuritiesModel
 class TableSecuritiesService:
 
     @classmethod
+    def get_percentage_change(self, user_id, ticker, price):
+        connection = db_connection()
+        cursor = connection.cursor()
+
+        queue = f"""SELECT date FROM user_info WHERE id = %s"""
+        cursor.execute(queue, (user_id,))
+        date = cursor.fetchall()[0][0]
+
+        print(date)
+
+        queue = f"""SELECT close FROM {ticker} WHERE date < %s
+                    ORDER BY date DESC LIMIT 1"""
+        cursor.execute(queue, (date,))
+        close = cursor.fetchall()[0][0]
+
+        print(price, close)
+        close_connection(connection)
+
+        return float(price / float(close) * 100)
+
+    @classmethod
     def GetAll(self, user_id) -> List[TableSecuritiesModel]:
         try:
             connection = db_connection()
@@ -25,7 +46,8 @@ class TableSecuritiesService:
             return [TableSecuritiesModel(
                 ticker=data[row][0],
                 quantity=data[row][1],
-                price=float(data[row][2])
+                price=float(data[row][2]),
+                percentage_change=self.get_percentage_change(user_id, data[row][0], float(data[row][2]))
             ) for row in range(len(data))]
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
@@ -40,7 +62,8 @@ class TableSecuritiesService:
             queue = """SELECT
                             st.name,
                             tb.quantity,
-                            tb.price
+                            tb.price,
+                            tb.user_id
                             FROM table_securities as tb
                             JOIN stock_names as st ON tb.securitie_id = st.name_id
                             WHERE st.id = %s"""
@@ -48,7 +71,9 @@ class TableSecuritiesService:
             data = cursor.fetchall()
 
             close_connection(connection)
-            return TableSecuritiesModel(ticker=data[0][0], quantity=data[0][1], price=float(data[0][2]))
+            return TableSecuritiesModel(ticker=data[0][0], quantity=data[0][1],
+                                        price=float(data[0][2]),
+                                        percentage_change=self.get_percentage_change(data[0][3], data[0][0], float(data[0][2])))
 
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
@@ -67,6 +92,17 @@ class TableSecuritiesService:
             queue = f"""SELECT close FROM {name} ORDER BY date DESC LIMIT 1"""
             cursor.execute(queue)
             price = float(cursor.fetchall()[0][0])
+
+            queue = f"""SELECT id, quantity FROM table_securities WHERE user_id = %s AND securitie_id = %s"""
+            cursor.execute(queue, (user_id, sequritie_id))
+            check = cursor.fetchall()
+
+            if check:
+                close_connection(connection)
+
+                check = self.Update(check[0][0], sequritie_id, check[0][1] + quantity)
+
+                return check
 
             queue = """INSERT INTO table_securities (user_id, securitie_id, quantity, price) VALUES
                     (%s, %s, %s, %s)"""
@@ -103,10 +139,10 @@ class TableSecuritiesService:
 
             queue = """UPDATE table_securities
                        SET 
-                       sequritie_id = %s
+                       securitie_id = %s,
                        quantity = %s
                        WHERE id = %s"""
-            cursor.fetchall(queue, (sequritie_id, quantity, id))
+            cursor.execute(queue, (sequritie_id, quantity, id))
             connection.commit()
 
             close_connection(connection)

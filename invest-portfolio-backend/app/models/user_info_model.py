@@ -8,6 +8,7 @@ class TableSecuritiesModel:
     ticker: str
     quantity: int
     price: float
+    percentage_change: float
 
     @property
     def sum_price(self) -> float:
@@ -18,7 +19,8 @@ class TableSecuritiesModel:
             'ticker': self.ticker,
             'quantity': self.quantity,
             'price': self.price,
-            'sum_price': self.sum_price
+            'sum_price': self.sum_price,
+            'percentage_change': self.percentage_change
         }
 
 
