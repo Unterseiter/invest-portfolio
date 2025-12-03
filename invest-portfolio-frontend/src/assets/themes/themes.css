@@ -4,7 +4,6 @@
 :root {
 
  /* ==================== FOOTER SPECIFIC ==================== */
- --bg-footer: #f8f9fa;
     
  /* ==================== LAYOUT ==================== */
  --footer-height: auto; /* Высота будет определяться контентом */
@@ -37,7 +36,7 @@
   /* Background colors */
   --bg-header: #f5f5f5;
   --bg-sidebar: #f0f0f0;
-  --bg-footer: #8a8a8a;
+  --bg-footer: #ececec;
   --bg-page: #ffffff;
   --bg-overlay: rgba(0, 0, 0, 0.1);
   --bg-modal: #ffffff;

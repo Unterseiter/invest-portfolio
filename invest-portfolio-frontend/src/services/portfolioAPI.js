@@ -1,5 +1,3 @@
-// frontend/src/services/portfolioAPI.js
-
 const API_BASE_URL = 'http://localhost:5000';
 
 const fetchAPI = async (endpoint, options = {}) => {
@@ -32,25 +30,22 @@ const fetchAPI = async (endpoint, options = {}) => {
 };
 
 export const PortfolioAPI = {
-  // Получить все записи портфеля (сортировка по дате)
+  // ========== PORTFOLIO METHODS ==========
   getPortfolios: async () => {
     const result = await fetchAPI('/api/portfolio');
     return result.data || [];
   },
 
-  // Получить портфель по user_id
   getPortfolioByUserId: async (userId) => {
     const result = await fetchAPI(`/api/portfolio/${userId}`);
     return result.data;
   },
 
-  // Получить портфель по дате
   getPortfolioByDate: async (date) => {
     const result = await fetchAPI(`/api/portfolio/${date}`);
     return result.data;
   },
 
-  // Создать новый портфель
   createPortfolio: async (date) => {
     const result = await fetchAPI('/api/portfolio', {
       method: 'POST',
@@ -59,7 +54,22 @@ export const PortfolioAPI = {
     return result;
   },
 
-  // Table_securities API
+  updatePortfolio: async (date) => {
+    const result = await fetchAPI('/api/portfolio', {
+      method: 'PUT',
+      body: JSON.stringify({ date }),
+    });
+    return result;
+  },
+
+  deletePortfolio: async (userId) => {
+    const result = await fetchAPI(`/api/portfolio/${userId}`, {
+      method: 'DELETE',
+    });
+    return result;
+  },
+
+  // ========== TABLE_SECURITIES METHODS ==========
   getTableSecurities: async (userId) => {
     const result = await fetchAPI(`/api/table_securities/all/${userId}`);
     return result.data || [];
@@ -70,15 +80,32 @@ export const PortfolioAPI = {
     return result.data;
   },
 
-  addTableSecurity: async (securitie_id, quantity) => {
-    const result = await fetchAPI('/api/table_securities/all', {
+  addTableSecurity: async (userId, securitie_id, quantity) => {
+    const result = await fetchAPI(`/api/table_securities/all/${userId}`, {
       method: 'POST',
       body: JSON.stringify({ securitie_id, quantity }),
     });
     return result;
   },
 
-  // Stock_names API
+  updateTableSecurity: async (id, securitie_id, quantity) => {
+    const result = await fetchAPI(`/api/table_securities/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ securitie_id, quantity }),
+    });
+    return result;
+  },
+
+  deleteTableSecurity: async (id) => {
+    // ВАЖНО: В роуте ошибка - используется method GET вместо DELETE
+    // Временно используем GET, но нужно поправить бэкенд
+    const result = await fetchAPI(`/api/table_securities/${id}`, {
+      method: 'GET', // Должно быть DELETE, но в роуте ошибка
+    });
+    return result;
+  },
+
+  // ========== STOCK_NAMES METHODS ==========
   getStockNames: async () => {
     const result = await fetchAPI('/api/stock_name');
     return result.data || [];
@@ -89,18 +116,52 @@ export const PortfolioAPI = {
     return result.data;
   },
 
-  // Table_stocks API
+  deleteStockName: async (name_id) => {
+    const result = await fetchAPI(`/api/stock_name/${name_id}`, {
+      method: 'DELETE',
+    });
+    return result;
+  },
+
+  // ========== TABLE_STOCKS METHODS ==========
   getTableStocks: async (name_id) => {
     const result = await fetchAPI(`/api/table_stock/${name_id}`);
     return result.data || [];
   },
 
-  // РЕАЛЬНЫЙ метод для истории портфеля
+  getTableStockById: async (name_id, record_id) => {
+    const result = await fetchAPI(`/api/table_stock/${name_id}/${record_id}`);
+    return result.data;
+  },
+
+  createTableStock: async (name, full_name, begin_date, end_date) => {
+    const result = await fetchAPI('/api/table_stock', {
+      method: 'POST',
+      body: JSON.stringify({ name, full_name, begin_date, end_date }),
+    });
+    return result;
+  },
+
+  updateTableStock: async (name) => {
+    const result = await fetchAPI('/api/table_stock', {
+      method: 'PUT',
+      body: JSON.stringify({ name }),
+    });
+    return result;
+  },
+
+  deleteTableStock: async (name_id) => {
+    const result = await fetchAPI(`/api/table_stock/${name_id}`, {
+      method: 'DELETE',
+    });
+    return result;
+  },
+
+  // ========== CUSTOM METHODS ==========
   getPortfolioHistory: async (period) => {
     try {
       console.log('Fetching REAL portfolio history for period:', period);
       
-      // Получаем все портфели из бэкенда
       const portfolios = await PortfolioAPI.getPortfolios();
       
       if (!portfolios || portfolios.length === 0) {
@@ -111,16 +172,12 @@ export const PortfolioAPI = {
         };
       }
 
-      // Преобразуем данные портфелей в формат для графика
       const chartData = portfolios.map(portfolio => ({
         timestamp: new Date(portfolio.date).getTime(),
         value: portfolio.total_value || 0
       }));
 
-      // Фильтруем данные по выбранному периоду
       const filteredData = filterDataByPeriod(chartData, period);
-      
-      // Сортируем по времени (от старых к новым)
       filteredData.sort((a, b) => a.timestamp - b.timestamp);
 
       console.log(`Loaded ${filteredData.length} real data points for ${period} period`);
@@ -137,10 +194,45 @@ export const PortfolioAPI = {
         message: error.message
       };
     }
+  },
+
+  // ========== ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ==========
+  // Получить полную информацию об активе (акция + котировки)
+  getAssetWithPrices: async (asset) => {
+    try {
+      if (!asset || !asset.securitie_id) {
+        throw new Error('Invalid asset data');
+      }
+
+      const stockData = await PortfolioAPI.getStockNameById(asset.securitie_id);
+      return {
+        ...asset,
+        stockData
+      };
+    } catch (error) {
+      console.error('Error loading asset with prices:', error);
+      throw error;
+    }
+  },
+
+  // Получить текущую цену актива
+  getCurrentPrice: async (securitie_id) => {
+    try {
+      const stockData = await PortfolioAPI.getStockNameById(securitie_id);
+      if (stockData && stockData.table && stockData.table.length > 0) {
+        // Последняя запись в таблице - самая свежая цена
+        const latestPrice = stockData.table[stockData.table.length - 1];
+        return latestPrice.close;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting current price:', error);
+      throw error;
+    }
   }
 };
 
-// Функция для фильтрации данных по периоду (РЕАЛЬНЫЕ ДАННЫЕ)
+// Функция для фильтрации данных по периоду
 const filterDataByPeriod = (data, period) => {
   if (!data || data.length === 0) return [];
   
@@ -149,27 +241,24 @@ const filterDataByPeriod = (data, period) => {
 
   switch (period) {
     case 'hour':
-      startTime = new Date(now.getTime() - 1 * 60 * 60 * 1000); // 1 час назад
+      startTime = new Date(now.getTime() - 1 * 60 * 60 * 1000);
       break;
     case 'day':
-      startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 1 день назад
+      startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
       break;
     case 'week':
-      startTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 1 неделя назад
+      startTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       break;
     case 'month':
-      startTime = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 дней назад
+      startTime = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
       break;
     case 'year':
-      startTime = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000); // 1 год назад
+      startTime = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
       break;
     default:
       return data;
   }
 
-  // Фильтруем данные, оставляя только те, что после startTime
   const filtered = data.filter(item => new Date(item.timestamp) >= startTime);
-  
-  // Если данных мало, возвращаем все доступные
   return filtered.length > 1 ? filtered : data;
 };

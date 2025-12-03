@@ -6,6 +6,18 @@ const AllActives = () => {
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newAsset, setNewAsset] = useState({
+    securitie_id: "",
+    quantity: ""
+  });
+  const [stockNames, setStockNames] = useState([]);
+  const [adding, setAdding] = useState(false);
+
+  // После загрузки stockNames добавь:
+console.log('Stock names:', stockNames);
+// После загрузки stockNames
+console.log('Available stocks:', stockNames);
 
   useEffect(() => {
     const loadAssets = async () => {
@@ -25,8 +37,13 @@ const AllActives = () => {
         
         // Получаем активы портфеля
         const tableSecurities = await PortfolioAPI.getTableSecurities(latestPortfolio.id || 1);
+        
+        // Получаем список всех акций для выпадающего списка
+        const stocks = await PortfolioAPI.getStockNames();
+        setStockNames(stocks || []);
+
         if (!tableSecurities || tableSecurities.length === 0) {
-          setError('Нет активов в портфеле');
+          setAssets([]);
           return;
         }
 
@@ -95,6 +112,47 @@ const AllActives = () => {
     loadAssets();
   }, []);
 
+  // Функция для добавления нового актива
+  const handleAddAsset = async () => {
+  if (!newAsset.securitie_id || !newAsset.quantity) {
+    alert("Пожалуйста, заполните все поля");
+    return;
+  }
+
+  try {
+    setAdding(true);
+    
+    // Получаем текущий портфель
+    const portfolios = await PortfolioAPI.getPortfolios();
+    if (!portfolios || portfolios.length === 0) {
+      throw new Error('Нет активного портфеля');
+    }
+
+    const latestPortfolio = portfolios[portfolios.length - 1];
+    
+    // ИСПРАВЛЕННЫЙ ВЫЗОВ - добавляем userId первым параметром
+    await PortfolioAPI.addTableSecurity(
+      latestPortfolio.id || 1,  // userId
+      parseInt(newAsset.securitie_id),
+      parseInt(newAsset.quantity)
+    );
+
+    // Обновляем список активов
+    const updatedSecurities = await PortfolioAPI.getTableSecurities(latestPortfolio.id || 1);
+    
+    // Перезагружаем данные
+    window.location.reload();
+    
+  } catch (error) {
+    console.error('Ошибка при добавлении актива:', error);
+    alert('Не удалось добавить актив: ' + error.message);
+  } finally {
+    setAdding(false);
+    setShowAddForm(false);
+    setNewAsset({ securitie_id: "", quantity: "" });
+  }
+};
+
   // Функция для форматирования изменения с цветом
   const formatChange = (change, changePercent) => {
     const isPositive = change >= 0;
@@ -112,10 +170,6 @@ const AllActives = () => {
 
   if (error) {
     return <div className="error">Ошибка: {error}</div>;
-  }
-
-  if (!assets || assets.length === 0) {
-    return <div className="no-data">Нет активов для отображения</div>;
   }
 
   // Рассчитываем общую стоимость
@@ -151,7 +205,68 @@ const AllActives = () => {
               <td>{formatChange(asset.change, asset.changePercent)}</td>
             </tr>
           ))}
+          
+          {/* Строка добавления нового актива */}
+          {showAddForm ? (
+            <tr className="add-asset-form">
+              <td>
+                <select
+                  value={newAsset.securitie_id}
+                  onChange={(e) => setNewAsset({...newAsset, securitie_id: e.target.value})}
+                  className="asset-select"
+                >
+                  <option value="">Выберите актив</option>
+                  {stockNames.map((stock) => (
+                    <option key={stock.id} value={stock.id}>
+                      {stock.name} ({stock.id})
+                    </option>
+                  ))}
+                </select>
+              </td>
+              <td>
+                <input
+                  type="number"
+                  value={newAsset.quantity}
+                  onChange={(e) => setNewAsset({...newAsset, quantity: e.target.value})}
+                  placeholder="Количество"
+                  className="quantity-input"
+                  min="1"
+                />
+              </td>
+              <td>-</td>
+              <td>-</td>
+              <td>
+                <div className="form-actions">
+                  <button 
+                    onClick={handleAddAsset}
+                    disabled={adding}
+                    className="save-btn"
+                  >
+                    {adding ? 'Добавление...' : 'Сохранить'}
+                  </button>
+                  <button 
+                    onClick={() => setShowAddForm(false)}
+                    className="cancel-btn"
+                  >
+                    Отмена
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ) : (
+            <tr className="add-asset-row">
+              <td colSpan="5">
+                <button 
+                  onClick={() => setShowAddForm(true)}
+                  className="add-asset-button"
+                >
+                  + Добавить актив
+                </button>
+              </td>
+            </tr>
+          )}
         </tbody>
+        
         {/* Подвал с итогами */}
         <tfoot>
           <tr className="total-row">
@@ -173,6 +288,7 @@ const AllActives = () => {
         </tfoot>
       </table>
     </div>
+    
   );
 };
 

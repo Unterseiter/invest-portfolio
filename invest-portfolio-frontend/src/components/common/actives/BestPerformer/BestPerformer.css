@@ -192,3 +192,104 @@
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
+
+/* BestPerformer.css - ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ ВЫПАДАЮЩЕГО СПИСКА */
+
+.best-performer-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.period-selector {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.period-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  background: var(--bg-surface-secondary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-sm);
+  color: var(--color-tertiary);
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.period-dropdown-trigger:hover {
+  background: var(--bg-surface-tertiary);
+  border-color: var(--border-primary);
+  color: var(--color-secondary);
+}
+
+.dropdown-arrow {
+  transition: transform var(--transition-normal);
+  color: var(--color-tertiary);
+}
+
+.dropdown-arrow.down {
+  transform: rotate(0deg);
+}
+
+.dropdown-arrow.up {
+  transform: rotate(180deg);
+}
+
+.period-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 2px;
+  background: var(--bg-surface-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-small);
+  z-index: 10;
+  min-width: 80px;
+  overflow: hidden;
+}
+
+.period-option {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  background: none;
+  border: none;
+  text-align: left;
+  color: var(--color-secondary);
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.period-option:hover {
+  background: var(--bg-surface-secondary);
+  color: var(--color-primary);
+}
+
+.period-option.active {
+  color: var(--color-accent);
+  background: var(--bg-surface-tertiary);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .period-dropdown-trigger {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+  
+  .period-option {
+    font-size: 11px;
+    padding: 8px 10px;
+  }
+}

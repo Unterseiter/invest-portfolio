@@ -1,0 +1,100 @@
+.asset-selector {
+    background: var(--bg-surface-primary);
+    border: 1px solid var(--border-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    transition: var(--transition-normal);
+    width: auto;
+}
+
+.asset-selector:hover {
+    border-color: var(--border-primary);
+    box-shadow: var(--shadow-small);
+}
+
+.selector-header {
+    margin-bottom: var(--spacing-md);
+}
+
+.selector-header h3 {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-secondary);
+    margin: 0;
+}
+
+.selector-content {
+    width: 100%;
+}
+
+.asset-select {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface-primary);
+    color: var(--color-primary);
+    font-size: var(--font-size-md);
+    font-family: var(--font-family-primary);
+    transition: var(--transition-fast);
+}
+
+.asset-select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-focus);
+}
+
+@media (max-width: 768px) {
+    .asset-selector {
+        padding: var(--spacing-md);
+    }
+    
+    .asset-select {
+        padding: var(--spacing-sm);
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* Стили для переключения режимов */
+.view-mode-selector {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-surface-secondary);
+    padding: 2px;
+    border-radius: var(--radius-sm);
+}
+
+.mode-btn {
+    padding: 4px 8px;
+    border: none;
+    background: transparent;
+    color: var(--color-secondary);
+    font-size: var(--font-size-xs);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition-normal);
+}
+
+.mode-btn:hover {
+    background: var(--bg-surface-tertiary);
+    color: var(--color-primary);
+}
+
+.mode-btn.active {
+    background: var(--color-accent);
+    color: white;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .view-mode-selector {
+        flex-direction: column;
+        gap: 2px;
+    }
+    
+    .mode-btn {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+}

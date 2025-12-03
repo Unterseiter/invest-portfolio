@@ -1,0 +1,99 @@
+.quantity-info {
+    background: var(--bg-surface-primary);
+    border: 1px solid var(--border-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: var(--transition-normal);
+}
+
+.quantity-info:hover {
+    border-color: var(--border-primary);
+    box-shadow: var(--shadow-small);
+}
+
+.metric-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.metric-title {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-secondary);
+    margin: 0;
+}
+
+.metric-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--spacing-md);
+}
+
+.quantity-value {
+    font-size: 1.8rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    font-family: var(--font-family-primary);
+    line-height: 1.2;
+    text-align: center;
+}
+
+.quantity-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xs) 0;
+}
+
+.detail-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-tertiary);
+    font-weight: var(--font-weight-regular);
+}
+
+.detail-value {
+    font-size: var(--font-size-xs);
+    color: var(--color-primary);
+    font-weight: var(--font-weight-medium);
+    font-family: var(--font-family-monospace);
+}
+
+.metric-footer {
+    margin-top: var(--spacing-md);
+}
+
+.allocation-info {
+    font-size: var(--font-size-xs);
+    color: var(--color-tertiary);
+    font-weight: var(--font-weight-regular);
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .quantity-info {
+        min-height: 160px;
+        padding: var(--spacing-md);
+    }
+    
+    .quantity-value {
+        font-size: 1.6rem;
+    }
+    
+    .detail-item {
+        padding: var(--spacing-xs) 0;
+    }
+}
