@@ -35,7 +35,7 @@
     font-weight: var(--font-weight-medium);
 }
 
-.quantity-input {
+.quantity-inputs {
     padding: var(--spacing-sm);
     border: 1px solid var(--border-primary);
     border-radius: var(--radius-sm);

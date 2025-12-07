@@ -261,10 +261,10 @@ const AllActives = () => {
   }
 
   // Рассчитываем общую стоимость
-  const totalValue = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
-  const totalPurchaseValue = assets.reduce((sum, asset) => sum + (asset.purchaseValue || 0), 0);
-  const totalChange = totalValue - totalPurchaseValue;
-  const totalChangePercent = totalPurchaseValue > 0 ? (totalChange / totalPurchaseValue) * 100 : 0;
+  // const totalValue = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
+  // const totalPurchaseValue = assets.reduce((sum, asset) => sum + (asset.purchaseValue || 0), 0);
+  // const totalChange = totalValue - totalPurchaseValue;
+  // const totalChangePercent = totalPurchaseValue > 0 ? (totalChange / totalPurchaseValue) * 100 : 0;
 
   return (
     <div className="table-container">

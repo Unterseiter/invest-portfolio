@@ -86,7 +86,7 @@ const BuyAsset = ({ asset }) => {
                         onChange={(e) => setQuantity(e.target.value)}
                         placeholder="Введите количество"
                         min="1"
-                        className="quantity-input"
+                        className="quantity-inputs"
                     />
                 </div>
                 

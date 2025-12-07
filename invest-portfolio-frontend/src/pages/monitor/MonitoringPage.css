@@ -7,24 +7,36 @@
     margin-bottom: var(--spacing-lg);
 }
 
-/* Новая сетка для трех компонентов */
+/* Ключевое изменение: задаем высоту для всей сетки */
 .main-action-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
-    align-items: start;
+    align-items: stretch; /* Это растягивает элементы по высоте */
+    min-height: 320px; /* Минимальная высота всей сетки */
+    padding-bottom: 40px;
 }
 
+/* CurrentPrice будет растягиваться на всю высоту */
 .price-section {
     grid-column: 1;
+    height: 100%;
 }
 
+/* Контейнер для кнопок также растягивается */
 .actions-section {
     grid-column: 2;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
+    height: 100%;
+}
+
+/* Дополнительно: убедимся что дочерние элементы также растягиваются */
+.actions-section > * {
+    flex: 1;
+    min-height: 0; /* Позволяет flex элементам сжиматься */
 }
 
 .chart-section {
@@ -74,13 +86,20 @@
     .main-action-grid {
         grid-template-columns: 1fr;
         gap: var(--spacing-md);
+        min-height: auto; /* На мобильных убираем фиксированную высоту */
     }
     
     .price-section {
         grid-column: 1;
+        height: auto;
     }
     
     .actions-section {
         grid-column: 1;
+        height: auto;
+    }
+    
+    .actions-section > * {
+        flex: none; /* На мобильных убираем flex растягивание */
     }
 }

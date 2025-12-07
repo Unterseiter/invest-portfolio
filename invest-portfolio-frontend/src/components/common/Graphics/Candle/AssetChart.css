@@ -419,3 +419,62 @@
     animation: none;
   }
 }
+
+/* Добавить в конец AssetChart.css */
+
+/* Стили для прогнозных свечей */
+.chart-tooltip.forecast-tooltip {
+    border-left: 4px solid var(--color-accent);
+}
+
+.forecast-badge {
+    background: var(--color-accent);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 8px;
+    text-transform: uppercase;
+}
+
+.forecast-info {
+    font-style: italic;
+    border-top: 1px dashed var(--border-tertiary);
+    padding-top: 4px;
+    margin-top: 4px;
+}
+
+/* Легенда для прогнозных свечей */
+.legend-color.forecast {
+    background: repeating-linear-gradient(
+        45deg,
+        var(--color-accent),
+        var(--color-accent) 2px,
+        transparent 2px,
+        transparent 4px
+    ) !important;
+    border-color: var(--color-accent) !important;
+}
+
+/* Стили для разделительной линии */
+.recharts-reference-line-line {
+    stroke-dasharray: 5 5;
+}
+
+/* Адаптивность для новых элементов */
+@media (max-width: 768px) {
+    .chart-info {
+        font-size: var(--font-size-xs);
+    }
+    
+    .chart-legend {
+        gap: var(--spacing-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-legend {
+        flex-wrap: wrap;
+    }
+}

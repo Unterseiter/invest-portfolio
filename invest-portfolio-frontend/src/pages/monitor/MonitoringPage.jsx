@@ -5,6 +5,7 @@ import CurrentPrice from '../../components/common/actives/CurrentPrice/CurrentPr
 import BuyAsset from '../../components/common/buttons/BuyAsset/BuyAsset';
 import ForecastButton from '../../components/common/buttons/ForecastButton/ForecastButton';
 import AssetChart from '../../components/common/Graphics/Candle/AssetChart';
+import ForecastAnalysis from '../../components/common/forecastAnalysis/ForecastAnalysis';
 import "./MonitoringPage.css";
 
 function MonitoringPage() {
@@ -12,6 +13,8 @@ function MonitoringPage() {
     const [portfolioTotal, setPortfolioTotal] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [forecastData, setForecastData] = useState(null);
+    const [chartHistoricalData, setChartHistoricalData] = useState([]);
 
     useEffect(() => {
         const loadPortfolioTotal = async () => {
@@ -37,6 +40,17 @@ function MonitoringPage() {
     const handleAssetSelect = (asset) => {
         console.log('Выбран актив:', asset);
         setSelectedAsset(asset);
+        setForecastData(null); // Сбрасываем прогноз при выборе нового актива
+    };
+
+    const handleForecastGenerated = (data) => {
+        console.log('Прогноз получен:', data);
+        setForecastData(data);
+    };
+
+    // Функция для получения исторических данных из графика
+    const handleChartDataLoaded = (data) => {
+        setChartHistoricalData(data);
     };
 
     if (loading) {
@@ -80,13 +94,26 @@ function MonitoringPage() {
                 </div>
                 <div className="actions-section">
                     <BuyAsset asset={selectedAsset} />
-                    <ForecastButton asset={selectedAsset} />
+                    <ForecastButton 
+                        asset={selectedAsset}
+                        onForecastGenerated={handleForecastGenerated}
+                        historicalData={chartHistoricalData}
+                    />
                 </div>
             </div>
 
             {/* График актива */}
             <div className="chart-section">
-                <AssetChart asset={selectedAsset} />
+                <AssetChart 
+                    asset={selectedAsset} 
+                    forecastData={forecastData}
+                    onDataLoaded={handleChartDataLoaded}
+                />
+            </div>
+            
+            {/* Аналитика прогноза */}
+            <div className="forecast-info">
+                <ForecastAnalysis forecastData={forecastData} />
             </div>
         </div>
     )
