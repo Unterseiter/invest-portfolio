@@ -41,6 +41,8 @@
     flex-direction: column;
     justify-content: center;
     gap: var(--spacing-sm);
+    align-items: baseline;
+
   }
   
   .total-value {

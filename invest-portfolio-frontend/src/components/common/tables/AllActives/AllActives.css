@@ -1,240 +1,572 @@
+/* ==================== TABLE CONTAINER ==================== */
+.table-container {
+    background: var(--bg-surface-primary);
+    border: 1px solid var(--border-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-small);
+    transition: all var(--transition-normal);
+}
+
+.table-container:hover {
+    border-color: var(--border-primary);
+    box-shadow: var(--shadow-medium);
+}
+
+/* ==================== TABLE HEADER ==================== */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-tertiary);
+}
+
+.table-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+    margin: 0;
+}
+
+/* ==================== ADD ASSET BUTTON ==================== */
+.add-asset-button {
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.add-asset-button:hover {
+    background: var(--color-accent-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-small);
+}
+
+.add-asset-button:active {
+    transform: translateY(0);
+}
+
+/* ==================== TABLE BASE STYLES ==================== */
 .table-allActives {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  background: var(--table-background);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--table-shadow);
-  font-family: var(--font-family-primary);
-  border: 1px solid var(--border-primary);
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--table-background);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: none;
+    font-family: var(--font-family-primary);
 }
 
 /* Заголовок таблицы */
 .table-allActives thead tr {
-  background: var(--table-header-background);
+    background: var(--table-header-background);
 }
 
 .table-allActives thead th {
-  color: var(--table-header-text);
-  font-weight: var(--header-font-weight);
-  padding: var(--header-padding);
-  border-bottom: 1px solid var(--table-header-border);
-  text-align: center;
-  font-size: var(--header-font-size);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+    color: var(--table-header-text);
+    font-weight: var(--header-font-weight);
+    padding: var(--header-padding);
+    border-bottom: 1px solid var(--table-header-border);
+    text-align: left;
+    font-size: var(--header-font-size);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.table-allActives thead th:last-child {
+    text-align: center;
+    width: 50px;
 }
 
 /* Строки таблицы */
 .table-allActives tbody tr {
-  background: var(--table-row-background);
-  transition: var(--row-transition);
+    background: var(--table-row-background);
+    transition: var(--row-transition);
 }
 
 .table-allActives tbody tr:nth-child(even) {
-  background: var(--table-row-even-background);
+    background: var(--table-row-even-background);
 }
 
 .table-allActives tbody tr:hover {
-  background: var(--table-row-hover-background);
-  transform: var(--row-hover-transform);
-  box-shadow: var(--table-row-hover-shadow);
-}
-
-.table-allActives tbody tr:nth-child(even):hover {
-  background: var(--table-row-hover-background);
+    background: var(--table-row-hover-background);
+    box-shadow: var(--table-row-hover-shadow);
 }
 
 .table-allActives tbody td {
-  padding: var(--cell-padding);
-  border-bottom: 1px solid var(--table-row-border);
-  color: var(--table-cell-text);
-  text-align: var(--cell-text-align);
-  vertical-align: middle;
-  font-size: var(--cell-font-size);
+    padding: var(--cell-padding);
+    border-bottom: 1px solid var(--table-row-border);
+    color: var(--table-cell-text);
+    vertical-align: middle;
+    font-size: var(--cell-font-size);
 }
 
-/* Последняя строка в tbody */
 .table-allActives tbody tr:last-child td {
-  border-bottom: none;
+    border-bottom: none;
 }
 
-/* Стили для отдельных колонок */
-.table-allActives td:first-child {
-  font-weight: var(--font-weight-medium);
-  color: var(--color-accent);
+/* Стили для столбцов */
+.text-center {
+    text-align: center;
 }
 
-.table-allActives td:nth-child(2),
-.table-allActives td:nth-child(3),
-.table-allActives td:nth-child(4) {
-  text-align: center;
-  font-family: var(--font-family-monospace);
-}
-
-.table-allActives td:last-child {
-  font-weight: var(--font-weight-medium);
-  text-align: right;
-}
-
-/* Закругленные углы для таблицы */
-.table-allActives thead tr:first-child th:first-child {
-  border-top-left-radius: var(--radius-lg);
-}
-
-.table-allActives thead tr:first-child th:last-child {
-  border-top-right-radius: var(--radius-lg);
-}
-
-.table-allActives tbody tr:last-child td:first-child {
-  border-bottom-left-radius: var(--radius-lg);
-}
-
-.table-allActives tbody tr:last-child td:last-child {
-  border-bottom-right-radius: var(--radius-lg);
-}
-
-/* Стили для положительных и отрицательных изменений */
-.change-positive {
-  color: var(--table-positive-color) !important;
-  font-weight: var(--font-weight-semibold);
-}
-
-.change-negative {
-  color: var(--table-negative-color) !important;
-  font-weight: var(--font-weight-semibold);
-}
-
-.change-neutral {
-  color: var(--table-neutral-color) !important;
+.text-right {
+    text-align: right;
 }
 
 /* Стили для информации об активе */
 .asset-info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
 }
 
 .asset-symbol {
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--cell-font-size);
-  color: var(--table-asset-symbol-color);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--cell-font-size);
+    color: var(--table-asset-symbol-color);
 }
 
 .asset-name {
-  font-size: calc(var(--cell-font-size) - 2px);
-  color: var(--table-asset-name-color);
+    font-size: calc(var(--cell-font-size) - 2px);
+    color: var(--table-asset-name-color);
 }
 
-/* Итоговая строка */
+/* ==================== DELETE BUTTON ==================== */
+.delete-button {
+    background: transparent;
+    color: var(--color-tertiary);
+    border: 1px solid var(--border-tertiary);
+    border-radius: var(--radius-sm);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all var(--transition-fast);
+    opacity: 0.6;
+}
+
+.delete-button:hover {
+    color: var(--color-error);
+    border-color: var(--color-error);
+    background: rgba(220, 53, 69, 0.1);
+    opacity: 1;
+}
+
+.delete-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.deleting-spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--color-tertiary);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ==================== ADD FORM STYLES ==================== */
+.add-form-row {
+    background: var(--bg-surface-secondary) !important;
+}
+
+.add-form-row:hover {
+    background: var(--bg-surface-secondary) !important;
+    box-shadow: none !important;
+}
+
+.asset-select,
+.quantity-input {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-secondary);
+    border-radius: var(--radius-sm);
+    background: var(--input-background);
+    color: var(--input-text);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-sm);
+    transition: border-color var(--transition-fast);
+}
+
+.asset-select:focus,
+.quantity-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(var(--color-accent-rgb), 0.1);
+}
+
+.quantity-input {
+    max-width: 100px;
+}
+
+.asset-select option {
+    background: var(--input-background);
+    color: var(--input-text);
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    justify-content: center;
+}
+
+.form-button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-sm);
+    transition: all var(--transition-fast);
+}
+
+.form-button--save {
+    background: var(--color-success);
+    color: white;
+}
+
+.form-button--save:hover:not(:disabled) {
+    background: var(--color-success);
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.form-button--cancel {
+    background: var(--color-tertiary);
+    color: white;
+}
+
+.form-button--cancel:hover:not(:disabled) {
+    background: var(--color-secondary);
+    transform: translateY(-1px);
+}
+
+.form-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ==================== TOTAL ROW ==================== */
 .table-allActives tfoot tr {
-  background: var(--table-footer-background);
-  border-top: 2px solid var(--table-footer-border);
+    background: var(--table-footer-background);
+    border-top: 2px solid var(--table-footer-border);
 }
 
 .table-allActives tfoot td {
-  padding: var(--footer-padding);
-  font-weight: var(--footer-font-weight);
-  color: var(--table-footer-text);
-  font-size: var(--footer-font-size);
+    padding: var(--footer-padding);
+    font-weight: var(--footer-font-weight);
+    color: var(--table-footer-text);
+    font-size: var(--footer-font-size);
 }
 
-/* Анимации */
-@keyframes fadeIn {
-  from {
-      opacity: 0;
-      transform: translateY(10px);
-  }
-  to {
-      opacity: 1;
-      transform: translateY(0);
-  }
+.total-label {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
 }
 
-.table-allActives tbody tr {
-  animation: fadeIn 0.3s ease-out;
+.total-value {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--spacing-xs);
 }
 
-/* Адаптивность */
+.total-amount {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+.total-change {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+/* ==================== CHANGE COLORS ==================== */
+.change-positive {
+    color: var(--table-positive-color) !important;
+}
+
+.change-negative {
+    color: var(--table-negative-color) !important;
+}
+
+.change-value {
+    font-weight: var(--font-weight-medium);
+}
+
+/* ==================== LOADING STATE ==================== */
+.table-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    background: var(--table-background);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--table-shadow);
+    border: 1px solid var(--border-secondary);
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-tertiary);
+    border-top-color: var(--color-accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: var(--spacing-md);
+}
+
+.loading-text {
+    color: var(--color-secondary);
+    font-size: var(--font-size-sm);
+}
+
+/* ==================== EMPTY STATE ==================== */
+.table-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    background: var(--table-background);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--table-shadow);
+    border: 1px solid var(--border-secondary);
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.7;
+}
+
+.empty-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    max-width: 300px;
+}
+
+.empty-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+}
+
+.empty-message {
+    font-size: var(--font-size-sm);
+    color: var(--color-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--spacing-md);
+}
+
+.empty-add-button {
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.empty-add-button:hover {
+    background: var(--color-accent-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-small);
+}
+
+/* ==================== ERROR STATE ==================== */
+.table-error {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: var(--table-background);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--table-shadow);
+    border: 1px solid var(--border-secondary);
+}
+
+.error-icon {
+    font-size: 24px;
+    margin-top: 2px;
+}
+
+.error-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.error-title {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-error);
+}
+
+.error-message {
+    font-size: var(--font-size-sm);
+    color: var(--color-secondary);
+    line-height: 1.5;
+}
+
+/* ==================== ADAPTIVE BREAKPOINTS ==================== */
+
 @media (max-width: 768px) {
-  .table-allActives {
-      font-size: 13px;
-      border-radius: var(--radius-md);
-  }
-  
-  .table-allActives thead th {
-      padding: var(--header-padding-mobile);
-      font-size: 12px;
-  }
-  
-  .table-allActives tbody td {
-      padding: var(--cell-padding-mobile);
-      font-size: 13px;
-  }
-  
-  .table-allActives tfoot td {
-      padding: var(--footer-padding-mobile);
-      font-size: 14px;
-  }
-  
-  .asset-symbol {
-      font-size: 13px;
-  }
-  
-  .asset-name {
-      font-size: 11px;
-  }
-  
-  /* Скрываем некоторые колонки на мобильных */
-  .table-allActives th:nth-child(3),
-  .table-allActives td:nth-child(3) {
-      display: none;
-  }
-  
-  /* Адаптивные углы */
-  .table-allActives thead tr:first-child th:first-child {
-      border-top-left-radius: var(--radius-md);
-  }
-  
-  .table-allActives thead tr:first-child th:last-child {
-      border-top-right-radius: var(--radius-md);
-  }
-  
-  .table-allActives tbody tr:last-child td:first-child {
-      border-bottom-left-radius: var(--radius-md);
-  }
-  
-  .table-allActives tbody tr:last-child td:last-child {
-      border-bottom-right-radius: var(--radius-md);
-  }
+    .table-container {
+        padding: var(--spacing-md);
+        border-radius: var(--radius-md);
+    }
+    
+    .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .table-title {
+        font-size: var(--font-size-md);
+    }
+    
+    .table-allActives {
+        font-size: 13px;
+    }
+    
+    .table-allActives thead th {
+        padding: var(--header-padding-mobile);
+        font-size: 11px;
+    }
+    
+    .table-allActives tbody td {
+        padding: var(--cell-padding-mobile);
+        font-size: 13px;
+    }
+    
+    .table-allActives tfoot td {
+        padding: var(--footer-padding-mobile);
+        font-size: 14px;
+    }
+    
+    /* Скрываем цену за штуку на мобильных */
+    .table-allActives th:nth-child(3),
+    .table-allActives td:nth-child(3) {
+        display: none;
+    }
+    
+    /* Компактные кнопки */
+    .add-asset-button,
+    .empty-add-button {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-button {
+        width: 100%;
+        height: 30px;
+    }
 }
 
-/* Состояние загрузки */
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-  font-size: 16px;
-  color: var(--loading-color);
-  background: var(--table-background);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--table-shadow);
+@media (max-width: 480px) {
+    .table-container {
+        padding: var(--spacing-sm);
+        border-radius: var(--radius-md);
+    }
+    
+    .table-allActives {
+        font-size: 12px;
+    }
+    
+    .delete-button {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+    }
+    
+    .quantity-input {
+        max-width: 80px;
+    }
 }
 
-/* Пустое состояние */
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--empty-state-color);
-  background: var(--table-background);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--table-shadow);
+/* ==================== DARK THEME ENHANCEMENTS ==================== */
+[data-theme="dark"] .table-container {
+    background: var(--bg-surface-secondary);
+    border-color: var(--border-primary);
 }
 
-.empty-state svg {
-  margin-bottom: var(--spacing-md);
-  opacity: 0.5;
+[data-theme="dark"] .add-asset-button:hover,
+[data-theme="dark"] .empty-add-button:hover {
+    background: var(--color-accent-hover);
+}
+
+[data-theme="dark"] .asset-select,
+[data-theme="dark"] .quantity-input {
+    background: var(--input-background);
+    border-color: var(--border-primary);
+    color: var(--input-text);
+}
+
+[data-theme="dark"] .delete-button:hover {
+    background: rgba(220, 53, 69, 0.2);
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+@media (prefers-reduced-motion: reduce) {
+    .table-allActives tbody tr,
+    .add-asset-button,
+    .delete-button,
+    .form-button {
+        transition: none;
+        transform: none !important;
+    }
+    
+    .loading-spinner,
+    .deleting-spinner {
+        animation-duration: 1.5s;
+    }
+}
+
+/* Focus styles */
+.add-asset-button:focus-visible,
+.asset-select:focus-visible,
+.quantity-input:focus-visible,
+.delete-button:focus-visible,
+.form-button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
 }
