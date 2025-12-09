@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { PortfolioAPI } from '../../../../services/portfolioAPI';
 import './TotalAssetValue.css';
+import { useCurrency } from '../../../../contexts/CurrencyContext';
 import ChartUp from "../../../../assets/Chart/ChartUp";
 
 const TotalAssetValue = ({ asset, portfolioTotal }) => {
     const [assetValue, setAssetValue] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { formatPrice } = useCurrency();
 
     useEffect(() => {
         const loadAssetValue = async () => {
@@ -104,7 +106,7 @@ const TotalAssetValue = ({ asset, portfolioTotal }) => {
             </div>
             
             <div className="metric-content">
-                <div className="metric-value">${totalValue.toLocaleString('ru-RU')}</div>
+                <div className="metric-value">{formatPrice(totalValue)}</div>
                 <div className="metric-subtitle">{percentage.toFixed(1)}% от портфеля</div>
             </div>
         </div>

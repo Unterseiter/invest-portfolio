@@ -1,5 +1,7 @@
+// AllActives.jsx
 import React, { useState, useEffect } from "react";
 import { PortfolioAPI } from "../../../../services/portfolioAPI";
+import { useCurrency } from "../../../../contexts/CurrencyContext";
 import "./AllActives.css";
 
 const AllActives = () => {
@@ -15,6 +17,8 @@ const AllActives = () => {
   const [adding, setAdding] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
+  const { formatPrice, convertPrice } = useCurrency();
+
   useEffect(() => {
     loadAssets();
   }, []);
@@ -24,39 +28,27 @@ const AllActives = () => {
       setLoading(true);
       setError(null);
       
-      // Получаем портфели
       const portfolios = await PortfolioAPI.getPortfolios();
       
-      let userId = 1; // По умолчанию
+      let userId = 1;
       if (portfolios && portfolios.length > 0) {
         const latestPortfolio = portfolios[portfolios.length - 1];
         userId = latestPortfolio.id || 1;
       }
       
-      // Получаем активы портфеля
       const tableSecurities = await PortfolioAPI.getTableSecurities(userId);
-      
-      // Получаем список всех акций для выпадающего списка
       const stocks = await PortfolioAPI.getStockNames();
       setStockNames(stocks || []);
 
-      // Если активов нет
       if (!tableSecurities || tableSecurities.length === 0) {
         setAssets([]);
         return;
       }
 
-      console.log('Загружено активов:', tableSecurities.length);
-      console.log('Данные активов:', tableSecurities);
-
-      // Обрабатываем активы с получением текущих цен
       const assetsWithDetails = [];
       
       for (const asset of tableSecurities) {
         try {
-          console.log('Обработка актива:', asset);
-          
-          // Определяем ID акции
           let securitieId = null;
           
           if (asset.securitie_id && asset.securitie_id !== 'undefined') {
@@ -64,7 +56,6 @@ const AllActives = () => {
           } else if (asset.id && asset.id !== 'undefined') {
             securitieId = asset.id;
           } else if (asset.ticker) {
-            // Если есть ticker, ищем в списке акций
             const foundStock = stocks?.find(s => s.name === asset.ticker);
             securitieId = foundStock?.id;
           }
@@ -74,25 +65,18 @@ const AllActives = () => {
             continue;
           }
           
-          console.log('Используем securitieId:', securitieId);
-          
-          // Получаем данные об акции с ценами
           let stockData = null;
           let currentPrice = 0;
           
           try {
             stockData = await PortfolioAPI.getStockNameById(securitieId);
-            console.log('Данные акции для ID', securitieId, ':', stockData);
             
-            // Извлекаем текущую цену
             if (stockData && stockData.table && stockData.table.length > 0) {
-              // Получаем последнюю запись с ценой закрытия
               const latestRecord = stockData.table[stockData.table.length - 1];
               currentPrice = latestRecord.close || latestRecord.close_price || 0;
-              console.log('Текущая цена для', securitieId, ':', currentPrice);
             }
           } catch (apiError) {
-            console.error(`Ошибка загрузки данных акции для ID ${securitieId}:`, apiError);
+            console.error(`Ошибка загрузки данных акции:`, apiError);
           }
           
           const purchasePrice = asset.price || 0;
@@ -103,7 +87,6 @@ const AllActives = () => {
           const change = currentValue - purchaseValue;
           const changePercent = purchaseValue > 0 ? (change / purchaseValue) * 100 : 0;
           
-          // Определяем название актива
           let symbol = '';
           let name = '';
           
@@ -130,16 +113,14 @@ const AllActives = () => {
             purchaseValue: purchaseValue,
             change: change,
             changePercent: changePercent,
-            tableSecurityId: asset.id // Для удаления
+            tableSecurityId: asset.id
           });
           
         } catch (err) {
           console.error(`Ошибка обработки актива:`, err);
-          console.error('Данные актива:', asset);
         }
       }
 
-      console.log('Обработанные активы:', assetsWithDetails);
       setAssets(assetsWithDetails);
 
     } catch (error) {
@@ -150,7 +131,6 @@ const AllActives = () => {
     }
   };
 
-  // Удаление актива
   const handleDeleteAsset = async (id) => {
     if (!window.confirm('Вы уверены, что хотите удалить этот актив?')) {
       return;
@@ -159,7 +139,7 @@ const AllActives = () => {
     try {
       setDeletingId(id);
       await PortfolioAPI.deleteTableSecurity(id);
-      await loadAssets(); // Перезагружаем данные
+      await loadAssets();
     } catch (error) {
       console.error('Ошибка при удалении актива:', error);
       alert('Не удалось удалить актив');
@@ -192,7 +172,7 @@ const AllActives = () => {
 
       setShowAddForm(false);
       setNewAsset({ securitie_id: "", quantity: "" });
-      await loadAssets(); // Перезагружаем данные
+      await loadAssets();
       
     } catch (error) {
       console.error('Ошибка при добавлении актива:', error);
@@ -205,20 +185,16 @@ const AllActives = () => {
   const formatChange = (change, changePercent) => {
     const isPositive = change >= 0;
     const sign = isPositive ? '+' : '';
+    const convertedChange = convertPrice(change);
+    
     return (
       <span className={`change-value ${isPositive ? 'change-positive' : 'change-negative'}`}>
-        {sign}{change.toLocaleString('ru-RU')} ₽ ({sign}{changePercent.toFixed(2)}%)
+        {sign}{Math.abs(convertedChange).toLocaleString('ru-RU', { minimumFractionDigits: 2 })}
+        {' '}({sign}{changePercent.toFixed(2)}%)
       </span>
     );
   };
 
-  // Форматирование цены
-  const formatPrice = (price) => {
-    if (!price || price === 0) return '-';
-    return `${price.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽`;
-  };
-
-  // Если загрузка
   if (loading) {
     return (
       <div className="table-loading">
@@ -228,7 +204,6 @@ const AllActives = () => {
     );
   }
 
-  // Если ошибка
   if (error) {
     return (
       <div className="table-error">
@@ -241,7 +216,6 @@ const AllActives = () => {
     );
   }
 
-  // Если нет активов
   if (assets.length === 0 && !showAddForm) {
     return (
       <div className="table-empty">
@@ -259,12 +233,6 @@ const AllActives = () => {
       </div>
     );
   }
-
-  // Рассчитываем общую стоимость
-  // const totalValue = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
-  // const totalPurchaseValue = assets.reduce((sum, asset) => sum + (asset.purchaseValue || 0), 0);
-  // const totalChange = totalValue - totalPurchaseValue;
-  // const totalChangePercent = totalPurchaseValue > 0 ? (totalChange / totalPurchaseValue) * 100 : 0;
 
   return (
     <div className="table-container">
@@ -292,7 +260,6 @@ const AllActives = () => {
           </tr>
         </thead>
         <tbody>
-          {/* Строка добавления нового актива */}
           {showAddForm && (
             <tr className="add-form-row">
               <td>
@@ -345,7 +312,6 @@ const AllActives = () => {
             </tr>
           )}
 
-          {/* Существующие активы */}
           {assets.map((asset) => (
             <tr key={asset.id} className={deletingId === asset.id ? 'deleting' : ''}>
               <td>

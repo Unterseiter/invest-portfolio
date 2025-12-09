@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { PortfolioAPI } from '../../../../services/portfolioAPI';
 import './PurchaseInfo.css';
 import ChartUp from "../../../../assets/Chart/ChartUp";
+import { useCurrency } from '../../../../contexts/CurrencyContext';
 
 const PurchaseInfo = ({ asset }) => {
     const [purchaseData, setPurchaseData] = useState(null);
     const [currentPrice, setCurrentPrice] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { formatPrice } = useCurrency();
 
     useEffect(() => {
         const loadPurchaseData = async () => {
@@ -142,7 +144,7 @@ const PurchaseInfo = ({ asset }) => {
             <div className="metric-content">
                 <div className="info-item">
                     <span className="info-label">Цена покупки:</span>
-                    <span className="info-value">${purchasePrice.toLocaleString('ru-RU')}</span>
+                    <span className="info-value">{formatPrice(purchaseData?.purchasePrice || 0)}</span>
                 </div>
                 
                 <div className="info-item">

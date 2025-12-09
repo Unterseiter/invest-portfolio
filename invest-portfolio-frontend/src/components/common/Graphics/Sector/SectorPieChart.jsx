@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { PortfolioAPI } from '../../../../services/portfolioAPI';
+import { useCurrency } from '../../../../contexts/CurrencyContext'; // ДОБАВИЛ
 import './SectorPieChart.css';
 import ChartUp from '../../../../assets/Chart/ChartUp.jsx';
 
@@ -37,6 +38,7 @@ const SectorPieChart = ({ height = 'auto', showLegend = true }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { formatPrice } = useCurrency(); // ДОБАВИЛ
 
   // Оптимизированный запрос данных
   useEffect(() => {
@@ -148,11 +150,13 @@ const SectorPieChart = ({ height = 'auto', showLegend = true }) => {
     return (
       <div className="custom-tooltip">
         <p className="tooltip__sector">{data.sector}</p>
-        <p className="tooltip__value">{data.value.toLocaleString('ru-RU')} ₽</p>
+        <p className="tooltip__value">
+          {formatPrice(data.value)} {/* ИСПРАВИЛ: убрал жесткие ₽ */}
+        </p>
         <p className="tooltip__percentage">{data.percentage.toFixed(1)}% портфеля</p>
       </div>
     );
-  }, []);
+  }, [formatPrice]); // ДОБАВИЛ зависимость
 
   const renderLegend = useCallback((value) => (
     <span className="legend-item">{value}</span>

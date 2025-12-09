@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { PortfolioAPI } from '../../../../services/portfolioAPI';
 import './QuantityInfo.css';
 import ChartUp from "../../../../assets/Chart/ChartUp";
+import { useCurrency } from '../../../../contexts/CurrencyContext';
 
 const QuantityInfo = ({ asset }) => {
     const [quantityData, setQuantityData] = useState(null);
     const [portfolioTotal, setPortfolioTotal] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { formatPrice } = useCurrency();
 
     useEffect(() => {
         const loadQuantityData = async () => {
@@ -125,11 +127,11 @@ const QuantityInfo = ({ asset }) => {
                 <div className="quantity-details">
                     <div className="detail-item">
                         <span className="detail-label">Цена покупки:</span>
-                        <span className="detail-value">${averagePrice.toLocaleString('ru-RU')}</span>
+                        <span className="detail-value">{formatPrice(averagePrice)}</span>
                     </div>
                     <div className="detail-item">
                         <span className="detail-label">Сумма покупки:</span>
-                        <span className="detail-value">${totalInvestment.toLocaleString('ru-RU')}</span>
+                        <span className="detail-value">{formatPrice(totalInvestment)}</span>
                     </div>
                 </div>
             </div>

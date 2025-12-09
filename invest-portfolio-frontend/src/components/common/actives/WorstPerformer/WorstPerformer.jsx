@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { PortfolioAPI } from '../../../../services/portfolioAPI';
 import './WorstPerformer.css';
 import ChartDown from '../../../../assets/Chart/ChartDown.jsx';
+import { useCurrency } from '../../../../contexts/CurrencyContext';
 
 const WorstPerformer = () => {
   const [worstAsset, setWorstAsset] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { formatPrice, formatChange } = useCurrency();
 
   useEffect(() => {
     const loadWorstPerformer = async () => {
@@ -122,7 +124,7 @@ const WorstPerformer = () => {
         <div className="asset-name">{worstAsset.name}</div>
         
         <div className={`performance-change ${isPositive ? 'positive' : 'negative'}`}>
-          {isPositive ? '+' : ''}{worstAsset.changePercent.toFixed(2)}%
+          {formatChange(worstAsset.change, worstAsset.changePercent, { showPercent: true, decimals: 2 })}
         </div>
       </div>
 
@@ -130,16 +132,16 @@ const WorstPerformer = () => {
         <div className="performance-details">
           <div className="detail-item">
             <span className="detail-label">Текущая цена:</span>
-            <span className="detail-value">{worstAsset.currentPrice.toLocaleString('ru-RU')} ₽</span>
+            <span className="detail-value">{formatPrice(worstAsset.currentPrice)}</span>
           </div>
           <div className="detail-item">
             <span className="detail-label">Цена покупки:</span>
-            <span className="detail-value">{worstAsset.purchasePrice.toLocaleString('ru-RU')} ₽</span>
+            <span className="detail-value">{formatPrice(worstAsset.purchasePrice)}</span>
           </div>
           <div className="detail-item">
             <span className="detail-label">Изменение:</span>
             <span className={`detail-value ${isPositive ? 'positive' : 'negative'}`}>
-              {isPositive ? '+' : ''}{worstAsset.change.toFixed(2)} ₽
+              {formatChange(worstAsset.change, worstAsset.changePercent, { showPercent: false })}
             </span>
           </div>
         </div>

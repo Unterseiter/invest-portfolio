@@ -1,5 +1,7 @@
+// PortfolioValue.jsx
 import React, { useState, useEffect } from "react";
 import { PortfolioAPI } from "../../../../services/portfolioAPI";
+import { useCurrency } from "../../../../contexts/CurrencyContext";
 import "./PortfolioValue.css";
 import ChartUp from "../../../../assets/Chart/ChartUp";
 import ChartDown from "../../../../assets/Chart/ChartDown";
@@ -8,6 +10,7 @@ const PortfolioValue = () => {
   const [portfolio, setPortfolio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { formatPrice, formatChange } = useCurrency();
 
   useEffect(() => {
     const loadPortfolio = async () => {
@@ -15,14 +18,11 @@ const PortfolioValue = () => {
         setLoading(true);
         setError(null);
         
-        // Получаем последний портфель из реального API
         const portfolios = await PortfolioAPI.getPortfolios();
         
         if (portfolios && portfolios.length > 0) {
-          // Берем самый последний портфель (сортировка по дате)
           const latestPortfolio = portfolios[portfolios.length - 1];
           
-          // Для демонстрации изменений - считаем разницу с предыдущим портфелем
           let dailyChange = 0;
           let dailyChangePercent = 0;
           
@@ -39,18 +39,17 @@ const PortfolioValue = () => {
           const portfolioData = {
             totalValue: latestPortfolio.total_value || 0,
             dailyChange: dailyChange,
-            dailyChangePercent: dailyChangePercent.toFixed(2),
+            dailyChangePercent: dailyChangePercent,
             date: latestPortfolio.date,
             totalStocks: latestPortfolio.total_stocks || 0
           };
           
           setPortfolio(portfolioData);
         } else {
-          // Если нет данных, создаем пустой портфель
           setPortfolio({
             totalValue: 0,
             dailyChange: 0,
-            dailyChangePercent: "0.00",
+            dailyChangePercent: 0,
             date: new Date().toISOString(),
             totalStocks: 0
           });
@@ -58,11 +57,10 @@ const PortfolioValue = () => {
       } catch (error) {
         console.error("Error loading portfolio:", error);
         setError(error.message);
-        // В случае ошибки используем данные по умолчанию
         setPortfolio({
           totalValue: 0,
           dailyChange: 0,
-          dailyChangePercent: "0.00",
+          dailyChangePercent: 0,
           date: new Date().toISOString(),
           totalStocks: 0
         });
@@ -100,7 +98,6 @@ const PortfolioValue = () => {
 
   const isPositive = portfolio.dailyChange >= 0;
 
-  // Форматируем дату обновления
   const formatUpdateDate = (dateString) => {
     try {
       const date = new Date(dateString);
@@ -132,18 +129,11 @@ const PortfolioValue = () => {
       </div>
       <div className="portfolio-content">
         <div className="total-value">
-          ${portfolio.totalValue.toLocaleString('ru-RU')}
+          {formatPrice(portfolio.totalValue)}
         </div>
 
         <div className={`change ${isPositive ? "positive" : "negative"}`}>
-          <span className="change-amount">
-            {isPositive && portfolio.dailyChange > 0 ? "+" : ""}
-            {portfolio.dailyChange.toLocaleString('ru-RU')}
-          </span>
-          <span className="change-percent">
-            ({isPositive && portfolio.dailyChangePercent > 0 ? "+" : ""}
-            {portfolio.dailyChangePercent}%)
-          </span>
+          {formatChange(portfolio.dailyChange, portfolio.dailyChangePercent)}
         </div>
       </div>
       <div className="portfolio-period">

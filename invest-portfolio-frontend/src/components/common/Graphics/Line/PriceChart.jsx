@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { PortfolioAPI } from '../../../../services/portfolioAPI';
+import { useCurrency } from '../../../../contexts/CurrencyContext'; // ДОБАВИЛ
 import "./PriceChart.css";
 import ChartUp from '../../../../assets/Chart/ChartUp';
 
@@ -18,6 +19,7 @@ const PortfolioChart = () => {
   const [period, setPeriod] = useState("day");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { formatPrice } = useCurrency(); // ДОБАВИЛ
 
   useEffect(() => {
     loadPortfolioData(period);
@@ -91,7 +93,7 @@ const PortfolioChart = () => {
     }
   };
 
-  // Кастомный тултип для графика
+  // Кастомный тултип для графика - ИСПРАВИЛ ИСПОЛЬЗОВАНИЕ formatPrice
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
@@ -100,12 +102,17 @@ const PortfolioChart = () => {
             {`${new Date(label).toLocaleString("ru-RU")}`}
           </p>
           <p className="tooltip-value">
-            {`$${payload[0].value.toLocaleString('ru-RU')}`}
+            {formatPrice(payload[0].value)} {/* ИСПРАВИЛ: убрал жесткий $ */}
           </p>
         </div>
       );
     }
     return null;
+  };
+
+  // Функция для форматирования оси Y - ДОБАВИЛ
+  const formatYAxis = (value) => {
+    return formatPrice(value); // Используем formatPrice вместо жесткого $
   };
 
   // Состояние загрузки
@@ -213,7 +220,7 @@ const PortfolioChart = () => {
               fontSize={12}
             />
             <YAxis
-              tickFormatter={(value) => `$${value.toLocaleString('ru-RU')}`}
+              tickFormatter={formatYAxis} /* ИСПРАВИЛ: убрал жесткий $ */
               domain={['dataMin - 1000', 'dataMax + 1000']}
               scale="linear"
               allowDataOverflow={false}

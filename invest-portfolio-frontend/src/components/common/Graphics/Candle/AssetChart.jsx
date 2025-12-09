@@ -10,10 +10,13 @@ import {
   ReferenceLine
 } from 'recharts';
 import { PortfolioAPI } from '../../../../services/portfolioAPI';
+import { useCurrency } from '../../../../contexts/CurrencyContext';
 import './AssetChart.css';
 
 // Компонент для кастомного тултипа
 const CustomTooltip = ({ active, payload, label }) => {
+  const { formatPrice } = useCurrency();
+  
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     const isGrowing = data.close >= data.open;
@@ -36,26 +39,26 @@ const CustomTooltip = ({ active, payload, label }) => {
         <div className="price-details">
           <div className="price-row">
             <span>Открытие:</span>
-            <span>${data.open?.toFixed(2)}</span>
+            <span>{formatPrice(data.open)}</span>
           </div>
           <div className="price-row">
             <span>Закрытие:</span>
             <span style={{ color: isGrowing ? '#00a86b' : '#ff4444' }}>
-              ${data.close?.toFixed(2)}
+              {formatPrice(data.close)}
             </span>
           </div>
           <div className="price-row">
             <span>Максимум:</span>
-            <span className="price-up">${data.high?.toFixed(2)}</span>
+            <span className="price-up">{formatPrice(data.high)}</span>
           </div>
           <div className="price-row">
             <span>Минимум:</span>
-            <span className="price-down">${data.low?.toFixed(2)}</span>
+            <span className="price-down">{formatPrice(data.low)}</span>
           </div>
           <div className="price-row">
             <span>Изменение:</span>
             <span style={{ color: isGrowing ? '#00a86b' : '#ff4444' }}>
-              {change >= 0 ? '+' : ''}{change.toFixed(2)} ({changePercent}%)
+              {change >= 0 ? '+' : ''}{formatPrice(change, { showSymbol: false })} ({changePercent}%)
             </span>
           </div>
           {isForecast && (
@@ -131,6 +134,7 @@ const AssetChart = ({ asset, forecastData }) => {
     const [period, setPeriod] = useState('1W');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { formatPrice, getCurrencySymbol } = useCurrency();
 
     useEffect(() => {
         const loadChartData = async () => {
@@ -476,7 +480,7 @@ const AssetChart = ({ asset, forecastData }) => {
                         />
                         <YAxis
                             domain={getYAxisDomain()}
-                            tickFormatter={(value) => `$${value.toFixed(2)}`}
+                            tickFormatter={formatPrice}
                             stroke="var(--color-tertiary)"
                             fontSize={12}
                             width={80}

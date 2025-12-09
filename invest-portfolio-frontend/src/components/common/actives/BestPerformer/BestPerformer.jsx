@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PortfolioAPI } from '../../../../services/portfolioAPI';
 import './BestPerformer.css';
 import ChartUp from '../../../../assets/Chart/ChartUp.jsx';
+import { useCurrency } from '../../../../contexts/CurrencyContext';
 
 const BestPerformer = () => {
   const [bestAsset, setBestAsset] = useState(null);
@@ -9,6 +10,7 @@ const BestPerformer = () => {
   const [error, setError] = useState(null);
   const [period, setPeriod] = useState('hour'); // 'hour' или 'day'
   const [showPeriodDropdown, setShowPeriodDropdown] = useState(false);
+  const { formatPrice, formatChange, getCurrencySymbol } = useCurrency();
 
   useEffect(() => {
     loadBestPerformer();
@@ -231,7 +233,7 @@ const BestPerformer = () => {
         <div className="asset-name">{bestAsset.name}</div>
         
         <div className={`performance-change ${isPositive ? 'positive' : 'negative'}`}>
-          {isPositive ? '+' : ''}{bestAsset.changePercent.toFixed(2)}%
+          {formatChange(bestAsset.change, bestAsset.changePercent, { showPercent: true, decimals: 2 })}
         </div>
       </div>
 
@@ -239,18 +241,18 @@ const BestPerformer = () => {
         <div className="performance-details">
           <div className="detail-item">
             <span className="detail-label">Текущая цена:</span>
-            <span className="detail-value">{bestAsset.currentPrice.toLocaleString('ru-RU')} ₽</span>
+            <span className="detail-value">{formatPrice(bestAsset.currentPrice)}</span>
           </div>
           <div className="detail-item">
             <span className="detail-label">
               {period === 'hour' ? 'Цена час назад:' : 'Цена вчера:'}
             </span>
-            <span className="detail-value">{bestAsset.previousPrice.toLocaleString('ru-RU')} ₽</span>
+            <span className="detail-value">{formatPrice(bestAsset.previousPrice)}</span>
           </div>
           <div className="detail-item">
             <span className="detail-label">Изменение:</span>
             <span className={`detail-value ${isPositive ? 'positive' : 'negative'}`}>
-              {isPositive ? '+' : ''}{bestAsset.change.toFixed(2)} ₽
+              {formatChange(bestAsset.change, bestAsset.changePercent, { showPercent: false })}
             </span>
           </div>
         </div>

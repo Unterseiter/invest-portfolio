@@ -11,6 +11,8 @@ import SettingsPage from './pages/settings/SettingsPage';
 import MonitoringPage from './pages/monitor/MonitoringPage';
 import FunctionalPage from './pages/functional/FunctionalPage';
 
+import { CurrencyProvider } from './contexts/CurrencyContext';
+
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [screenSize, setScreenSize] = useState('desktop');
@@ -58,18 +60,20 @@ function App() {
   const sidebarIsOpen = screenSize === 'desktop' ? true : isSidebarOpen;
 
   return (
+    <CurrencyProvider>
+
     <Router>
       <div className={`App ${sidebarIsOpen ? 'sidebar-open' : ''} screen-${screenSize}`}>
         <Header 
           isSidebarOpen={sidebarIsOpen}
           onToggleSidebar={toggleSidebar}
-        />
+          />
         
         <main className='App-body'>
           <Sidebar 
             isOpen={sidebarIsOpen}
             onClose={closeSidebar}
-          />
+            />
           <div className='main-content'>
             <Routes>
               <Route path='/' element={<HomePage />} />
@@ -83,6 +87,7 @@ function App() {
         <Footer />
       </div>
     </Router>
+    </CurrencyProvider>
   );
 }
 

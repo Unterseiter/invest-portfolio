@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { PortfolioAPI } from '../../../../services/portfolioAPI';
 import './CurrentPrice.css';
 import ChartUp from "../../../../assets/Chart/ChartUp";
+import { useCurrency } from '../../../../contexts/CurrencyContext';
 
 const CurrentPrice = ({ asset }) => {
     const [priceData, setPriceData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { formatPrice, formatChange, getCurrencySymbol } = useCurrency();
 
     useEffect(() => {
         const loadPriceData = async () => {
@@ -131,9 +133,9 @@ const CurrentPrice = ({ asset }) => {
             </div>
             
             <div className="metric-content">
-                <div className="metric-value">${currentPrice.toLocaleString('ru-RU')}</div>
+                <div className="metric-value">{formatPrice(priceData?.currentPrice || 0)}</div>
                 <div className={`price-change ${isPositive ? 'positive' : 'negative'}`}>
-                    {isPositive ? '+' : ''}{dailyChange.toFixed(2)} ({isPositive ? '+' : ''}{dailyChangePercent.toFixed(2)}%)
+                    {formatChange(priceData?.dailyChange || 0, priceData?.dailyChangePercent || 0)}
                 </div>
             </div>
 
