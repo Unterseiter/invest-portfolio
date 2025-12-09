@@ -85,12 +85,16 @@ class TableSecuritiesService:
             connection = db_connection()
             cursor = connection.cursor()
 
+            queue = """SELECT date FROM user_info WHERE id = %s"""
+            cursor.execute(queue, (user_id,))
+            date = cursor.fetchall()[0][0]
+
             queue = """SELECT name FROM stock_names WHERE name_id = %s"""
             cursor.execute(queue, (sequritie_id,))
             name = cursor.fetchall()[0][0]
 
-            queue = f"""SELECT close FROM {name} ORDER BY date DESC LIMIT 1"""
-            cursor.execute(queue)
+            queue = f"""SELECT close FROM {name} WHERE date <= %s ORDER BY date DESC LIMIT 1"""
+            cursor.execute(queue, (date,))
             price = float(cursor.fetchall()[0][0])
 
             queue = f"""SELECT id, quantity FROM table_securities WHERE user_id = %s AND securitie_id = %s"""
@@ -112,7 +116,7 @@ class TableSecuritiesService:
             close_connection(connection)
             return True
         except Exception as e:
-            print(f'Ошибка в сервисе: {e}')
+            print(f'Ошибка в сервисе 3: {e}')
             return False
 
     @classmethod
@@ -169,5 +173,5 @@ class TableSecuritiesService:
             return True
 
         except Exception as e:
-            print(f'Ошибка в сервисе: {e}')
+            print(f'Ошибка в сервисе 2: {e}')
             return False

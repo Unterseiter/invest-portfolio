@@ -39,7 +39,7 @@ def update_df(delimiter, name):
 def get_end_date(connection, name):
     cursor = connection.cursor()
 
-    queue = f"""SELECT CAST(date as DATE) FROM {name} ORDER BY id DESC LIMIT 1"""
+    queue = f"""SELECT CAST(`date` as DATE) FROM {name} ORDER BY `date` DESC LIMIT 1"""
     cursor.execute(queue)
     date = cursor.fetchall()[0][0]
 

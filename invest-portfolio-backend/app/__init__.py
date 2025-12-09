@@ -25,10 +25,12 @@ def create_app(config_class=Config):
     from app.routes.table_securities_route import api as tableSecuritiesApi
     from app.routes.table_stock_route import api as tableStockApi
     from app.routes.user_info_route import api as UserInfoApi
+    from app.routes.predict_route import api as PredictApi
 
     api.add_namespace(stockNameApi, path='/api')
     api.add_namespace(tableSecuritiesApi, path='/api')
     api.add_namespace(tableStockApi, path='/api')
     api.add_namespace(UserInfoApi, path='/api')
+    api.add_namespace(PredictApi, path='/api')
 
     return app

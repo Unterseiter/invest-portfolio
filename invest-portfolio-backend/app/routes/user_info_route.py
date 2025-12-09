@@ -7,6 +7,7 @@ api = Namespace('dti', description='Операции с портфелем')
 # Модели данных для Swagger
 user_info_model = api.model('UserInformation', {
     'date': fields.String(required=True, description='Дата последнего обновления портфеля'),
+    'new_date': fields.String(required=True, description='Новая дата'),
 })
 
 table_securities_model = api.model('TableSecurities', {
@@ -148,7 +149,7 @@ class UserInfo(Resource):
     def put(self):
         try:
             data = request.get_json()
-            success = UserService.Update(data['date'])
+            success = UserService.Update(data['date'], data['new_date'])
 
             if success:
                 return {

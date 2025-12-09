@@ -94,7 +94,7 @@ class TableSecurities(Resource):
     @api.doc('delete_one_table_securities')
     @api.response(200, 'Актив успешно удален')
     @api.response(404, 'Актив не найден')
-    def get(self, id):
+    def delete(self, id):
         try:
             check = TableSecuritiesService.Delete(id)
 

@@ -114,7 +114,6 @@ def create_records(connection, df, name):
             print(f"Доступные колонки: {list(df.columns)}")
             return False
 
-
         # Преобразуем дату в правильный формат
         df['date'] = pd.to_datetime(df['date'])
 
