@@ -21,9 +21,6 @@ class TrainModel:
         df = df.copy()
 
         x_data = DataProcessing().prepare_data(df)
-        x_data = DataProcessing().add_trend(x_data)
-        x_data.dropna()
-
         y_data = DataProcessing().add_target(x_data).values
 
         x_data = x_data.values

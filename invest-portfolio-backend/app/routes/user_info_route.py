@@ -28,10 +28,14 @@ class UserInfoById(Resource):
         try:
             data = UserService.GetOneById(user_id)
 
+            tickers = UserService.getTickerbest()
+
             if data:
                 return {
                     'success': True,
-                    'data': data.to_dict()
+                    'data': data.to_dict(),
+                    'best_ticker': tickers['best_ticker'],
+                    'worst_ticker': tickers['worst_ticker']
                 }, 200
 
             return {
@@ -101,7 +105,6 @@ class UserInfoByDate(Resource):
 
 @api.route('/portfolio')
 class UserInfo(Resource):
-
     @api.doc('post_user_info')
     @api.expect(user_info_model)
     @api.response(201, 'Портфель успешно создан')

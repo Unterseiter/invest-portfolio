@@ -23,7 +23,7 @@ class DataProcessing:
         # df['log_low'] = low / low_
         # df['log_high'] = high / high_
 
-        df['previous_close'] = df['close'].shift(1)
+        df['previous_close'] = df['close'].shift(-1)
 
         df['sma_20'] = talib.SMA(close, timeperiod=20)
 
@@ -31,6 +31,10 @@ class DataProcessing:
 
         # Volume indicators
         # df['volume_sma'] = talib.SMA(volume, timeperiod=20)
+
+        df['trend'] = self.prepare_trend(df, 1)
+
+        df['trend'] = df['trend'].shift(-1)
 
         # # MACD
         # macd, macdsignal, macdhist = talib.MACD(close)
@@ -72,10 +76,3 @@ class DataProcessing:
                 target.append(0)
 
         return np.array(target)
-
-    def add_trend(self, df: pd.DataFrame):
-        df = df.copy()
-
-        df['trend'] = self.prepare_trend(df, 1)
-        df['trend'] = df['trend'].shift(-1)
-        return df

@@ -1,6 +1,8 @@
 from app.models.user_info_model import TableSecuritiesModel, UserInfoModel
 from database.db_connection import db_connection, close_connection
 from app.services.table_securities_service import TableSecuritiesService
+from app.services.stock_names_service import StockNamesService
+
 from typing import List
 from datetime import timedelta, datetime
 
@@ -36,6 +38,58 @@ class UserService:
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
             return None
+
+    @classmethod
+    def getTickerbest(cls):
+        try:
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            names = StockNamesService.GetAllNames()
+
+            mx = {}
+            mm = {}
+
+            for i in names:
+                queue = f"SELECT close FROM {i.name} ORDER BY date DESC LIMIT 2;"
+                cursor.execute(queue)
+                closes = cursor.fetchall()
+
+                if not mx and not mm:
+                    mx = {
+                        'ticker_id': i.id,
+                        'name': i.name,
+                        'full_name': i.full_name,
+                        'price_change': float(closes[0][0] - closes[1][0])
+                    }
+                    mm = mx
+
+                if closes[0][0] - closes[1][0] > mx['price_change']:
+                    mx = {
+                        'ticker_id': i.id,
+                        'name': i.name,
+                        'full_name': i.full_name,
+                        'price_change': float(closes[0][0] - closes[1][0])
+                    }
+
+                elif closes[0][0] - closes[1][0] < mm['price_change']:
+                    mm = {
+                        'ticker_id': i.id,
+                        'name': i.name,
+                        'full_name': i.full_name,
+                        'price_change': float(closes[0][0] - closes[1][0])
+                    }
+
+            close_connection(connection)
+            return {
+                'best_ticker': mx,
+                'worst_ticker': mm
+            }
+
+        except Exception as e:
+            print('Ошибка в сервисе user_info:', e)
+            return None
+
 
     @classmethod
     def GetOneById(self, user_id) -> UserInfoModel:

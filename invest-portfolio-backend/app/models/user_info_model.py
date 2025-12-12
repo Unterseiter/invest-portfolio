@@ -9,6 +9,7 @@ class TableSecuritiesModel:
     quantity: int
     price: float
     percentage_change: float
+    price_change: float
 
     @property
     def sum_price(self) -> float:

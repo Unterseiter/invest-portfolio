@@ -11,13 +11,13 @@ class MlModelTrend:
     def create_model(self, l, w):
         input_layer = keras.Input(shape=(w, l, 1), name='input')
 
-        x = keras.layers.Rescaling(1./255)(input_layer)
-        x = keras.layers.Conv2D(32, 3, activation='relu')(x)
+        # x = keras.layers.Rescaling(1./255)(input_layer)
+        x = keras.layers.Conv2D(128, 3, activation='relu')(input_layer)
         x = keras.layers.MaxPooling2D()(x)
 
-        # x = keras.layers.Conv2D(32, 3, activation='relu')(x)
-        # x = keras.layers.MaxPooling2D()(x)
-        #
+        x = keras.layers.Conv2D(64, 3, activation='relu')(x)
+        x = keras.layers.MaxPooling2D()(x)
+
         # x = keras.layers.Conv2D(32, 3, activation='relu')(x)
         # x = keras.layers.MaxPooling2D()(x)
 

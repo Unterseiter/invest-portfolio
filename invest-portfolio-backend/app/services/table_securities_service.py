@@ -14,17 +14,14 @@ class TableSecuritiesService:
         cursor.execute(queue, (user_id,))
         date = cursor.fetchall()[0][0]
 
-        print(date)
-
         queue = f"""SELECT close FROM {ticker} WHERE date < %s
                     ORDER BY date DESC LIMIT 1"""
         cursor.execute(queue, (date,))
         close = cursor.fetchall()[0][0]
 
-        print(price, close)
         close_connection(connection)
 
-        return float(price / float(close) * 100)
+        return (1 - float(price / float(close))) * 100, (float(price) - float(close))
 
     @classmethod
     def GetAll(self, user_id) -> List[TableSecuritiesModel]:
@@ -47,7 +44,8 @@ class TableSecuritiesService:
                 ticker=data[row][0],
                 quantity=data[row][1],
                 price=float(data[row][2]),
-                percentage_change=self.get_percentage_change(user_id, data[row][0], float(data[row][2]))
+                percentage_change=self.get_percentage_change(user_id, data[row][0], float(data[row][2]))[0],
+                price_change=self.get_percentage_change(user_id, data[row][0], float(data[row][2]))[1]
             ) for row in range(len(data))]
         except Exception as e:
             print(f'Ошибка в сервисе: {e}')
