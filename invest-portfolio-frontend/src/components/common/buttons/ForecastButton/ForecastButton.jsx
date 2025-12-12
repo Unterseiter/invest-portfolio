@@ -1,31 +1,29 @@
 // ForecastButton.jsx
 import React, { useState } from 'react';
-import { ForecastAPI } from '../../../../test/forecastMockData'; // Или правильный путь
+import { PortfolioAPI } from '../../../../services/portfolioAPI';
 import './ForecastButton.css';
 
-const ForecastButton = ({ asset, onForecastGenerated, historicalData }) => {
+const ForecastButton = ({ asset, onForecastGenerated }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [forecastHours, setForecastHours] = useState(12);
     const [showHoursSelector, setShowHoursSelector] = useState(false);
     
-    const handleForecastClick = async () => {
-        if (!asset) {
+    const handleForecastClick = () => {
+        if (!asset || !asset.id) {
             alert('Пожалуйста, выберите актив');
             return;
         }
         
         if (showHoursSelector) {
-            // Если открыт селектор часов, закрываем его
             setShowHoursSelector(false);
             return;
         }
         
-        // Показываем селектор часов
         setShowHoursSelector(true);
     };
     
     const handleGenerateForecast = async () => {
-        if (!asset || forecastHours < 1 || forecastHours > 24) {
+        if (!asset || !asset.id || forecastHours < 1 || forecastHours > 24) {
             alert('Пожалуйста, выберите корректный период прогноза (1-24 часа)');
             return;
         }
@@ -34,25 +32,18 @@ const ForecastButton = ({ asset, onForecastGenerated, historicalData }) => {
             setIsLoading(true);
             setShowHoursSelector(false);
             
-            console.log(`Генерация прогноза для ${asset.symbol} на ${forecastHours} часов`);
+            // Получаем реальный прогноз
+            const forecast = await PortfolioAPI.getMLForecast(asset.id, forecastHours);
             
-            // Получаем прогноз
-            const result = await ForecastAPI.getForecast(asset, forecastHours, historicalData);
-            
-            if (result.success) {
-                // Передаем прогноз в родительский компонент
-                if (onForecastGenerated) {
-                    onForecastGenerated(result.data);
-                }
-                
-                // Показываем уведомление об успехе
-                alert(`Прогноз для ${asset.symbol} успешно сгенерирован на ${forecastHours} часов!`);
+            if (forecast && onForecastGenerated) {
+                onForecastGenerated(forecast);
+                alert(`Прогноз для ${asset.name} успешно сгенерирован!`);
             } else {
-                alert('Ошибка при генерации прогноза');
+                alert('Не удалось получить данные прогноза');
             }
         } catch (error) {
             console.error('Ошибка при получении прогноза:', error);
-            alert('Произошла ошибка при генерации прогноза. Попробуйте снова.');
+            alert(`Ошибка: ${error.message}`);
         } finally {
             setIsLoading(false);
         }
@@ -76,23 +67,18 @@ const ForecastButton = ({ asset, onForecastGenerated, historicalData }) => {
                     <button 
                         onClick={handleForecastClick}
                         className="forecast-btn"
-                        disabled={!asset || isLoading}
+                        disabled={!asset || !asset.id || isLoading}
                     >
                         {isLoading ? 'Загрузка...' : 'Сгенерировать прогноз'}
                     </button>
                     
                     <div className="forecast-info">
                         <p className="forecast-hint">
-                            {asset 
-                                ? `Получить прогноз по ${asset.symbol}` 
+                            {asset?.id 
+                                ? `Прогноз по ${asset.name}` 
                                 : 'Выберите актив для получения прогноза'
                             }
                         </p>
-                        {asset && (
-                            <p className="forecast-details">
-                                Прогноз будет сгенерирован на выбранное количество часов
-                            </p>
-                        )}
                     </div>
                 </>
             ) : (

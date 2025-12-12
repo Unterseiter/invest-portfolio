@@ -3,15 +3,14 @@
     border: 1px solid var(--border-secondary);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    min-height: 304px;
-    height: 100%; /* Это важно - занимает всю высоту родителя */
+    min-height: 200px;
+    /* height: 50%; Это важно - занимает всю высоту родителя */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     transition: var(--transition-normal);
 }
 
-/* Остальные стили остаются без изменений */
 .current-price:hover {
     border-color: var(--border-primary);
     box-shadow: var(--shadow-small);

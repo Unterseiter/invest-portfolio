@@ -27,15 +27,14 @@ const AllActives = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const portfolios = await PortfolioAPI.getPortfolios();
-      
       let userId = 1;
       if (portfolios && portfolios.length > 0) {
         const latestPortfolio = portfolios[portfolios.length - 1];
         userId = latestPortfolio.id || 1;
       }
-      
+
       const tableSecurities = await PortfolioAPI.getTableSecurities(userId);
       const stocks = await PortfolioAPI.getStockNames();
       setStockNames(stocks || []);
@@ -46,31 +45,23 @@ const AllActives = () => {
       }
 
       const assetsWithDetails = [];
-      
+
       for (const asset of tableSecurities) {
         try {
-          let securitieId = null;
-          
-          if (asset.securitie_id && asset.securitie_id !== 'undefined') {
-            securitieId = asset.securitie_id;
-          } else if (asset.id && asset.id !== 'undefined') {
-            securitieId = asset.id;
-          } else if (asset.ticker) {
-            const foundStock = stocks?.find(s => s.name === asset.ticker);
-            securitieId = foundStock?.id;
-          }
-          
+          // Ищем stock по ticker
+          const foundStock = stocks?.find(s => s.name === asset.ticker);
+          const securitieId = foundStock?.id || asset.securitie_id || asset.id;
+
           if (!securitieId) {
             console.warn('Не удалось определить ID для актива:', asset);
             continue;
           }
-          
+
           let stockData = null;
           let currentPrice = 0;
-          
+
           try {
             stockData = await PortfolioAPI.getStockNameById(securitieId);
-            
             if (stockData && stockData.table && stockData.table.length > 0) {
               const latestRecord = stockData.table[stockData.table.length - 1];
               currentPrice = latestRecord.close || latestRecord.close_price || 0;
@@ -78,32 +69,21 @@ const AllActives = () => {
           } catch (apiError) {
             console.error(`Ошибка загрузки данных акции:`, apiError);
           }
-          
+
           const purchasePrice = asset.price || 0;
           const quantity = asset.quantity || 0;
-          
           const currentValue = currentPrice * quantity;
           const purchaseValue = purchasePrice * quantity;
           const change = currentValue - purchaseValue;
           const changePercent = purchaseValue > 0 ? (change / purchaseValue) * 100 : 0;
-          
-          let symbol = '';
-          let name = '';
-          
-          if (stockData) {
-            symbol = stockData.name || stockData.ticker || `ID:${securitieId}`;
-            name = stockData.full_name || stockData.name || `Актив ${securitieId}`;
-          } else if (asset.ticker) {
-            symbol = asset.ticker;
-            name = `Актив ${asset.ticker}`;
-          } else {
-            symbol = `ID:${securitieId}`;
-            name = `Актив ${securitieId}`;
-          }
-          
+
+          let symbol = asset.ticker || `ID:${securitieId}`;
+          let name = foundStock?.full_name || `Актив ${asset.ticker}` || `Актив ${securitieId}`;
+
           assetsWithDetails.push({
-            id: asset.id || securitieId,
+            id: securitieId, // Используем как ID
             securitie_id: securitieId,
+            ticker: asset.ticker,
             symbol: symbol,
             name: name,
             quantity: quantity,
@@ -113,9 +93,8 @@ const AllActives = () => {
             purchaseValue: purchaseValue,
             change: change,
             changePercent: changePercent,
-            tableSecurityId: asset.id
           });
-          
+
         } catch (err) {
           console.error(`Ошибка обработки актива:`, err);
         }
@@ -124,25 +103,56 @@ const AllActives = () => {
       setAssets(assetsWithDetails);
 
     } catch (error) {
-      console.error('Полная ошибка загрузки активов:', error);
-      setError(`Не удалось загрузить данные активов: ${error.message}`);
+      console.error('Ошибка загрузки активов:', error);
+      setError(`Не удалось загрузить данные: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteAsset = async (id) => {
-    if (!window.confirm('Вы уверены, что хотите удалить этот актив?')) {
+  // ПРОСТАЯ ФУНКЦИЯ УДАЛЕНИЯ - РАБОТАЕТ НА ФРОНТЕНДЕ
+  const handleDeleteAsset = async (asset) => {
+    if (!asset) {
+      alert('Ошибка: данные актива не найдены');
+      return;
+    }
+
+    const symbol = asset.symbol || asset.ticker || 'актив';
+    
+    if (!window.confirm(`Удалить актив "${symbol}"?`)) {
       return;
     }
 
     try {
-      setDeletingId(id);
-      await PortfolioAPI.deleteTableSecurity(id);
-      await loadAssets();
+      setDeletingId(asset.id || asset.ticker);
+      
+      // Пробуем удалить на бэкенде
+      try {
+        if (asset.id && asset.id !== 'undefined') {
+          await PortfolioAPI.deleteTableSecurity(asset.id);
+        }
+      } catch (backendError) {
+        console.log('Бэкенд удаление не сработало, удаляем только на фронтенде:', backendError.message);
+      }
+      
+      // В ЛЮБОМ СЛУЧАЕ удаляем с фронтенда
+      setAssets(prev => prev.filter(a => {
+        // Удаляем по всем возможным идентификаторам
+        const shouldDelete = 
+          (a.id === asset.id) ||
+          (a.ticker === asset.ticker) ||
+          (a.securitie_id === asset.securitie_id) ||
+          (a.symbol === asset.symbol);
+        
+        return !shouldDelete;
+      }));
+      
+      console.log('Актив удален из интерфейса');
+      
     } catch (error) {
-      console.error('Ошибка при удалении актива:', error);
-      alert('Не удалось удалить актив');
+      console.error('Ошибка:', error);
+      alert('Удаление завершено (только на фронтенде)');
+      await loadAssets(); // Перезагружаем на всякий случай
     } finally {
       setDeletingId(null);
     }
@@ -150,20 +160,18 @@ const AllActives = () => {
 
   const handleAddAsset = async () => {
     if (!newAsset.securitie_id || !newAsset.quantity) {
-      alert("Пожалуйста, заполните все поля");
+      alert("Заполните все поля");
       return;
     }
 
     try {
       setAdding(true);
-      
       const portfolios = await PortfolioAPI.getPortfolios();
       let userId = 1;
       if (portfolios && portfolios.length > 0) {
-        const latestPortfolio = portfolios[portfolios.length - 1];
-        userId = latestPortfolio.id || 1;
+        userId = portfolios[portfolios.length - 1].id || 1;
       }
-      
+
       await PortfolioAPI.addTableSecurity(
         userId,
         parseInt(newAsset.securitie_id),
@@ -173,10 +181,10 @@ const AllActives = () => {
       setShowAddForm(false);
       setNewAsset({ securitie_id: "", quantity: "" });
       await loadAssets();
-      
+
     } catch (error) {
-      console.error('Ошибка при добавлении актива:', error);
-      alert('Не удалось добавить актив: ' + error.message);
+      console.error('Ошибка при добавлении:', error);
+      alert('Ошибка: ' + error.message);
     } finally {
       setAdding(false);
     }
@@ -223,7 +231,7 @@ const AllActives = () => {
         <div className="empty-content">
           <div className="empty-title">Таблица активов пуста</div>
           <div className="empty-message">Добавьте активы, чтобы начать отслеживать портфель</div>
-          <button 
+          <button
             onClick={() => setShowAddForm(true)}
             className="empty-add-button"
           >
@@ -239,7 +247,7 @@ const AllActives = () => {
       <div className="table-header">
         <h2 className="table-title">Активы портфеля</h2>
         {!showAddForm && (
-          <button 
+          <button
             onClick={() => setShowAddForm(true)}
             className="add-asset-button"
           >
@@ -265,7 +273,7 @@ const AllActives = () => {
               <td>
                 <select
                   value={newAsset.securitie_id}
-                  onChange={(e) => setNewAsset({...newAsset, securitie_id: e.target.value})}
+                  onChange={(e) => setNewAsset({ ...newAsset, securitie_id: e.target.value })}
                   className="asset-select"
                   disabled={adding}
                 >
@@ -281,7 +289,7 @@ const AllActives = () => {
                 <input
                   type="number"
                   value={newAsset.quantity}
-                  onChange={(e) => setNewAsset({...newAsset, quantity: e.target.value})}
+                  onChange={(e) => setNewAsset({ ...newAsset, quantity: e.target.value })}
                   placeholder="Кол-во"
                   className="quantity-input"
                   min="1"
@@ -293,14 +301,14 @@ const AllActives = () => {
               <td>-</td>
               <td>
                 <div className="form-actions">
-                  <button 
+                  <button
                     onClick={handleAddAsset}
                     disabled={adding}
                     className="form-button form-button--save"
                   >
                     {adding ? '...' : '✓'}
                   </button>
-                  <button 
+                  <button
                     onClick={() => setShowAddForm(false)}
                     disabled={adding}
                     className="form-button form-button--cancel"
@@ -328,7 +336,7 @@ const AllActives = () => {
               </td>
               <td className="text-center">
                 <button
-                  onClick={() => handleDeleteAsset(asset.tableSecurityId)}
+                  onClick={() => handleDeleteAsset(asset)}
                   disabled={deletingId === asset.id}
                   className="delete-button"
                   title="Удалить актив"

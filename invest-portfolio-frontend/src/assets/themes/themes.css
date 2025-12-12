@@ -2,24 +2,34 @@
 
 /* -----------------------= LIGHT THEME =---------------------------- */
 :root {
+  /* ==================== MODAL SPECIFIC ==================== */
+  --modal-overlay-bg: rgba(0, 0, 0, 0.85);
+  --warning-header-bg: linear-gradient(135deg, #ff4444, #ff6666);
+  --warning-accent-color: #cc0000;
+  --warning-text-light: #ffffff;
+  --checkbox-accent: #0066cc;
+  --accept-btn-gradient: linear-gradient(135deg, #00cc66, #00aa55);
+  --reject-btn-gradient: linear-gradient(135deg, #ff4444, #cc0000);
 
- /* ==================== FOOTER SPECIFIC ==================== */
-    
- /* ==================== LAYOUT ==================== */
- --footer-height: auto; /* Высота будет определяться контентом */
-  
+
+  /* ==================== FOOTER SPECIFIC ==================== */
+
+  /* ==================== LAYOUT ==================== */
+  --footer-height: auto;
+  /* Высота будет определяться контентом */
+
   /* ==================== BASE COLORS ==================== */
 
   --chart-color-1: #4285f4;
---chart-color-2: #34a853;
---chart-color-3: #fbbc04;
---chart-color-4: #ea4335;
---chart-color-5: #8b5cf6;
---chart-color-6: #06b6d4;
---chart-color-7: #84cc16;
---chart-color-8: #f59e0b;
---chart-color-9: #ef4444;
---chart-color-10: #6366f1;
+  --chart-color-2: #34a853;
+  --chart-color-3: #fbbc04;
+  --chart-color-4: #ea4335;
+  --chart-color-5: #8b5cf6;
+  --chart-color-6: #06b6d4;
+  --chart-color-7: #84cc16;
+  --chart-color-8: #f59e0b;
+  --chart-color-9: #ef4444;
+  --chart-color-10: #6366f1;
 
   --footer-height: 60px;
 
@@ -366,15 +376,15 @@
   --table-row-hover-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
   /* ==================== COMPONENT SPECIFIC ==================== */
-
+  
   /* Loading states */
   --loading-color: #9aa0a6;
   --loading-background: #363636;
-
+  
   /* Empty states */
   --empty-state-color: #9aa0a6;
   --empty-state-background: #363636;
-
+  
   /* Input fields */
   --input-background: #424242;
   --input-border: #5f6368;
@@ -382,12 +392,23 @@
   --input-placeholder: #80868b;
   --input-focus-background: #424242;
   --input-focus-border: #8ab4f8;
-
+  
   /* Cards */
   --card-background: #363636;
   --card-border: #5f6368;
   --card-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  
+
+
+  /* ==================== MODAL SPECIFIC ==================== */
+
+  --modal-overlay-bg: rgba(0, 0, 0, 0.9);
+  --warning-header-bg: linear-gradient(135deg, #dc2626, #ef4444);
+  --warning-accent-color: #b91c1c;
+  --warning-text-light: #f8fafc;
+  --checkbox-accent: #3b82f6;
+  --accept-btn-gradient: linear-gradient(135deg, #10b981, #059669);
+  --reject-btn-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+
 }
 
 /* -----------------------= CUSTOM THEME =---------------------------- */

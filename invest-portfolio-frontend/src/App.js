@@ -1,3 +1,4 @@
+// App.jsx
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 
@@ -12,10 +13,14 @@ import MonitoringPage from './pages/monitor/MonitoringPage';
 import FunctionalPage from './pages/functional/FunctionalPage';
 
 import { CurrencyProvider } from './contexts/CurrencyContext';
+import { ModalProvider, useModal } from './contexts/ModalContext';
+import WarningModal from './components/common/WarningModal/WarningModal';
 
-function App() {
+// Компонент с контентом приложения
+const AppContent = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [screenSize, setScreenSize] = useState('desktop');
+  const { showWarning, acceptWarning, rejectWarning } = useModal();
 
   // Определяем тип устройства
   useEffect(() => {
@@ -60,20 +65,28 @@ function App() {
   const sidebarIsOpen = screenSize === 'desktop' ? true : isSidebarOpen;
 
   return (
-    <CurrencyProvider>
-
-    <Router>
+    <>
+      {/* Модальное окно с предупреждением */}
+      {showWarning && (
+        <WarningModal
+          onAccept={acceptWarning}
+          onReject={rejectWarning}
+          licenseUrl="/user-agreement" // Замените на реальный URL
+        />
+      )}
+      
+      {/* Основной контент приложения */}
       <div className={`App ${sidebarIsOpen ? 'sidebar-open' : ''} screen-${screenSize}`}>
         <Header 
           isSidebarOpen={sidebarIsOpen}
           onToggleSidebar={toggleSidebar}
-          />
+        />
         
         <main className='App-body'>
           <Sidebar 
             isOpen={sidebarIsOpen}
             onClose={closeSidebar}
-            />
+          />
           <div className='main-content'>
             <Routes>
               <Route path='/' element={<HomePage />} />
@@ -86,8 +99,20 @@ function App() {
 
         <Footer />
       </div>
-    </Router>
-    </CurrencyProvider>
+    </>
+  );
+};
+
+// Главный компонент App с провайдерами
+function App() {
+  return (
+    <ModalProvider>
+      <CurrencyProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </CurrencyProvider>
+    </ModalProvider>
   );
 }
 

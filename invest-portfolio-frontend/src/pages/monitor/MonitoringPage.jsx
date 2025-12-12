@@ -21,7 +21,7 @@ function MonitoringPage() {
             try {
                 setLoading(true);
                 const portfolios = await PortfolioAPI.getPortfolios();
-                
+
                 if (portfolios && portfolios.length > 0) {
                     const latestPortfolio = portfolios[portfolios.length - 1];
                     setPortfolioTotal(latestPortfolio.total_value || 0);
@@ -77,43 +77,45 @@ function MonitoringPage() {
         );
     }
 
-    return (
+        return (
         <div className="monitoring-page">
-            {/* Селектор актива */}
-            <div className="monitoring-section">
-                <AssetSelector 
-                    onAssetSelect={handleAssetSelect}
-                    selectedAsset={selectedAsset}
-                />
-            </div>
-
-            {/* Три основных компонента */}
-            <div className="main-action-grid">
-                <div className="price-section">
-                    <CurrentPrice asset={selectedAsset} />
+            {/* Четыре компонента в две колонки */}
+            <div className="monitoring-container">
+                <div className="components-grid">
+                    <div className="grid-item">
+                        <AssetSelector
+                            onAssetSelect={handleAssetSelect}
+                            selectedAsset={selectedAsset}
+                        />
+                    </div>
+                    <div className="grid-item">
+                        <CurrentPrice asset={selectedAsset} />
+                    </div>
+                    <div className="grid-item">
+                        <BuyAsset asset={selectedAsset} />
+                    </div>
+                    <div className="grid-item">
+                        <ForecastButton
+                            asset={selectedAsset}
+                            onForecastGenerated={handleForecastGenerated}
+                            historicalData={chartHistoricalData}
+                        />
+                    </div>
                 </div>
-                <div className="actions-section">
-                    <BuyAsset asset={selectedAsset} />
-                    <ForecastButton 
+
+                {/* График актива */}
+                <div className="chart-section">
+                    <AssetChart
                         asset={selectedAsset}
-                        onForecastGenerated={handleForecastGenerated}
-                        historicalData={chartHistoricalData}
+                        forecastData={forecastData}
+                        onDataLoaded={handleChartDataLoaded}
                     />
                 </div>
-            </div>
 
-            {/* График актива */}
-            <div className="chart-section">
-                <AssetChart 
-                    asset={selectedAsset} 
-                    forecastData={forecastData}
-                    onDataLoaded={handleChartDataLoaded}
-                />
-            </div>
-            
-            {/* Аналитика прогноза */}
-            <div className="forecast-info">
-                <ForecastAnalysis forecastData={forecastData} />
+                {/* Аналитика прогноза */}
+                <div className="forecast-info">
+                    <ForecastAnalysis forecastData={forecastData} />
+                </div>
             </div>
         </div>
     )

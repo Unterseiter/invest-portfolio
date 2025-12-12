@@ -67,7 +67,7 @@ const BuyAsset = ({ asset }) => {
         return (
             <div className="buy-asset disabled">
                 <h3>Покупка актива</h3>
-                <p>Выберите актив для покупки</p>
+                <p>---------------------</p>
             </div>
         );
     }

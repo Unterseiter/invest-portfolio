@@ -72,7 +72,7 @@ const CurrentPrice = ({ asset }) => {
                     <h3 className="metric-title">Текущая цена</h3>
                 </div>
                 <div className="metric-content">
-                    <div className="no-asset-text">Выберите актив</div>
+                    <div className="no-asset-text">-------------------</div>
                 </div>
             </div>
         );

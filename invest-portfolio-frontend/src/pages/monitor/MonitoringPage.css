@@ -1,46 +1,56 @@
 .monitoring-page {
     padding: var(--spacing-lg);
     min-height: 100vh;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
-.monitoring-section {
-    margin-bottom: var(--spacing-lg);
-}
-
-/* Ключевое изменение: задаем высоту для всей сетки */
-.main-action-grid {
+/* Сетка для 4 компонентов в 2 колонки */
+.components-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
-    align-items: stretch; /* Это растягивает элементы по высоте */
-    min-height: 320px; /* Минимальная высота всей сетки */
-    padding-bottom: 40px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
-/* CurrentPrice будет растягиваться на всю высоту */
-.price-section {
-    grid-column: 1;
-    height: 100%;
-}
-
-/* Контейнер для кнопок также растягивается */
-.actions-section {
-    grid-column: 2;
+.grid-item {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
-    height: 100%;
+    min-height: 150px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
-/* Дополнительно: убедимся что дочерние элементы также растягиваются */
-.actions-section > * {
+/* Убедимся, что компоненты внутри занимают всю высоту, но не выходят за границы */
+.grid-item > * {
     flex: 1;
-    min-height: 0; /* Позволяет flex элементам сжиматься */
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Гарантируем, что компоненты адаптируются по ширине */
+.grid-item > *,
+.grid-item > * > * {
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .chart-section {
     margin-bottom: var(--spacing-lg);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.forecast-info {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 /* Стили для состояний загрузки и ошибок */
@@ -50,12 +60,15 @@
     justify-content: center;
     align-items: center;
     min-height: 60vh;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .loading-content,
 .error-content {
     text-align: center;
     padding: var(--spacing-xl);
+    max-width: 100%;
 }
 
 .error-content {
@@ -71,6 +84,7 @@
     border-radius: var(--radius-md);
     cursor: pointer;
     font-size: var(--font-size-sm);
+    max-width: 100%;
 }
 
 .retry-btn:hover {
@@ -81,25 +95,40 @@
 @media (max-width: 768px) {
     .monitoring-page {
         padding: var(--spacing-md);
+        max-width: 100vw;
+        overflow-x: hidden;
     }
     
-    .main-action-grid {
+    .components-grid {
         grid-template-columns: 1fr;
         gap: var(--spacing-md);
-        min-height: auto; /* На мобильных убираем фиксированную высоту */
+        max-width: 100%;
     }
     
-    .price-section {
-        grid-column: 1;
-        height: auto;
+    .grid-item {
+        min-height: 120px;
+        max-width: 100%;
     }
     
-    .actions-section {
-        grid-column: 1;
-        height: auto;
+    /* Гарантируем, что на мобильных компоненты не выходят за экран */
+    .grid-item > * {
+        max-width: 100vw;
+        overflow: hidden;
     }
-    
-    .actions-section > * {
-        flex: none; /* На мобильных убираем flex растягивание */
+}
+
+/* Дополнительные гарантии для предотвращения переполнения */
+@media (max-width: 1200px) {
+    .monitoring-page {
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+    }
+}
+
+/* Ограничение максимальной ширины для очень широких экранов */
+@media (min-width: 1600px) {
+    .monitoring-page {
+        max-width: 1600px;
+        margin: 0 auto;
     }
 }

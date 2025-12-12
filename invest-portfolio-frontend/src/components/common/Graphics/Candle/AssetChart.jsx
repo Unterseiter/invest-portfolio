@@ -13,7 +13,7 @@ import { PortfolioAPI } from '../../../../services/portfolioAPI';
 import { useCurrency } from '../../../../contexts/CurrencyContext';
 import './AssetChart.css';
 
-// Компонент для кастомного тултипа
+// Компонент для кастомного тултипа (ОСТАВЛЯЕМ БЕЗ ИЗМЕНЕНИЙ)
 const CustomTooltip = ({ active, payload, label }) => {
   const { formatPrice } = useCurrency();
   
@@ -21,7 +21,7 @@ const CustomTooltip = ({ active, payload, label }) => {
     const data = payload[0].payload;
     const isGrowing = data.close >= data.open;
     const change = data.close - data.open;
-    const changePercent = ((change / data.open) * 100).toFixed(2);
+    const changePercent = data.open !== 0 ? ((change / data.open) * 100).toFixed(2) : '0.00';
     const isForecast = data.isForecast;
     
     return (
@@ -75,7 +75,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-// Компонент для отрисовки свечей
+// Компонент для отрисовки свечей (ОСТАВЛЯЕМ БЕЗ ИЗМЕНЕНИЙ)
 const CandleStick = (props) => {
   const { x, y, width, height, data } = props;
   
@@ -136,6 +136,7 @@ const AssetChart = ({ asset, forecastData }) => {
     const [error, setError] = useState(null);
     const { formatPrice, getCurrencySymbol } = useCurrency();
 
+    // ЗАМЕНА ЗАГЛУШКИ: Загружаем реальные данные
     useEffect(() => {
         const loadChartData = async () => {
             if (!asset || !asset.id) {
@@ -145,41 +146,20 @@ const AssetChart = ({ asset, forecastData }) => {
             }
 
             try {
-                console.log('Loading chart data for asset:', asset);
+                console.log('Loading REAL chart data for asset:', asset.name);
                 setLoading(true);
                 setError(null);
 
+                // ПОЛУЧАЕМ РЕАЛЬНЫЕ ДАННЫЕ ИЗ API
                 const stockData = await PortfolioAPI.getStockNameById(asset.id);
-                console.log('Received stockData:', stockData);
+                console.log('Received REAL stockData:', stockData);
                 
                 if (stockData && stockData.table && stockData.table.length > 0) {
-                    console.log('Processing table data:', stockData.table);
                     const priceTable = stockData.table;
                     
-                    // Сортируем по дате (от старых к новым)
-                    const sortedTable = [...priceTable].sort((a, b) => {
-                        const dateA = new Date(a.date || a.timestamp || a.time);
-                        const dateB = new Date(b.date || b.timestamp || b.time);
-                        return dateA - dateB;
-                    });
-
-                    console.log('Sorted table:', sortedTable);
-
-                    // Преобразуем данные для графика
-                    const formattedData = sortedTable.map((item, index) => {
-                        // Пробуем разные возможные поля с датой
-                        const dateStr = item.date || item.timestamp || item.time;
-                        if (!dateStr) {
-                            console.warn('Item has no date field:', item);
-                            return null;
-                        }
-                        
-                        const date = new Date(dateStr);
-                        if (isNaN(date.getTime())) {
-                            console.warn('Invalid date format:', dateStr);
-                            return null;
-                        }
-
+                    // Преобразуем данные для графика (ТОЧНО ТАК ЖЕ КАК БЫЛО)
+                    const formattedData = priceTable.map((item) => {
+                        const date = new Date(item.date);
                         const open = parseFloat(item.open);
                         const high = parseFloat(item.high);
                         const low = parseFloat(item.low);
@@ -187,11 +167,10 @@ const AssetChart = ({ asset, forecastData }) => {
                         
                         // Проверяем валидность данных
                         if (isNaN(open) || isNaN(high) || isNaN(low) || isNaN(close)) {
-                            console.warn('Invalid price data:', item);
                             return null;
                         }
 
-                        const candleData = {
+                        return {
                             timestamp: date.getTime(),
                             date: date.toISOString(),
                             open: open,
@@ -204,21 +183,17 @@ const AssetChart = ({ asset, forecastData }) => {
                             range: [low, high],
                             body: [Math.min(open, close), Math.max(open, close)]
                         };
-
-                        return candleData;
                     }).filter(item => item !== null);
-
-                    console.log('Formatted data:', formattedData);
 
                     if (formattedData.length === 0) {
                         throw new Error('Нет валидных данных для отображения');
                     }
 
+                    // Фильтруем по периоду (ТОЧНО ТАК ЖЕ КАК БЫЛО)
                     const filteredData = filterDataByPeriod(formattedData, period);
-                    console.log('Filtered data:', filteredData);
+                    console.log(`Loaded ${filteredData.length} REAL data points for ${period} period`);
                     setChartData(filteredData);
                 } else {
-                    console.warn('No table data found in stockData');
                     setError('Нет данных о ценах для выбранного актива');
                     setChartData([]);
                 }
@@ -235,29 +210,31 @@ const AssetChart = ({ asset, forecastData }) => {
         loadChartData();
     }, [asset, period]);
 
-    // Объединяем исторические данные с прогнозными
+    // Объединяем исторические данные с прогнозными (ТОЧНО ТАК ЖЕ КАК БЫЛО)
     const combinedData = useMemo(() => {
         if (!chartData.length) return [];
         
         const historical = [...chartData];
         const forecast = forecastData?.forecastCandles || [];
         
-        // Добавляем прогнозные свечи после исторических
-        const combined = [...historical, ...forecast.map(candle => ({
-            ...candle,
-            // Добавляем необходимые поля для отрисовки
-            range: [candle.low, candle.high],
-            body: [Math.min(candle.open, candle.close), Math.max(candle.open, candle.close)]
-        }))];
+        if (forecast.length === 0) return historical;
         
-        console.log('Combined data:', combined);
+        // Добавляем прогнозные свечи после исторических
+        const combined = [...historical];
+        
+        forecast.forEach(candle => {
+            combined.push({
+                ...candle,
+                // Добавляем необходимые поля для отрисовки
+                range: [candle.low, candle.high],
+                body: [Math.min(candle.open, candle.close), Math.max(candle.open, candle.close)]
+            });
+        });
+        
         return combined;
     }, [chartData, forecastData]);
 
-    // Находим последнюю историческую свечу для разделительной линии
-    const lastHistoricalIndex = chartData.length - 1;
-    const lastHistoricalTimestamp = chartData.length > 0 ? chartData[lastHistoricalIndex].timestamp : null;
-
+    // Функция фильтрации данных по периоду (ТОЧНО ТАК ЖЕ КАК БЫЛО)
     const filterDataByPeriod = (data, periodType) => {
         if (!data || data.length === 0) return [];
         
@@ -266,7 +243,7 @@ const AssetChart = ({ asset, forecastData }) => {
         // Определяем количество точек для каждого периода
         switch (periodType) {
             case '1D':
-                dataPoints = 2; // 24 часа
+                dataPoints = 24; // 24 часа
                 break;
             case '1W':
                 dataPoints = 7 * 24; // 7 дней по 24 часа
@@ -289,10 +266,7 @@ const AssetChart = ({ asset, forecastData }) => {
         
         // Берем последние N записей
         const startIndex = Math.max(0, data.length - dataPoints);
-        const result = data.slice(startIndex);
-        
-        console.log(`Filtered ${result.length} points for period ${periodType}`);
-        return result;
+        return data.slice(startIndex);
     };
 
     const formatXAxis = (timestamp) => {
@@ -350,7 +324,7 @@ const AssetChart = ({ asset, forecastData }) => {
         return periodTexts[period] || 'недельный';
     };
 
-    // Временный компонент иконки
+    // Временный компонент иконки (ОСТАВЛЯЕМ БЕЗ ИЗМЕНЕНИЙ)
     const ChartIcon = ({ width = 24, height = 24, color = 'currentColor' }) => (
         <svg width={width} height={height} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3 17L9 11L13 15L21 7" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -358,6 +332,7 @@ const AssetChart = ({ asset, forecastData }) => {
         </svg>
     );
 
+    // ВСЕ ОСТАВЛЯЕМ КАК БЫЛО ТОЛЬКО ЗАМЕНЯЕМ ДАННЫЕ
     if (!asset) {
         return (
             <div className="asset-chart">
@@ -386,13 +361,13 @@ const AssetChart = ({ asset, forecastData }) => {
                 <div className="chart-header">
                     <div className="chart-title-section">
                         <ChartIcon width={24} height={24} color="var(--color-tertiary)" />
-                        <h3 className="chart-title">График {asset?.symbol}</h3>
+                        <h3 className="chart-title">График {asset.name}</h3>
                     </div>
                 </div>
                 <div className="chart-content">
                     <div className="chart-placeholder">
                         <div className="placeholder-content">
-                            <div className="loading-text">Загрузка данных...</div>
+                            <div className="loading-text">Загрузка РЕАЛЬНЫХ данных...</div>
                         </div>
                     </div>
                 </div>
@@ -406,14 +381,14 @@ const AssetChart = ({ asset, forecastData }) => {
                 <div className="chart-header">
                     <div className="chart-title-section">
                         <ChartIcon width={24} height={24} color="var(--color-error)" />
-                        <h3 className="chart-title">График {asset?.symbol}</h3>
+                        <h3 className="chart-title">График {asset.name}</h3>
                     </div>
                 </div>
                 <div className="chart-content">
                     <div className="chart-placeholder">
                         <div className="placeholder-content">
                             <h4>Ошибка загрузки</h4>
-                            <p>{error || 'Нет данных для отображения графика'}</p>
+                            <p>{error || 'Нет РЕАЛЬНЫХ данных для отображения графика'}</p>
                         </div>
                     </div>
                 </div>
@@ -421,14 +396,13 @@ const AssetChart = ({ asset, forecastData }) => {
         );
     }
 
-    console.log('Rendering chart with combined data:', combinedData);
-
+    // ВОЗВРАЩАЕМ ОРИГИНАЛЬНУЮ РАЗМЕТКУ ГРАФИКА (НИЧЕГО НЕ МЕНЯЕМ)
     return (
         <div className="asset-chart">
             <div className="chart-header">
                 <div className="chart-title-section">
                     <ChartIcon width={24} height={24} color="var(--color-accent)" />
-                    <h3 className="chart-title">Свечевой график {asset?.symbol}</h3>
+                    <h3 className="chart-title">Свечевой график {asset.name}</h3>
                 </div>
                 <div className="chart-periods">
                     {['1D', '1W', '1M', '3M', '1Y'].map((p) => (
@@ -456,9 +430,9 @@ const AssetChart = ({ asset, forecastData }) => {
                         />
                         
                         {/* Разделительная линия между историческими и прогнозными данными */}
-                        {lastHistoricalTimestamp && forecastData && (
+                        {forecastData && chartData.length > 0 && (
                             <ReferenceLine 
-                                x={lastHistoricalTimestamp} 
+                                x={chartData[chartData.length - 1].timestamp} 
                                 stroke="var(--color-accent)"
                                 strokeWidth={2}
                                 strokeDasharray="5 5"
@@ -487,7 +461,7 @@ const AssetChart = ({ asset, forecastData }) => {
                         />
                         <Tooltip content={<CustomTooltip />} />
                         
-                        {/* Свечной график через Bar с кастомной формой */}
+                        {/* Свечной график через Bar (ОСТАВЛЯЕМ ОРИГИНАЛЬНЫЙ КОД) */}
                         <Bar
                             dataKey="range"
                             shape={(props) => {

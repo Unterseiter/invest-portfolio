@@ -1,13 +1,56 @@
 import React from 'react';
 import './ForecastAnalysis.css';
 
-const ForecastAnalysis = ({ forecastData }) => {
+const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
+    if (loading) {
+        return (
+            <div className="forecast-analysis">
+                <div className="analysis-header">
+                    <div className="title-section">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19Z" fill="var(--color-accent)"/>
+                            <path d="M7 12H9V17H7V12ZM11 7H13V17H11V7ZM15 10H17V17H15V10Z" fill="var(--color-accent)"/>
+                        </svg>
+                        <h3 className="analysis-title">Аналитика прогноза</h3>
+                    </div>
+                </div>
+                <div className="analysis-placeholder">
+                    <div className="placeholder-content">
+                        <h4>Загрузка анализа...</h4>
+                        <p>Подождите, идет обработка данных ML модели</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    
+    if (error) {
+        return (
+            <div className="forecast-analysis">
+                <div className="analysis-header">
+                    <div className="title-section">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="var(--color-error)"/>
+                        </svg>
+                        <h3 className="analysis-title">Ошибка анализа</h3>
+                    </div>
+                </div>
+                <div className="analysis-placeholder">
+                    <div className="placeholder-content">
+                        <h4>Ошибка загрузки</h4>
+                        <p>{error}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    
     if (!forecastData) {
         return null;
     }
-
+    
     const { analysis, statistics, forecastHours } = forecastData;
-    const { marketSignal, modelConfidence, modelAgreement, volatility, recommendation } = analysis;
+    const { marketSignal, modelConfidence, volatility, recommendation } = analysis;
 
     // Функция для получения цвета в зависимости от значения
     const getConfidenceColor = (value) => {
@@ -80,77 +123,41 @@ const ForecastAnalysis = ({ forecastData }) => {
                         </div>
                     </div>
 
-                    {/* 2. Надежность моделей */}
+                    {/* 2. Надежность модели */}
                     <div className="analysis-card confidence-card">
                         <div className="card-header">
-                            <h4 className="card-title">Надежность моделей</h4>
+                            <h4 className="card-title">Надежность модели</h4>
                             <div className="card-subtitle">Уверенность в прогнозе</div>
                         </div>
                         <div className="card-content">
-                            <div className="confidence-models">
-                                <div className="model-confidence">
-                                    <div className="model-name">LSTM Neural Network</div>
-                                    <div className="confidence-bar">
-                                        <div 
-                                            className="confidence-fill"
-                                            style={{
-                                                width: `${modelConfidence.model1}%`,
-                                                backgroundColor: getConfidenceColor(modelConfidence.model1)
-                                            }}
-                                        />
-                                    </div>
-                                    <div className="confidence-value" style={{ color: getConfidenceColor(modelConfidence.model1) }}>
+                            <div className="confidence-model">
+                                <div className="model-info">
+                                    <div className="model-name">Модель чертолета</div>
+                                    <div className="model-value" style={{ color: getConfidenceColor(modelConfidence.model1) }}>
                                         {modelConfidence.model1}%
                                     </div>
                                 </div>
-                                <div className="model-confidence">
-                                    <div className="model-name">Random Forest</div>
-                                    <div className="confidence-bar">
-                                        <div 
-                                            className="confidence-fill"
-                                            style={{
-                                                width: `${modelConfidence.model2}%`,
-                                                backgroundColor: getConfidenceColor(modelConfidence.model2)
-                                            }}
-                                        />
-                                    </div>
-                                    <div className="confidence-value" style={{ color: getConfidenceColor(modelConfidence.model2) }}>
-                                        {modelConfidence.model2}%
-                                    </div>
+                                <div className="confidence-bar-container">
+                                    <div 
+                                        className="confidence-bar"
+                                        style={{
+                                            width: `${modelConfidence.model1}%`,
+                                            backgroundColor: getConfidenceColor(modelConfidence.model1)
+                                        }}
+                                    />
                                 </div>
                             </div>
-                            <div className="average-confidence">
-                                <span className="average-label">Средняя уверенность:</span>
-                                <span className="average-value" style={{ color: getConfidenceColor(modelConfidence.average) }}>
+                            
+                            <div className="confidence-summary">
+                                <span className="summary-label">Уверенность прогноза:</span>
+                                <span className="summary-value" style={{ color: getConfidenceColor(modelConfidence.average) }}>
                                     {modelConfidence.average}%
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    {/* 3. Согласованность моделей */}
-                    <div className="analysis-card agreement-card">
-                        <div className="card-header">
-                            <h4 className="card-title">Согласованность моделей</h4>
-                            <div className="card-subtitle">Совпадение прогнозов</div>
-                        </div>
-                        <div className="card-content">
-                            <div className="agreement-indicator">
-                                <div className={`agreement-status ${modelAgreement === 'Согласованы' ? 'agreed' : 'disagreed'}`}>
-                                    {modelAgreement === 'Согласованы' ? '✓' : '✗'}
-                                </div>
-                                <div className="agreement-text">{modelAgreement}</div>
-                            </div>
-                            <div className="agreement-details">
-                                {modelAgreement === 'Согласованы' 
-                                    ? 'Обе модели сходятся в прогнозе'
-                                    : 'Модели расходятся в прогнозах. Требуется осторожность'
-                                }
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* 4. Волатильность прогноза */}
+                    {/* 3. Волатильность прогноза */}
                     <div className="analysis-card volatility-card">
                         <div className="card-header">
                             <h4 className="card-title">Волатильность прогноза</h4>
@@ -173,7 +180,7 @@ const ForecastAnalysis = ({ forecastData }) => {
                         </div>
                     </div>
 
-                    {/* 5. Рекомендация к действию */}
+                    {/* 4. Рекомендация к действию */}
                     <div className="analysis-card recommendation-card">
                         <div className="card-header">
                             <h4 className="card-title">Рекомендация к действию</h4>
@@ -197,11 +204,17 @@ const ForecastAnalysis = ({ forecastData }) => {
                                     <span className="detail-label">Оптимальный вход:</span>
                                     <span className="detail-value">В течение 1-2 часов</span>
                                 </div>
+                                <div className="detail-item">
+                                    <span className="detail-label">Уровень риска:</span>
+                                    <span className="detail-value" style={{ color: getVolatilityColor(volatility.value) }}>
+                                        {volatility.level}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* 6. Статистика прогноза */}
+                    {/* 5. Статистика прогноза - растягиваем на 2 колонки */}
                     <div className="analysis-card stats-card">
                         <div className="card-header">
                             <h4 className="card-title">Статистика прогноза</h4>
@@ -213,35 +226,35 @@ const ForecastAnalysis = ({ forecastData }) => {
                                     <div className="stat-value" style={{ color: 'var(--color-success)' }}>
                                         {statistics.bullishCandles}
                                     </div>
-                                    <div className="stat-label">Ростовых</div>
+                                    <div className="stat-label">Ростовых свечей</div>
                                 </div>
                                 <div className="stat-item">
                                     <div className="stat-value" style={{ color: 'var(--color-error)' }}>
                                         {statistics.bearishCandles}
                                     </div>
-                                    <div className="stat-label">Падающих</div>
+                                    <div className="stat-label">Падающих свечей</div>
                                 </div>
                                 <div className="stat-item">
                                     <div className="stat-value" style={{ color: 'var(--color-warning)' }}>
                                         {statistics.neutralCandles}
                                     </div>
-                                    <div className="stat-label">Нейтральных</div>
+                                    <div className="stat-label">Нейтральных свечей</div>
                                 </div>
                                 <div className="stat-item">
                                     <div className="stat-value" style={{ color: 'var(--color-success)' }}>
                                         +{statistics.maxGain}%
                                     </div>
-                                    <div className="stat-label">Макс. рост</div>
+                                    <div className="stat-label">Максимальный рост</div>
                                 </div>
                                 <div className="stat-item">
                                     <div className="stat-value" style={{ color: 'var(--color-error)' }}>
                                         {statistics.maxLoss}%
                                     </div>
-                                    <div className="stat-label">Макс. падение</div>
+                                    <div className="stat-label">Максимальное падение</div>
                                 </div>
                             </div>
                             <div className="stats-summary">
-                                Всего свечей: {statistics.bullishCandles + statistics.bearishCandles + statistics.neutralCandles}
+                                Всего свечей в прогнозе: {statistics.bullishCandles + statistics.bearishCandles + statistics.neutralCandles}
                             </div>
                         </div>
                     </div>

@@ -5,13 +5,7 @@
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
     margin-top: var(--spacing-lg);
-    transition: var(--transition-normal);
     min-height: 500px;
-}
-
-.forecast-analysis:hover {
-    border-color: var(--border-primary);
-    box-shadow: var(--shadow-small);
 }
 
 /* Header */
@@ -63,11 +57,11 @@
     min-height: 400px;
 }
 
-/* Grid Layout */
+/* Grid Layout - верну 2 колонки как было */
 .analysis-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-md);
+    gap: 50px;
     margin-bottom: var(--spacing-lg);
 }
 
@@ -85,16 +79,14 @@
     padding: var(--spacing-md);
     transition: var(--transition-fast);
     height: 100%;
-}
-
-.analysis-card:hover {
-    border-color: var(--border-primary);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-small);
+    display: flex;
+    flex-direction: column;
 }
 
 .card-header {
     margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-tertiary);
 }
 
 .card-title {
@@ -114,15 +106,26 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
+    flex: 1;
 }
 
 /* Signal Card */
-.signal-indicator {
+.signal-card .card-content {
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: var(--spacing-md);
+}
+
+.signal-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
     background: var(--bg-surface-tertiary);
     border-radius: var(--radius-md);
-    border: 2px solid currentColor;
+    width: 100%;
+    min-height: 140px;
 }
 
 .signal-value {
@@ -144,119 +147,83 @@
 }
 
 /* Confidence Card */
-.confidence-models {
-    display: flex;
-    flex-direction: column;
+.confidence-card .card-content {
     gap: var(--spacing-sm);
 }
 
-.model-confidence {
+.confidence-model {
     display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+}
+
+.model-info {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
 }
 
 .model-name {
-    flex: 1;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     color: var(--color-secondary);
-    min-width: 120px;
 }
 
-.confidence-bar {
-    flex: 2;
+.model-value {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+}
+
+.confidence-bar-container {
     height: 8px;
     background: var(--border-secondary);
     border-radius: 4px;
     overflow: hidden;
+    margin-bottom: var(--spacing-sm);
 }
 
-.confidence-fill {
+.confidence-bar {
     height: 100%;
     border-radius: 4px;
     transition: width 0.3s ease;
 }
 
-.confidence-value {
-    flex: 0 0 40px;
-    text-align: right;
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-semibold);
-}
-
-.average-confidence {
+.confidence-summary {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: var(--spacing-sm);
+    padding-top: var(--spacing-md);
     border-top: 1px solid var(--border-tertiary);
-    margin-top: var(--spacing-xs);
+    margin-top: auto;
 }
 
-.average-label {
-    font-size: var(--font-size-xs);
+.summary-label {
+    font-size: var(--font-size-sm);
     color: var(--color-secondary);
 }
 
-.average-value {
-    font-size: var(--font-size-md);
-    font-weight: var(--font-weight-bold);
-}
-
-/* Agreement Card */
-.agreement-indicator {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-md);
-    background: var(--bg-surface-tertiary);
-    border-radius: var(--radius-md);
-}
-
-.agreement-status {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--font-size-2xl);
-    font-weight: var(--font-weight-bold);
-}
-
-.agreement-status.agreed {
-    background: var(--color-success);
-    color: white;
-}
-
-.agreement-status.disagreed {
-    background: var(--color-error);
-    color: white;
-}
-
-.agreement-text {
-    flex: 1;
+.summary-value {
     font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-primary);
-}
-
-.agreement-details {
-    font-size: var(--font-size-xs);
-    color: var(--color-secondary);
-    line-height: 1.4;
+    font-weight: var(--font-weight-bold);
 }
 
 /* Volatility Card */
 .volatility-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     padding: var(--spacing-md);
     background: var(--bg-surface-tertiary);
     border-radius: var(--radius-md);
+    min-height: 140px;
+    flex: 1;
 }
 
 .volatility-value {
-    font-size: var(--font-size-3xl);
+    font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-bold);
     margin-bottom: var(--spacing-xs);
 }
@@ -274,12 +241,22 @@
 }
 
 /* Recommendation Card */
+.recommendation-card .card-content {
+    align-items: center;
+    justify-content: space-between;
+}
+
 .recommendation-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     padding: var(--spacing-md);
     background: var(--bg-surface-tertiary);
     border-radius: var(--radius-md);
-    border: 2px solid currentColor;
+    width: 100%;
+    min-height: 120px;
 }
 
 .recommendation-action {
@@ -294,9 +271,11 @@
 }
 
 .recommendation-details {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
+    margin-top: auto;
 }
 
 .detail-item {
@@ -304,6 +283,12 @@
     justify-content: space-between;
     align-items: center;
     font-size: var(--font-size-xs);
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid var(--border-tertiary);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
 }
 
 .detail-label {
@@ -315,31 +300,46 @@
     font-weight: var(--font-weight-medium);
 }
 
-/* Stats Card */
+/* Stats Card - увеличил */
+.stats-card {
+    grid-column: span 2;
+}
+
+@media (max-width: 1024px) {
+    .stats-card {
+        grid-column: span 1;
+    }
+}
+
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: var(--spacing-sm);
     margin-bottom: var(--spacing-md);
 }
 
 @media (max-width: 768px) {
     .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
 .stat-item {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding: var(--spacing-sm);
     background: var(--bg-surface-tertiary);
     border-radius: var(--radius-sm);
-    transition: var(--transition-fast);
-}
-
-.stat-item:hover {
-    background: var(--bg-surface-hover);
-    transform: translateY(-1px);
+    text-align: center;
+    min-height: 80px;
 }
 
 .stat-value {
@@ -422,12 +422,7 @@
     background: var(--bg-surface-tertiary);
 }
 
-[data-theme="dark"] .analysis-card:hover {
-    background: var(--bg-surface-secondary);
-}
-
 [data-theme="dark"] .signal-indicator,
-[data-theme="dark"] .agreement-indicator,
 [data-theme="dark"] .volatility-display,
 [data-theme="dark"] .recommendation-main,
 [data-theme="dark"] .stat-item {
@@ -482,5 +477,18 @@
     
     .recommendation-action {
         font-size: var(--font-size-xl);
+    }
+    
+    .stats-grid {
+        gap: var(--spacing-xs);
+    }
+    
+    .stat-item {
+        padding: var(--spacing-xs);
+        min-height: 70px;
+    }
+    
+    .stat-value {
+        font-size: var(--font-size-md);
     }
 }
