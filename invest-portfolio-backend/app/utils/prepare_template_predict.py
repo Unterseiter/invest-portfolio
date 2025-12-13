@@ -25,8 +25,9 @@ def calc_market_signal(trend_prediction, stock_prediction):
 
         volatility = (high - low) / pre_close * 10
         volatility_list.append(volatility)
-
-    volatility_signal = max(0.3, 1 - sum(volatility_list) / len(volatility_list))
+    volatility_signal = 0
+    if len(volatility_list) > 0:
+        volatility_signal = max(0.3, 1 - sum(volatility_list) / len(volatility_list))
 
     # result
     score = 0.7 * trend_signal + 0.3 * stock_signal
@@ -67,6 +68,9 @@ def calc_assurance_trend(score, trend_prediction):
         elif mx == flat and (score < 0.1 and score > -0.1):
             assurance_sum += flat
             count += 1
+
+    if count == 0:
+        count += 1
 
     return round(float(assurance_sum / count), 2)
 

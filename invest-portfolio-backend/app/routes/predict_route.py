@@ -19,7 +19,7 @@ class PredictRoute(Resource):
     @api.doc('get_prediction')
     @api.expect(predict_input_model)
     @api.response(200, 'Успешное получение прогноза')
-    def get(self):
+    def post(self):
         try:
             data = request.get_json()
 

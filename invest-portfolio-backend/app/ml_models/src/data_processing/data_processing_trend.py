@@ -48,7 +48,7 @@ class DataProcessingTrend:
     def add_target(self, df, period: int):
         df = df.copy()
 
-        future_price = df['close'].shift(-period)
+        future_price = df['close'].shift(period)
 
         price_change = (future_price / df['close'] - 1) * 100
 

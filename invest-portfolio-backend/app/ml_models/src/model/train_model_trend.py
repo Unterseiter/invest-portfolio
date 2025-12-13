@@ -8,8 +8,6 @@ from keras.callbacks import (
     ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
 )
 
-import joblib
-
 from app.ml_models.src.data_processing.data_processing_trend import DataProcessingTrend
 
 
@@ -46,7 +44,7 @@ class TrainModel:
         callbacks = [
             EarlyStopping(
                 monitor='val_loss',
-                patience=15,
+                patience=25,
                 restore_best_weights=True,
                 verbose=1
             ),
@@ -83,10 +81,10 @@ class TrainModel:
     def save_model(self, model, path='models/trend_train_models/ml_trend_model.keras'):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         model.save(path)
-        print(f"Модель сохранена: {path}")
 
     def load_model(self, path='models/trend_train_models/ml_trend_model.keras'):
         model = keras.models.load_model(path)
+
         return model
 
     def add_class_weight(self, y_train):

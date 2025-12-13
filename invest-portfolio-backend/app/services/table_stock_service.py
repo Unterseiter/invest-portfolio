@@ -58,7 +58,8 @@ class TableStockService:
                         low,
                         close,
                         volume
-                        FROM {stock_name}"""
+                        FROM {stock_name}
+                        ORDER BY date"""
             cursor.execute(queue)
             data = cursor.fetchall()
 

@@ -56,7 +56,7 @@ class MlPredictService:
                             FROM {ticker}
                             WHERE date >= '2025-10-01'
                             ORDER BY date DESC
-                            LIMIT 43"""
+                            LIMIT 45"""
         cursor.execute(queue)
 
         data = cursor.fetchall()
@@ -86,7 +86,7 @@ class MlPredictService:
             pred = []
             pred.append(last_date + timedelta(hours=1))
             for key in ['open', 'high', 'low', 'close']:
-                stock_predict[key] = float(stock_predict[key]) - float(avr_dict[key])
+                # stock_predict[key] = float(stock_predict[key]) - float(avr_dict[key])
 
                 pred.append(stock_predict[key])
 
@@ -104,21 +104,20 @@ class MlPredictService:
     @classmethod
     def template_predict(cls, table_predict, trend_predict, hours) -> PredictModel:
 
-        print(1)
         # Создаем шаблон
         market_signal, score_market_signal = calc_market_signal(trend_predict, table_predict)
         print(1)
         assurance = calc_assurance_trend(score_market_signal, trend_predict)
-        print(1)
+        print(2)
         balance_signal, score_balance_signal = calc_balance_models(trend_predict, table_predict)
-        print(1)
+        print(3)
         volatility_signal, volatility = calc_volatility(table_predict)
-        print(1)
+        print(4)
         recommendation_signal = calc_recommendation_signal(table_predict, volatility,
                                                            score_balance_signal, score_market_signal)
-        print(1)
+        print(5)
 
-        return PredictModel(
+        model = PredictModel(
             hours=hours,
             market_signal=market_signal,
             assurance=float(assurance),
@@ -133,6 +132,9 @@ class MlPredictService:
                 close=float(row[4]),
             ) for row in table_predict]
         )
+        print(model.to_dict())
+
+        return model
 
     @classmethod
     def _predict_trend(self, model, df: pd.DataFrame):
@@ -169,7 +171,6 @@ class MlPredictService:
             df = df.copy()
 
             x_data = DataProcessing().prepare_data(df)
-            x_data = DataProcessing().add_trend(x_data)
             x_data.loc[x_data.index[-1], 'trend'] = trend_res
             x_data = x_data.values
 
@@ -189,7 +190,7 @@ class MlPredictService:
             for j, key in enumerate(['open', 'high', 'low', 'close']):
                 temp_array[0, j] = predict[key][0]
                 unscaled = scalers['target'].inverse_transform(temp_array)
-                list_predict[key] = unscaled[0, j]
+                list_predict[key] = np.exp(unscaled[0, j]) * float(df.loc[df.index[-1], key])
                 temp_array[0, j] = 0
 
             return list_predict
@@ -265,7 +266,7 @@ class MlPredictService:
 
             train_model.save_model(model, path=f'app/ml_models/models/stock_train_models/ml_stock_{ticker}_model.keras')
 
-            self._add_moving_avr(ticker, test)
+            self._add_moving_avr(ticker, test, df)
 
             return True
 
@@ -275,7 +276,7 @@ class MlPredictService:
 
 
     @classmethod
-    def _add_moving_avr(cls, ticker, test):
+    def _add_moving_avr(cls, ticker, test, df: pd.DataFrame):
 
         model, scalers = train_model_stock.TrainModel().load_model(path=f'app/ml_models/models/stock_train_models/ml_stock_{ticker}_model.keras')
 
@@ -327,6 +328,24 @@ class MlPredictService:
 
         test_df = pd.DataFrame(data=list_test, columns=['open', 'high', 'low', 'close'])
         res_df = pd.DataFrame(data=list_predict, columns=['open', 'high', 'low', 'close'])
+
+        df = df.shift(1)
+        df = df.dropna()
+        copy_test = test_df.copy()
+        copy_res = res_df.copy()
+
+        comsum_test = copy_test.cumsum()
+        comsum_res = copy_res.cumsum()
+
+        test_df['open'] = float(df['open'].iloc[0]) * np.exp(comsum_test['open'])
+        test_df['high'] = float(df['high'].iloc[0]) * np.exp(comsum_test['high'])
+        test_df['low'] = float(df['low'].iloc[0]) * np.exp(comsum_test['low'])
+        test_df['close'] = float(df['close'].iloc[0]) * np.exp(comsum_test['close'])
+
+        res_df['open'] = float(df['open'].iloc[0]) * np.exp(comsum_res['open'])
+        res_df['high'] = float(df['high'].iloc[0]) * np.exp(comsum_res['high'])
+        res_df['low'] = float(df['low'].iloc[0]) * np.exp(comsum_res['low'])
+        res_df['close'] = float(df['close'].iloc[0]) * np.exp(comsum_res['close'])
 
         list_avr = []
         for _, key in enumerate(['open', 'high', 'low', 'close']):

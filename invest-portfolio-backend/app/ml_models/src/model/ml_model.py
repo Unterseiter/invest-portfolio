@@ -119,10 +119,10 @@ class MlModelStock:
                 'close': 'mae'
             },
             loss_weights={
-                'open': 0.25,
-                'high': 0.25,
-                'low': 0.25,
-                'close': 0.25
+                'open': 0.2,
+                'high': 0.2,
+                'low': 0.2,
+                'close': 0.4
             },
             metrics={'close': ['mae', 'mse']}  # Основная метрика по close price
         )
