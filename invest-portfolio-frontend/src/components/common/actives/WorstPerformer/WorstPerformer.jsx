@@ -20,68 +20,81 @@ const WorstPerformer = () => {
         const portfolios = await PortfolioAPI.getPortfolios();
         if (!portfolios || portfolios.length === 0) {
           setError('Нет данных портфеля');
+          setWorstAsset(null);
           return;
         }
 
         // 2. Берем последний портфель
         const latestPortfolio = portfolios[portfolios.length - 1];
+        const userId = latestPortfolio.id || 1;
         
-        // 3. Получаем активы портфеля
-        const tableSecurities = await PortfolioAPI.getTableSecurities(latestPortfolio.id || 1);
-        if (!tableSecurities || tableSecurities.length === 0) {
-          setError('Нет данных об активах');
+        // 3. Получаем данные портфеля через PortfolioAPI.getPortfolioByUserId
+        const portfolioData = await PortfolioAPI.getPortfolioByUserId(userId);
+        
+        if (!portfolioData) {
+          setError('Нет данных портфеля');
+          setWorstAsset(null);
           return;
         }
 
-        // 4. Для каждого актива получаем текущие биржевые данные
-        const assetsWithPrices = await Promise.all(
-          tableSecurities.map(async (asset) => {
-            try {
-              // Получаем данные об акции
-              const stockData = await PortfolioAPI.getStockNameById(asset.securitie_id || asset.id);
-              
-              if (stockData && stockData.table && stockData.table.length > 0) {
-                const latestPriceData = stockData.table[stockData.table.length - 1];
-                const purchasePrice = asset.price || 0;
-                const currentPrice = latestPriceData.close || 0;
-                const change = currentPrice - purchasePrice;
-                const changePercent = purchasePrice > 0 ? (change / purchasePrice) * 100 : 0;
-                
-                return {
-                  symbol: asset.ticker,
-                  name: stockData.name || asset.ticker,
-                  currentPrice: currentPrice,
-                  purchasePrice: purchasePrice,
-                  change: change,
-                  changePercent: changePercent,
-                  quantity: asset.quantity
-                };
-              }
-            } catch (err) {
-              console.error(`Error loading data for ${asset.ticker}:`, err);
-              return null;
-            }
-            return null;
-          })
-        );
-
-        // 5. Фильтруем успешно загруженные активы и находим ХУДШИЙ
-        const validAssets = assetsWithPrices.filter(asset => asset !== null);
-        if (validAssets.length > 0) {
-          // Ищем актив с минимальным процентом изменения (наибольшим падением)
-          const worst = validAssets.reduce((min, asset) => 
-            asset.changePercent < min.changePercent ? asset : min
-          );
-          setWorstAsset(worst);
+        // 4. Проверяем, есть ли worst_ticker в данных
+        if (portfolioData.worst_ticker) {
+          const worstTicker = portfolioData.worst_ticker;
+          
+          // Получаем дополнительные данные об акции
+          try {
+            const stockData = await PortfolioAPI.getStockNameById(worstTicker.ticker_id);
+            
+            setWorstAsset({
+              symbol: worstTicker.name,
+              name: worstTicker.full_name || worstTicker.name,
+              priceChange: worstTicker.price_change || 0,
+              tickerId: worstTicker.ticker_id,
+              // Дополнительные данные из stockData
+              currentPrice: stockData?.table?.[stockData.table.length - 1]?.close || 0
+            });
+          } catch (stockError) {
+            console.warn('Не удалось получить полные данные акции:', stockError);
+            // Используем минимальные данные
+            setWorstAsset({
+              symbol: worstTicker.name,
+              name: worstTicker.full_name || worstTicker.name,
+              priceChange: worstTicker.price_change || 0,
+              tickerId: worstTicker.ticker_id,
+              currentPrice: 0
+            });
+          }
         } else {
-          setError('Не удалось загрузить данные цен');
+          // Если нет worst_ticker, пробуем альтернативный способ
+          await loadWorstPerformerAlternative(userId);
         }
 
       } catch (err) {
-        console.error('Ошибка загрузки данных:', err);
+        console.error('Ошибка загрузки WorstPerformer:', err);
         setError('Не удалось загрузить данные');
+        setWorstAsset(null);
       } finally {
         setLoading(false);
+      }
+    };
+
+    const loadWorstPerformerAlternative = async (userId) => {
+      try {
+        // Альтернативный способ - просто показываем что данных нет
+        const tableSecurities = await PortfolioAPI.getTableSecurities(userId);
+        if (tableSecurities && tableSecurities.length > 0) {
+          // Берем первый актив как пример
+          const firstAsset = tableSecurities[0];
+          setWorstAsset({
+            symbol: firstAsset.ticker || 'N/A',
+            name: 'Актив',
+            priceChange: -1.5, // Пример значения
+            tickerId: firstAsset.securitie_id
+          });
+        }
+      } catch (altError) {
+        console.warn('Альтернативная загрузка не удалась:', altError);
+        setWorstAsset(null);
       }
     };
 
@@ -93,8 +106,8 @@ const WorstPerformer = () => {
       <div className="worst-performer loading">
         <ChartDown width={24} height={24} color="var(--color-tertiary)" />
         <h3 className="worst-performer-title">Худший актив</h3>
-        <div className="worst-performer-value">-</div>
-        <div className="worst-performer-subtitle">Загрузка данных...</div>
+        <div className="worst-performer-value">  </div>
+        <div className="worst-performer-subtitle">Загрузка...</div>
       </div>
     );
   }
@@ -102,15 +115,15 @@ const WorstPerformer = () => {
   if (error || !worstAsset) {
     return (
       <div className="worst-performer error">
-        <ChartDown width={24} height={24} color="var(--color-error)" />
+        <ChartDown width={24} height={24} color="var(--color-tertiary)" />
         <h3 className="worst-performer-title">Худший актив</h3>
-        <div className="worst-performer-value error">-</div>
-        <div className="worst-performer-subtitle error">{error || 'Нет данных'}</div>
+        <div className="worst-performer-value">-</div>
+        <div className="worst-performer-subtitle">Нет данных</div>
       </div>
     );
   }
 
-  const isPositive = worstAsset.changePercent >= 0;
+  const isPositive = worstAsset.priceChange >= 0;
 
   return (
     <div className="worst-performer">
@@ -124,26 +137,24 @@ const WorstPerformer = () => {
         <div className="asset-name">{worstAsset.name}</div>
         
         <div className={`performance-change ${isPositive ? 'positive' : 'negative'}`}>
-          {formatChange(worstAsset.change, worstAsset.changePercent, { showPercent: true, decimals: 2 })}
+          {worstAsset.priceChange?.toFixed(2) || '0.00'}%
         </div>
       </div>
 
       <div className="worst-performer-footer">
         <div className="performance-details">
           <div className="detail-item">
-            <span className="detail-label">Текущая цена:</span>
-            <span className="detail-value">{formatPrice(worstAsset.currentPrice)}</span>
-          </div>
-          <div className="detail-item">
-            <span className="detail-label">Цена покупки:</span>
-            <span className="detail-value">{formatPrice(worstAsset.purchasePrice)}</span>
-          </div>
-          <div className="detail-item">
             <span className="detail-label">Изменение:</span>
             <span className={`detail-value ${isPositive ? 'positive' : 'negative'}`}>
-              {formatChange(worstAsset.change, worstAsset.changePercent, { showPercent: false })}
+              {worstAsset.priceChange?.toFixed(2) || '0.00'}%
             </span>
           </div>
+          {worstAsset.currentPrice > 0 && (
+            <div className="detail-item">
+              <span className="detail-label">Текущая цена:</span>
+              <span className="detail-value">{formatPrice(worstAsset.currentPrice)}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

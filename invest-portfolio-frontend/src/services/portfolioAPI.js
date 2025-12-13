@@ -99,23 +99,17 @@ deleteSecurityBySecuritieId: async (userId, securitieId) => {
 },
 
   // ========== TABLE_SECURITIES METHODS ==========
-  // В portfolioAPI.js
 getTableSecurities: async (userId) => {
   const result = await fetchAPI(`/api/table_securities/all/${userId}`);
   
-  // Добавляем id к каждому активу, если его нет
+  // ВАЖНО: Убедитесь, что в ответе есть id записи
   const securities = result.data || [];
   
-  // Если в данных нет id, создаем его из других полей
-  const enrichedSecurities = securities.map((security, index) => ({
-    ...security,
-    // Создаем уникальный id из комбинации полей
-    id: security.id || `${userId}_${security.securitie_id}_${index}`,
-    // Или просто используем securitie_id как id
-    deleteId: security.securitie_id // дополнительное поле для удаления
-  }));
+  // Добавляем логирование, чтобы увидеть структуру данных
+  console.log('Структура данных table_securities:', securities);
   
-  return enrichedSecurities;
+  // Возвращаем данные как есть, предполагая что id уже есть
+  return securities;
 },
 
   getTableSecurityById: async (id) => {

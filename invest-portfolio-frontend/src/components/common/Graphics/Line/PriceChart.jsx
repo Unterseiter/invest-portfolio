@@ -56,12 +56,12 @@ const PortfolioChart = () => {
     const date = new Date(timestamp);
     try {
       switch (period) {
-        case "hour":
-          // Для часового периода показываем время с минутами
-          return date.toLocaleTimeString("ru-RU", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
+        // case "hour":
+        //   // Для часового периода показываем время с минутами
+        //   return date.toLocaleTimeString("ru-RU", {
+        //     hour: "2-digit",
+        //     minute: "2-digit",
+        //   });
         case "day":
           // Для дневного периода показываем время
           return date.toLocaleTimeString("ru-RU", {
@@ -185,15 +185,13 @@ const PortfolioChart = () => {
           <h3 className="chart-title">История портфеля (реальные данные)</h3>
         </div>
         <div className="period-selector">
-          {["hour", "day", "week", "month", "year"].map((p) => (
+          {["day", "week", "month", "year"].map((p) => (
             <button
               key={p}
               className={`period-btn ${period === p ? "active" : ""}`}
               onClick={() => setPeriod(p)}
             >
-              {p === "hour"
-                ? "Час"
-                : p === "day"
+              { p === "day"
                 ? "День"
                 : p === "week"
                 ? "Неделя"
@@ -249,8 +247,7 @@ const PortfolioChart = () => {
 
       <div className="chart-footer">
         <div className="chart-period">
-          Период: {period === "hour" ? "часовой" : 
-                  period === "day" ? "дневной" : 
+          Период: {period === "day" ? "дневной" : 
                   period === "week" ? "недельный" : 
                   period === "month" ? "месячный" : "годовой"}
         </div>

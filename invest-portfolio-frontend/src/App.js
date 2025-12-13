@@ -14,7 +14,7 @@ import FunctionalPage from './pages/functional/FunctionalPage';
 
 import { CurrencyProvider } from './contexts/CurrencyContext';
 import { ModalProvider, useModal } from './contexts/ModalContext';
-import WarningModal from './components/common/WarningModal/WarningModal';
+import WarningModal from './components/common/modal/WarningModal/WarningModal';
 
 // Компонент с контентом приложения
 const AppContent = () => {
