@@ -132,7 +132,7 @@ const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
                         <div className="card-content">
                             <div className="confidence-model">
                                 <div className="model-info">
-                                    <div className="model-name">Модель чертолета</div>
+                                    <div className="model-name">Трендовая модель</div>
                                     <div className="model-value" style={{ color: getConfidenceColor(modelConfidence.model1) }}>
                                         {modelConfidence.model1}%
                                     </div>

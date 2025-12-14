@@ -5,20 +5,20 @@ import CurrencySettings from './CurrencySettings';
 import AboutSettings from './AboutSettings';
 
 function SettingsPage() {
-    const [activeSection, setActiveSection] = useState('appearance');
+    const [activeSection, setActiveSection] = useState('currency');
 
     const settingsSections = [
-        { id: 'appearance', title: 'Внешний вид', icon: '🎨' },
-        { id: 'currency', title: 'Валюта и данные', icon: '💰' },
-        { id: 'about', title: 'О программе', icon: 'ℹ️' }
+        // { id: 'appearance', title: 'Внешний вид', icon: '' },
+        { id: 'currency', title: 'Валюта и данные', icon: '' }
+        // { id: 'about', title: 'О программе', icon: 'ℹ' }
     ];
 
     const renderSettingsContent = () => {
         switch (activeSection) {
-            case 'appearance':
-                return <AppearanceSettings />;
             case 'currency':
                 return <CurrencySettings />;
+            case 'appearance':
+                return <AppearanceSettings />;
             case 'about':
                 return <AboutSettings />;
             default:

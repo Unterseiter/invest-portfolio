@@ -49,7 +49,7 @@ function Header({ isSidebarOpen, onToggleSidebar }) {
                             height={100}
                             color="var(--color-accent)" 
                         />
-                        <h1 className="header__title">Invest Portfolio</h1>
+                        <h1 className="header__title">AI assistent trader </h1>
                     </div>
                 </div>
                 
