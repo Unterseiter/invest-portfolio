@@ -125,7 +125,7 @@ const PortfolioChart = () => {
             <h3 className="chart-title">История портфеля</h3>
           </div>
         </div>
-        <div className="chart-loading-text">Загрузка реальных данных...</div>
+        <div className="chart-loading-text">Загрузка данных...</div>
       </div>
     );
   }

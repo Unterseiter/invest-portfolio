@@ -276,6 +276,13 @@
     border-top: 2px solid var(--table-footer-border);
 }
 
+.table-total{
+    display: flex;
+    flex-direction: row;
+    height: max-content;
+    justify-content: space-between;
+}
+
 .table-allActives tfoot td {
     padding: var(--footer-padding);
     font-weight: var(--footer-font-weight);
@@ -284,8 +291,11 @@
 }
 
 .total-label {
+    /* height: 25px; */
     font-weight: var(--font-weight-semibold);
     color: var(--color-primary);
+    display: flex;
+    align-items: center;
 }
 
 .total-value {

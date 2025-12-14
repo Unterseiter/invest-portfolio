@@ -67,56 +67,38 @@ export const PortfolioAPI = {
     return result;
   },
 
-// В portfolioAPI.js, добавьте этот метод:
-deleteSecurityBySecuritieId: async (userId, securitieId) => {
-  try {
-    // Сначала получаем все записи пользователя
-    const securities = await PortfolioAPI.getTableSecurities(userId);
-    
-    // Находим запись с нужным securitie_id
-    const securityToDelete = securities.find(s => 
-      s.securitie_id === securitieId || 
-      s.securitie_id === parseInt(securitieId)
-    );
-    
-    if (!securityToDelete) {
-      throw new Error('Запись не найдена');
+  deleteSecurityBySecuritieId: async (userId, securitieId) => {
+    try {
+      const securities = await PortfolioAPI.getTableSecurities(userId);
+      
+      const securityToDelete = securities.find(s => 
+        s.securitie_id === securitieId || 
+        s.securitie_id === parseInt(securitieId)
+      );
+      
+      if (!securityToDelete) {
+        throw new Error('Запись не найдена');
+      }
+      
+      if (securityToDelete.id) {
+        return await PortfolioAPI.deleteTableSecurity(securityToDelete.id);
+      }
+      
+      return await PortfolioAPI.deleteTableSecurity(securityToDelete.securitie_id);
+      
+    } catch (error) {
+      console.error('Error in deleteSecurityBySecuritieId:', error);
+      throw error;
     }
-    
-    // Если у записи есть id, удаляем по нему
-    if (securityToDelete.id) {
-      return await PortfolioAPI.deleteTableSecurity(securityToDelete.id);
-    }
-    
-    // Если нет id, пробуем удалить по securitie_id
-    // (если бэкенд поддерживает такой вариант)
-    return await PortfolioAPI.deleteTableSecurity(securityToDelete.securitie_id);
-    
-  } catch (error) {
-    console.error('Error in deleteSecurityBySecuritieId:', error);
-    throw error;
-  }
-},
+  },
 
   // ========== TABLE_SECURITIES METHODS ==========
-  // В portfolioAPI.js
-getTableSecurities: async (userId) => {
-  const result = await fetchAPI(`/api/table_securities/all/${userId}`);
-  
-  // Добавляем id к каждому активу, если его нет
-  const securities = result.data || [];
-  
-  // Если в данных нет id, создаем его из других полей
-  const enrichedSecurities = securities.map((security, index) => ({
-    ...security,
-    // Создаем уникальный id из комбинации полей
-    id: security.id || `${userId}_${security.securitie_id}_${index}`,
-    // Или просто используем securitie_id как id
-    deleteId: security.securitie_id // дополнительное поле для удаления
-  }));
-  
-  return enrichedSecurities;
-},
+  getTableSecurities: async (userId) => {
+    const result = await fetchAPI(`/api/table_securities/all/${userId}`);
+    const securities = result.data || [];
+    console.log('Структура данных table_securities:', securities);
+    return securities;
+  },
 
   getTableSecurityById: async (id) => {
     const result = await fetchAPI(`/api/table_securities/${id}`);
@@ -140,11 +122,11 @@ getTableSecurities: async (userId) => {
   },
 
   deleteTableSecurity: async (id) => {
-  const result = await fetchAPI(`/api/table_securities/${id}`, {
-    method: 'DELETE',
-  });
-  return result;
-},
+    const result = await fetchAPI(`/api/table_securities/${id}`, {
+      method: 'DELETE',
+    });
+    return result;
+  },
 
   // ========== STOCK_NAMES METHODS ==========
   getStockNames: async () => {
@@ -201,7 +183,6 @@ getTableSecurities: async (userId) => {
   // ========== ML PREDICTION METHODS ==========
   getMLPrediction: async (ticker_id, hours = 24) => {
     try {
-      // Пробуем POST метод (как должно быть)
       const result = await fetchAPI('/api/ml_predict', {
         method: 'POST',
         body: JSON.stringify({ ticker_id, hours }),
@@ -210,7 +191,6 @@ getTableSecurities: async (userId) => {
     } catch (error) {
       console.error('Error with POST method, trying GET:', error);
       
-      // Если POST не работает, пробуем GET с параметрами
       try {
         const result = await fetchAPI(`/api/ml_predict?ticker_id=${ticker_id}&hours=${hours}`);
         return result.data;
@@ -223,14 +203,12 @@ getTableSecurities: async (userId) => {
 
   getMLForecast: async (ticker_id, hours = 24) => {
     try {
-      // Получаем данные от ML API
       const mlData = await PortfolioAPI.getMLPrediction(ticker_id, hours);
       
       if (!mlData) {
         throw new Error('No forecast data received from server');
       }
 
-      // Трансформируем данные для UI
       const predictions = mlData.table_predictions || [];
       const market_signal = mlData.market_signal || 'hold';
       const assurance = mlData.assurance || 0.5;
@@ -238,7 +216,6 @@ getTableSecurities: async (userId) => {
       const volatility = mlData.volatility || '3.5';
       const recommendation_signal = mlData.recommendation_signal || 'hold';
       
-      // Рассчитываем статистику
       let bullish = 0, bearish = 0, maxGain = 0, maxLoss = 0;
       
       predictions.forEach(pred => {
@@ -254,7 +231,6 @@ getTableSecurities: async (userId) => {
         }
       });
       
-      // Рассчитываем общее изменение
       let overallChange = 0;
       if (predictions.length >= 2) {
         const first = predictions[0]?.close || 0;
@@ -264,7 +240,6 @@ getTableSecurities: async (userId) => {
         }
       }
       
-      // Функции для форматирования
       const getVolatilityLevel = (vol) => {
         const v = parseFloat(vol) || 0;
         if (v < 2) return 'Низкая';
@@ -282,7 +257,6 @@ getTableSecurities: async (userId) => {
         return map[rec?.toLowerCase()] || 'Держать позицию';
       };
       
-      // Форматируем прогнозные свечи
       const forecastCandles = predictions.map((pred, index) => ({
         timestamp: new Date(Date.now() + (index + 1) * 60 * 60 * 1000).getTime(),
         date: pred.date || new Date(Date.now() + (index + 1) * 60 * 60 * 1000).toISOString(),
@@ -294,7 +268,6 @@ getTableSecurities: async (userId) => {
         volume: pred.volume || 0
       }));
       
-      // Возвращаем структуру для UI
       return {
         analysis: {
           marketSignal: translateSignal(market_signal),
@@ -329,7 +302,7 @@ getTableSecurities: async (userId) => {
       
     } catch (error) {
       console.error('Error in getMLForecast:', error);
-      throw error; // Просто пробрасываем ошибку дальше
+      throw error;
     }
   },
 
@@ -493,6 +466,75 @@ getTableSecurities: async (userId) => {
     } catch (error) {
       console.error('Error getting full asset info:', error);
       throw error;
+    }
+  },
+
+  // ========== НОВЫЕ МЕТОДЫ ДЛЯ BEST/WORST PERFORMER ==========
+  getTickerIdByName: async (tickerName) => {
+    try {
+      const stockNames = await PortfolioAPI.getStockNames();
+      const ticker = stockNames.find(s => s.name === tickerName);
+      return ticker ? ticker.id : null;
+    } catch (error) {
+      console.error('Error getting ticker id by name:', error);
+      return null;
+    }
+  },
+
+  getTickerInfoByName: async (tickerName) => {
+    try {
+      const stockNames = await PortfolioAPI.getStockNames();
+      const ticker = stockNames.find(s => s.name === tickerName);
+      if (!ticker) return null;
+      
+      const stockData = await PortfolioAPI.getStockNameById(ticker.id);
+      return {
+        id: ticker.id,
+        name: ticker.name,
+        full_name: ticker.full_name,
+        stockData: stockData
+      };
+    } catch (error) {
+      console.error('Error getting ticker info by name:', error);
+      return null;
+    }
+  },
+
+  calculatePriceChange: async (tickerId) => {
+    try {
+      const stockData = await PortfolioAPI.getStockNameById(tickerId);
+      if (!stockData?.table || stockData.table.length < 2) return 0;
+      
+      const prices = stockData.table;
+      const currentPrice = prices[prices.length - 1].close;
+      const previousPrice = prices[prices.length - 2].close;
+      
+      return ((currentPrice - previousPrice) / previousPrice) * 100;
+    } catch (error) {
+      console.error('Error calculating price change:', error);
+      return 0;
+    }
+  },
+
+  getAssetFullInfoByTicker: async (tickerName) => {
+    try {
+      const tickerInfo = await PortfolioAPI.getTickerInfoByName(tickerName);
+      if (!tickerInfo) return null;
+      
+      const priceChange = await PortfolioAPI.calculatePriceChange(tickerInfo.id);
+      const currentPrice = tickerInfo.stockData?.table?.[tickerInfo.stockData.table.length - 1]?.close || 0;
+      
+      return {
+        symbol: tickerInfo.name,
+        name: tickerInfo.full_name,
+        tickerId: tickerInfo.id,
+        priceChange: priceChange,
+        currentPrice: currentPrice,
+        stockData: tickerInfo.stockData
+      };
+    } catch (error) {
+      console.error('Error getting asset full info by ticker:', error);
+      return null;
     }
   }
 };
