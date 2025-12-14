@@ -8,6 +8,24 @@ from app.services.table_stock_service import TableStockService
 
 def dynamic_update():
     names = StockNamesService.GetAllNames()
+
+    if not names:
+        print('Загружаем данные биржы в базу данных...')
+        # sber
+        TableStockService.Post(';', 'sber', 'Сбербанк', '2025-12-01', '2025-12-14')
+        TableStockService.Post(';', 'sber', 'Сбербанк', '2025-11-01', '2025-12-01')
+        TableStockService.Post(';', 'sber', 'Сбербанк', '2025-10-01', '2025-11-01')
+
+        # gazp
+        TableStockService.Post(';', 'gazp', 'Газпром', '2025-12-01', '2025-12-14')
+        TableStockService.Post(';', 'gazp', 'Газпром', '2025-11-01', '2025-12-01')
+        TableStockService.Post(';', 'gazp', 'Газпром', '2025-10-01', '2025-11-01')
+
+        # mgnt
+        TableStockService.Post(';', 'mgnt', 'Магнит', '2025-12-01', '2025-12-14')
+        TableStockService.Post(';', 'mgnt', 'Магнит', '2025-11-01', '2025-12-01')
+        TableStockService.Post(';', 'mgnt', 'Магнит', '2025-10-01', '2025-11-01')
+
     for i in names:
         TableStockService.Update(';', i.name)
 

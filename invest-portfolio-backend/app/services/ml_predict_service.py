@@ -40,14 +40,6 @@ class MlPredictService:
         connection = db_connection()
         cursor = connection.cursor()
 
-        queue = f"""SELECT avr_open,
-                    avr_high,
-                    avr_low,
-                    avr_close 
-                    FROM avr_predict_stock WHERE ticker = %s"""
-        cursor.execute(queue, (ticker,))
-        avr_data = cursor.fetchall()
-
         queue = f"""SELECT date FROM {ticker} ORDER BY date DESC LIMIT 1;"""
         cursor.execute(queue)
         last_date = cursor.fetchall()[0][0]
@@ -65,13 +57,6 @@ class MlPredictService:
 
         df = pd.DataFrame(data, columns=['open', 'high', 'low', 'close'])
 
-        avr_dict = {
-            'open': avr_data[0][0],
-            'high': avr_data[0][1],
-            'low': avr_data[0][2],
-            'close': avr_data[0][3]
-        }
-
         model_trend = train_model_trend.TrainModel().load_model(path=path_trend)
         model_stock, scalers = train_model_stock.TrainModel().load_model(path=path_stock)
 
@@ -86,8 +71,6 @@ class MlPredictService:
             pred = []
             pred.append(last_date + timedelta(hours=1))
             for key in ['open', 'high', 'low', 'close']:
-                # stock_predict[key] = float(stock_predict[key]) - float(avr_dict[key])
-
                 pred.append(stock_predict[key])
 
             table_predict.append(pred)
@@ -106,16 +89,11 @@ class MlPredictService:
 
         # Создаем шаблон
         market_signal, score_market_signal = calc_market_signal(trend_predict, table_predict)
-        print(1)
         assurance = calc_assurance_trend(score_market_signal, trend_predict)
-        print(2)
         balance_signal, score_balance_signal = calc_balance_models(trend_predict, table_predict)
-        print(3)
         volatility_signal, volatility = calc_volatility(table_predict)
-        print(4)
         recommendation_signal = calc_recommendation_signal(table_predict, volatility,
                                                            score_balance_signal, score_market_signal)
-        print(5)
 
         model = PredictModel(
             hours=hours,
@@ -266,109 +244,8 @@ class MlPredictService:
 
             train_model.save_model(model, path=f'app/ml_models/models/stock_train_models/ml_stock_{ticker}_model.keras')
 
-            self._add_moving_avr(ticker, test, df)
-
             return True
 
         except Exception as e:
             print(f'Сервис ml_predict. Ошибка в обучении сток модели: {e}')
             return False
-
-
-    @classmethod
-    def _add_moving_avr(cls, ticker, test, df: pd.DataFrame):
-
-        model, scalers = train_model_stock.TrainModel().load_model(path=f'app/ml_models/models/stock_train_models/ml_stock_{ticker}_model.keras')
-
-        x_test, y_test = test
-
-        predict = model.predict(x_test)
-
-        list_predict = {
-            'open': [],
-            'high': [],
-            'low': [],
-            'close': []
-        }
-
-        list_test = {
-            'open': [],
-            'high': [],
-            'low': [],
-            'close': []
-        }
-
-        for i in range(len(y_test['close'])):
-
-            temp_array = np.zeros((1, 4))
-            result = {}
-            for j, key in enumerate(['open', 'high', 'low', 'close']):
-                temp_array[0, j] = predict[key][i][0]
-                unscaled = scalers['target'].inverse_transform(temp_array)
-                result[key] = unscaled[0, j]
-                temp_array[0, j] = 0  # сброс
-
-            list_predict['open'].append(result['open'])
-            list_predict['high'].append(result['high'])
-            list_predict['low'].append(result['low'])
-            list_predict['close'].append(result['close'])
-
-            temp_array = np.zeros((1, 4))
-            result = {}
-            for j, key in enumerate(['open', 'high', 'low', 'close']):
-                temp_array[0, j] = y_test[key][i]
-                unscaled = scalers['target'].inverse_transform(temp_array)
-                result[key] = unscaled[0, j]
-                temp_array[0, j] = 0  # сброс
-
-            list_test['open'].append(result['open'])
-            list_test['high'].append(result['high'])
-            list_test['low'].append(result['low'])
-            list_test['close'].append(result['close'])
-
-        test_df = pd.DataFrame(data=list_test, columns=['open', 'high', 'low', 'close'])
-        res_df = pd.DataFrame(data=list_predict, columns=['open', 'high', 'low', 'close'])
-
-        df = df.shift(1)
-        df = df.dropna()
-        copy_test = test_df.copy()
-        copy_res = res_df.copy()
-
-        comsum_test = copy_test.cumsum()
-        comsum_res = copy_res.cumsum()
-
-        test_df['open'] = float(df['open'].iloc[0]) * np.exp(comsum_test['open'])
-        test_df['high'] = float(df['high'].iloc[0]) * np.exp(comsum_test['high'])
-        test_df['low'] = float(df['low'].iloc[0]) * np.exp(comsum_test['low'])
-        test_df['close'] = float(df['close'].iloc[0]) * np.exp(comsum_test['close'])
-
-        res_df['open'] = float(df['open'].iloc[0]) * np.exp(comsum_res['open'])
-        res_df['high'] = float(df['high'].iloc[0]) * np.exp(comsum_res['high'])
-        res_df['low'] = float(df['low'].iloc[0]) * np.exp(comsum_res['low'])
-        res_df['close'] = float(df['close'].iloc[0]) * np.exp(comsum_res['close'])
-
-        list_avr = []
-        for _, key in enumerate(['open', 'high', 'low', 'close']):
-            metric = key
-            a = []
-
-            for i in range(len(test_df)):
-                test_value = round(float(test_df.loc[i, metric]), 2)
-                res_value = round(float(res_df.loc[i, metric]), 2)
-
-                a.append(abs(round(test_value - res_value, 2)))
-            avr = sum(a) / len(a)
-
-            print(f'Средняя разность: {avr:.2f}')
-            list_avr.append(avr)
-
-        connection = db_connection()
-        cursor = connection.cursor()
-
-        queue = f"""INSERT INTO avr_predict_stock (ticker, avr_open, avr_high, avr_low, avr_close) VALUES
-                    (%s, %s, %s, %s, %s);"""
-
-        cursor.execute(queue, (ticker, list_avr[0], list_avr[1], list_avr[2], list_avr[3]))
-        connection.commit()
-
-        close_connection(connection)

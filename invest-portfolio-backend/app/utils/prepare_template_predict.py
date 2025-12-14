@@ -43,7 +43,7 @@ def class_market_signal(score):
     elif score > 0.1:
         return f"Умеренный бычий! Слабая вероятность роста (score_signal = {score})", score
     elif score > -0.1:
-        return f"Флэт. Нету вероятности роста и падения (score_signal = {score})", score
+        return f"Флэт. Нет вероятности роста и падения (score_signal = {score})", score
     elif score > -0.4:
         return f"Умеренный медвежий! Слабая вероятность падения (score_signal = {score})", score
     else:
