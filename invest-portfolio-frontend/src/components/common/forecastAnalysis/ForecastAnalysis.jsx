@@ -8,8 +8,8 @@ const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
                 <div className="analysis-header">
                     <div className="title-section">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19Z" fill="var(--color-accent)"/>
-                            <path d="M7 12H9V17H7V12ZM11 7H13V17H11V7ZM15 10H17V17H15V10Z" fill="var(--color-accent)"/>
+                            <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19Z" fill="var(--color-accent)" />
+                            <path d="M7 12H9V17H7V12ZM11 7H13V17H11V7ZM15 10H17V17H15V10Z" fill="var(--color-accent)" />
                         </svg>
                         <h3 className="analysis-title">Аналитика прогноза</h3>
                     </div>
@@ -23,14 +23,14 @@ const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
             </div>
         );
     }
-    
+
     if (error) {
         return (
             <div className="forecast-analysis">
                 <div className="analysis-header">
                     <div className="title-section">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="var(--color-error)"/>
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="var(--color-error)" />
                         </svg>
                         <h3 className="analysis-title">Ошибка анализа</h3>
                     </div>
@@ -44,13 +44,13 @@ const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
             </div>
         );
     }
-    
+
     if (!forecastData) {
         return null;
     }
-    
+
     const { analysis, statistics, forecastHours } = forecastData;
-    const { marketSignal, modelConfidence, volatility, recommendation } = analysis;
+    const { marketSignal, modelConfidence, volatility, recommendation, balance, balanceDetails } = analysis;
 
     // Функция для получения цвета в зависимости от значения
     const getConfidenceColor = (value) => {
@@ -84,13 +84,19 @@ const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
         }
     };
 
+    const getBalanceColor = (balanceValue) => {
+        if (balanceValue >= 70) return 'var(--color-success)';
+        if (balanceValue >= 50) return 'var(--color-warning)';
+        return 'var(--color-error)';
+    };
+
     return (
         <div className="forecast-analysis">
             <div className="analysis-header">
                 <div className="title-section">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19Z" fill="var(--color-accent)"/>
-                        <path d="M7 12H9V17H7V12ZM11 7H13V17H11V7ZM15 10H17V17H15V10Z" fill="var(--color-accent)"/>
+                        <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19Z" fill="var(--color-accent)" />
+                        <path d="M7 12H9V17H7V12ZM11 7H13V17H11V7ZM15 10H17V17H15V10Z" fill="var(--color-accent)" />
                     </svg>
                     <h3 className="analysis-title">Аналитика прогноза</h3>
                 </div>
@@ -123,13 +129,14 @@ const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
                         </div>
                     </div>
 
-                    {/* 2. Надежность модели */}
+                    {/* 2. Надежность модели и баланс */}
                     <div className="analysis-card confidence-card">
                         <div className="card-header">
                             <h4 className="card-title">Надежность модели</h4>
-                            <div className="card-subtitle">Уверенность в прогнозе</div>
+                            <div className="card-subtitle">Уверенность и согласованность прогнозов</div>
                         </div>
                         <div className="card-content">
+                            {/* Модель 1 */}
                             <div className="confidence-model">
                                 <div className="model-info">
                                     <div className="model-name">Трендовая модель</div>
@@ -138,7 +145,7 @@ const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
                                     </div>
                                 </div>
                                 <div className="confidence-bar-container">
-                                    <div 
+                                    <div
                                         className="confidence-bar"
                                         style={{
                                             width: `${modelConfidence.model1}%`,
@@ -147,13 +154,48 @@ const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
                                     />
                                 </div>
                             </div>
-                            
-                            <div className="confidence-summary">
-                                <span className="summary-label">Уверенность прогноза:</span>
+
+                            {/* Модель 2
+                            <div className="confidence-model">
+                                <div className="model-info">
+                                    <div className="model-name">Волатильностная модель</div>
+                                    <div className="model-value" style={{ color: getConfidenceColor(modelConfidence.model2) }}>
+                                        {modelConfidence.model2}%
+                                    </div>
+                                </div>
+                                <div className="confidence-bar-container">
+                                    <div
+                                        className="confidence-bar"
+                                        style={{
+                                            width: `${modelConfidence.model2}%`,
+                                            backgroundColor: getConfidenceColor(modelConfidence.model2)
+                                        }}
+                                    />
+                                </div>
+                            </div> */}
+
+                            <div className="balance-indicator">
+                                <div className="balance-header">
+                                    <div className="balance-title">Баланс моделей</div>
+                                    <div className="balance-value" style={{ color: getBalanceColor(balanceDetails?.score || 0) }}>
+                                        {balanceDetails?.score || 0}%
+                                    </div>
+                                </div>
+                                <div className="balance-description">
+                                    {balance || 'Баланс не определен'}
+                                </div>
+                                <div className="balance-status">
+                                    {analysis.modelAgreement === 'Согласованы' ? '✓ Модели согласованы' : '⚠ Модели расходятся'}
+                                </div>
+                            </div>
+
+                            {/* Итоговая уверенность */}
+                            {/* <div className="confidence-summary">
+                                <span className="summary-label">Общая уверенность:</span>
                                 <span className="summary-value" style={{ color: getConfidenceColor(modelConfidence.average) }}>
                                     {modelConfidence.average}%
                                 </span>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
 
@@ -214,7 +256,7 @@ const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
                         </div>
                     </div>
 
-                    {/* 5. Статистика прогноза - растягиваем на 2 колонки */}
+                    {/* 5. Статистика прогноза */}
                     <div className="analysis-card stats-card">
                         <div className="card-header">
                             <h4 className="card-title">Статистика прогноза</h4>
