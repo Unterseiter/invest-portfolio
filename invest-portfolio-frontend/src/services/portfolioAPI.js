@@ -27,6 +27,50 @@ const fetchAPI = async (endpoint, options = {}) => {
   }
 };
 
+// Вспомогательные функции
+const extractNumber = (str) => {
+  if (!str) return 0;
+  const match = str.match(/[\d.-]+/);
+  return match ? parseFloat(match[0]) : 0;
+};
+
+const getVolatilityLevel = (value) => {
+  const v = parseFloat(value) || 0;
+  if (v < 0.8) return 'Низкая';
+  if (v < 2) return 'Средняя';
+  return 'Высокая';
+};
+
+const filterDataByPeriod = (data, period) => {
+  if (!data || data.length === 0) return [];
+  
+  const now = new Date();
+  let startTime;
+
+  switch (period) {
+    case 'hour':
+      startTime = new Date(now.getTime() - 1 * 60 * 60 * 1000);
+      break;
+    case 'day':
+      startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      break;
+    case 'week':
+      startTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      break;
+    case 'month':
+      startTime = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      break;
+    case 'year':
+      startTime = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+      break;
+    default:
+      return data;
+  }
+
+  const filtered = data.filter(item => new Date(item.timestamp) >= startTime);
+  return filtered.length > 1 ? filtered : data;
+};
+
 export const PortfolioAPI = {
   // ========== PORTFOLIO METHODS ==========
   getPortfolios: async () => {
@@ -181,7 +225,7 @@ export const PortfolioAPI = {
   },
 
   // ========== ML PREDICTION METHODS ==========
-getExtendedMLPrediction: async (ticker_id, hours = 12) => {
+  getExtendedMLPrediction: async (ticker_id, hours = 12) => {
     try {
       const result = await fetchAPI('/api/ml_predict', {
         method: 'POST',
@@ -190,42 +234,25 @@ getExtendedMLPrediction: async (ticker_id, hours = 12) => {
       
       const data = result.data;
       
-      // Парсим данные из примера API
-      const parsePredictionData = (predData) => {
-        if (!predData) return null;
+      if (!data) return null;
+      
+      // Просто возвращаем данные как есть
+      return {
+        table_predictions: data.table_predictions || [],
+        market_signal: data.market_signal || '',
+        assurance: data.assurance || 0,
+        balance: data.balance || '',
+        volatility: data.volatility || '',
+        recommendation_signal: data.recommendation_signal || '',
+        hours: data.hours || hours,
+        generated_at: data.generated_at || new Date().toISOString(),
         
-        // Если данные приходят в виде массива table_predictions
-        const table_predictions = predData.table_predictions || [];
-        
-        // Пытаемся извлечь сигналы из текстовых полей
-        const market_signal = predData.market_signal || 'Нет сигнала';
-        const balance = predData.balance || 'Баланс не определен';
-        const volatility = predData.volatility || 'Волатильность не определена';
-        const recommendation_signal = predData.recommendation_signal || 'Нет рекомендации';
-        
-        // Извлекаем числовые значения
-        const signalMatch = market_signal.match(/score_signal = ([\d.-]+)/);
-        const balanceMatch = balance.match(/score = ([\d.-]+)/);
-        const volatilityMatch = volatility.match(/volatility = ([\d.-]+)/);
-        const recommendationMatch = recommendation_signal.match(/score = ([\d.-]+)/);
-        
-        return {
-          table_predictions: table_predictions,
-          market_signal: market_signal,
-          signal_score: signalMatch ? parseFloat(signalMatch[1]) : 0.26,
-          assurance: predData.assurance || 0.52, // уверенность модели
-          balance: balance,
-          balance_score: balanceMatch ? parseFloat(balanceMatch[1]) : 0.6,
-          volatility: volatility,
-          volatility_score: volatilityMatch ? parseFloat(volatilityMatch[1]) : 6.5,
-          recommendation_signal: recommendation_signal,
-          recommendation_score: recommendationMatch ? parseFloat(recommendationMatch[1]) : 2.21,
-          hours: predData.hours || hours,
-          generated_at: predData.generated_at || new Date().toISOString()
-        };
+        // Извлекаем числовые значения для удобства
+        signal_score: extractNumber(data.market_signal),
+        balance_score: extractNumber(data.balance),
+        volatility_score: extractNumber(data.volatility),
+        recommendation_score: extractNumber(data.recommendation_signal)
       };
-
-      return parsePredictionData(data);
     } catch (error) {
       console.error('Error getting extended ML prediction:', error);
       return null;
@@ -252,9 +279,9 @@ getExtendedMLPrediction: async (ticker_id, hours = 12) => {
     }
   },
 
- getMLForecast: async (ticker_id, hours = 24) => {
+  getMLForecast: async (ticker_id, hours = 24) => {
     try {
-      // Получаем данные от ML API
+      // Получаем сырые данные от ML API
       const mlData = await PortfolioAPI.getExtendedMLPrediction(ticker_id, hours);
       
       if (!mlData) {
@@ -263,78 +290,12 @@ getExtendedMLPrediction: async (ticker_id, hours = 12) => {
 
       const predictions = mlData.table_predictions || [];
       
-      // Парсим строковые данные из ответа API
-      const parseSignal = (signalString) => {
-        if (!signalString) return 'Боковик';
-        
-        // Определяем тип сигнала по тексту
-        if (signalString.includes('бычий') || signalString.includes('рост')) {
-          return 'Рост';
-        } else if (signalString.includes('медвежий') || signalString.includes('падение')) {
-          return 'Падение';
-        } else {
-          return 'Боковик';
-        }
-      };
-
-      const parseVolatility = (volatilityString) => {
-        if (!volatilityString) return { value: 3.5, level: 'Средняя' };
-        
-        // Извлекаем числовое значение волатильности
-        const match = volatilityString.match(/[-]?\d+\.?\d*/);
-        const volatilityValue = match ? Math.abs(parseFloat(match[0])) : 3.5;
-        
-        // Определяем уровень
-        let level = 'Средняя';
-        if (volatilityValue < 2) level = 'Низкая';
-        else if (volatilityValue >= 5) level = 'Высокая';
-        
-        return { value: volatilityValue.toFixed(2), level };
-      };
-
-      const parseRecommendation = (recString) => {
-        if (!recString) return 'Держать позицию';
-        
-        if (recString.includes('ПОКУПКА') || recString.includes('ПОКУПАТЬ') || recString.includes('BUY')) {
-          return 'Покупать';
-        } else if (recString.includes('ПРОДАЖА') || recString.includes('ПРОДАВАТЬ') || recString.includes('SELL')) {
-          return 'Продавать';
-        } else {
-          return 'Держать позицию';
-        }
-      };
-
-      const parseBalance = (balanceString) => {
-        if (!balanceString) return { text: 'Баланс не определен', score: 50 };
-        
-        // Извлекаем score из строки
-        const scoreMatch = balanceString.match(/score = ([\d.-]+)/);
-        let score = 50;
-        if (scoreMatch) {
-          const rawScore = parseFloat(scoreMatch[1]);
-          // Нормализуем score к проценту (предполагаем, что rawScore от 0 до 1 или от -1 до 1)
-          if (rawScore >= 0 && rawScore <= 1) {
-            score = Math.round(rawScore * 100);
-          } else if (rawScore >= -1 && rawScore <= 1) {
-            score = Math.round((rawScore + 1) * 50); // преобразуем -1..1 в 0..100
-          }
-        }
-        
-        return { text: balanceString, score };
-      };
-
-      // Используем реальные данные из API
-      const market_signal = mlData.market_signal || 'Нет сигнала';
-      const balance_data = mlData.balance || 'Данные о балансе недоступны';
-      const volatility_data = mlData.volatility || 'Волатильность не определена';
-      const recommendation_data = mlData.recommendation_signal || 'Нет рекомендации';
-      const assurance = mlData.assurance || 0.5;
-      
-      // Парсим данные
-      const parsedSignal = parseSignal(market_signal);
-      const parsedVolatility = parseVolatility(volatility_data);
-      const parsedRecommendation = parseRecommendation(recommendation_data);
-      const parsedBalance = parseBalance(balance_data);
+      // Берем данные как есть с бекенда
+      const market_signal = mlData.market_signal || '';
+      const balance_data = mlData.balance || '';
+      const volatility_data = mlData.volatility || '';
+      const recommendation_data = mlData.recommendation_signal || '';
+      const assurance = mlData.assurance || 0;
       
       // Расчет статистики свечей
       let bullish = 0, bearish = 0, maxGain = 0, maxLoss = 0;
@@ -376,23 +337,25 @@ getExtendedMLPrediction: async (ticker_id, hours = 12) => {
       
       return {
         analysis: {
-          marketSignal: parsedSignal,
+          marketSignal: market_signal, // Просто передаем как есть
           modelConfidence: {
-            model1: Math.round(assurance * 100),
-            model2: Math.round((1 - assurance) * 100), // дополнение до 100%
-            average: Math.round(assurance * 100)
+            model1: mlData.assurance ? Math.round(mlData.assurance * 100) : 0,
+            model2: mlData.assurance ? 100 - Math.round(mlData.assurance * 100) : 0,
+            average: mlData.assurance ? Math.round(mlData.assurance * 100) : 0
           },
-          balance: parsedBalance.text,
+          balance: balance_data, // Просто передаем как есть
           balanceDetails: {
-            score: parsedBalance.score,
-            description: parsedBalance.text
+            score: mlData.balance_score ? Math.round(mlData.balance_score * 100) : 0,
+            description: balance_data
           },
-          modelAgreement: parsedBalance.score > 60 ? 'Согласованы' : 'Расходятся',
-          volatility: parsedVolatility,
-          recommendation: parsedRecommendation,
+          volatility: {
+            value: mlData.volatility_score || 0,
+            level: getVolatilityLevel(mlData.volatility_score || 0)
+          },
+          recommendation: recommendation_data, // Просто передаем как есть
           overallChangePercent: overallChange,
           recommendationDetails: {
-            confidence: Math.round((mlData.recommendation_score || 0.5) * 100),
+            confidence: mlData.recommendation_score ? Math.round(mlData.recommendation_score * 100) : 0,
             timeframe: `${hours} часов`
           }
         },
@@ -406,46 +369,12 @@ getExtendedMLPrediction: async (ticker_id, hours = 12) => {
         forecastHours: hours,
         generatedAt: mlData.generated_at || new Date().toISOString(),
         forecastCandles: forecastCandles,
-        rawData: mlData // сохраняем сырые данные для отладки
+        rawData: mlData
       };
       
     } catch (error) {
       console.error('Error in getMLForecast:', error);
-      
-      // Fallback на тестовые данные, если API не доступно
-      return {
-        analysis: {
-          marketSignal: 'Рост',
-          modelConfidence: {
-            model1: 75,
-            model2: 25,
-            average: 50
-          },
-          balance: 'Две модели слабо согласованы! (score = 0.6)',
-          balanceDetails: {
-            score: 60,
-            description: 'Две модели слабо согласованы'
-          },
-          modelAgreement: 'Слабо согласованы',
-          volatility: { value: 2.5, level: 'Средняя' },
-          recommendation: 'Покупать',
-          overallChangePercent: 1.5,
-          recommendationDetails: {
-            confidence: 75,
-            timeframe: `${hours} часов`
-          }
-        },
-        statistics: {
-          bullishCandles: 8,
-          bearishCandles: 3,
-          neutralCandles: 1,
-          maxGain: 2.5,
-          maxLoss: 1.8
-        },
-        forecastHours: hours,
-        generatedAt: new Date().toISOString(),
-        forecastCandles: []
-      };
+      throw error;
     }
   },
 
@@ -680,35 +609,4 @@ getExtendedMLPrediction: async (ticker_id, hours = 12) => {
       return null;
     }
   }
-};
-
-// Функция для фильтрации данных по периоду
-const filterDataByPeriod = (data, period) => {
-  if (!data || data.length === 0) return [];
-  
-  const now = new Date();
-  let startTime;
-
-  switch (period) {
-    case 'hour':
-      startTime = new Date(now.getTime() - 1 * 60 * 60 * 1000);
-      break;
-    case 'day':
-      startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-      break;
-    case 'week':
-      startTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      break;
-    case 'month':
-      startTime = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      break;
-    case 'year':
-      startTime = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-      break;
-    default:
-      return data;
-  }
-
-  const filtered = data.filter(item => new Date(item.timestamp) >= startTime);
-  return filtered.length > 1 ? filtered : data;
 };

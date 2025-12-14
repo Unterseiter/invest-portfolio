@@ -118,7 +118,7 @@ const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
                             <div className="signal-indicator" style={{ color: getSignalColor(marketSignal) }}>
                                 <div className="signal-value">{marketSignal}</div>
                                 <div className="signal-change">
-                                    {analysis.overallChangePercent >= 0 ? '+' : ''}{analysis.overallChangePercent}%
+                                    {/* {analysis.overallChangePercent >= 0 ? '+' : ''}{analysis.overallChangePercent}% */}
                                 </div>
                             </div>
                             <div className="signal-description">
@@ -155,25 +155,6 @@ const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
                                 </div>
                             </div>
 
-                            {/* Модель 2
-                            <div className="confidence-model">
-                                <div className="model-info">
-                                    <div className="model-name">Волатильностная модель</div>
-                                    <div className="model-value" style={{ color: getConfidenceColor(modelConfidence.model2) }}>
-                                        {modelConfidence.model2}%
-                                    </div>
-                                </div>
-                                <div className="confidence-bar-container">
-                                    <div
-                                        className="confidence-bar"
-                                        style={{
-                                            width: `${modelConfidence.model2}%`,
-                                            backgroundColor: getConfidenceColor(modelConfidence.model2)
-                                        }}
-                                    />
-                                </div>
-                            </div> */}
-
                             <div className="balance-indicator">
                                 <div className="balance-header">
                                     <div className="balance-title">Баланс моделей</div>
@@ -184,18 +165,7 @@ const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
                                 <div className="balance-description">
                                     {balance || 'Баланс не определен'}
                                 </div>
-                                <div className="balance-status">
-                                    {analysis.modelAgreement === 'Согласованы' ? '✓ Модели согласованы' : '⚠ Модели расходятся'}
-                                </div>
                             </div>
-
-                            {/* Итоговая уверенность */}
-                            {/* <div className="confidence-summary">
-                                <span className="summary-label">Общая уверенность:</span>
-                                <span className="summary-value" style={{ color: getConfidenceColor(modelConfidence.average) }}>
-                                    {modelConfidence.average}%
-                                </span>
-                            </div> */}
                         </div>
                     </div>
 
@@ -233,9 +203,9 @@ const ForecastAnalysis = ({ forecastData, loading = false, error = null }) => {
                                 <div className="recommendation-action" style={{ color: getRecommendationColor(recommendation) }}>
                                     {recommendation}
                                 </div>
-                                <div className="recommendation-confidence">
+                                {/* <div className="recommendation-confidence">
                                     Уверенность: {analysis.recommendationDetails.confidence}%
-                                </div>
+                                </div> */}
                             </div>
                             <div className="recommendation-details">
                                 <div className="detail-item">
