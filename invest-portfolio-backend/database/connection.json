@@ -1,6 +1,6 @@
 {
-  "database": "DTI_project",
+  "database": "dti_schema",
   "user": "root",
-  "password": "admin1234",
+  "password": "qwerty",
   "host": "localhost"
 }
